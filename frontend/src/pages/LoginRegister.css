@@ -1,0 +1,106 @@
+body {
+	background-color: #2f2841;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+main {
+	background-color: #201b2c;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+main h2 {
+	color: white;
+	text-align: center;
+}
+
+main label {
+	color: white;
+}
+
+main span {
+	color: white;
+}
+
+.input-label {
+	display: flex;
+	flex-direction: column;
+}
+
+.span-button {
+	display: flex;
+	flex-direction: row;
+	gap: 15px;
+	margin-bottom: 20px;
+}
+
+.input-label label {
+	margin-bottom: 8px;
+}
+
+.input-label input {
+	margin-bottom: 15px;
+	border: none;
+	background-color: #514869;
+	border-radius: 3px;
+	padding: 8px;
+	padding-right: 200px;
+	color: white;
+	transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-label input::placeholder {
+	color: white;
+	opacity: 0.3; /* Opcional: reduz a opacidade para diferenciar do texto digitado */
+}
+
+.input-label input:focus {
+	outline: none;
+	border-color: #8a75ff; /* Muda a cor da borda ao focar */
+	box-shadow: 0 0 8px rgba(138, 117, 255, 0.8); /* Efeito de brilho ao redor */
+	background-color: #5d4d7a; /* Sutil mudança no fundo para dar feedback */
+}
+
+.button-toggleform {
+	background: none;
+	border: none;
+	color: white;
+	font-size: inherit;
+	cursor: pointer;
+	text-decoration: none;
+	padding: 0;
+	font-weight: 600;
+}
+
+.button-toggleform:hover {
+	text-decoration: underline;
+}
+
+.button-submit {
+	width: 100%;
+	padding: 10px;
+	border: none;
+	border-radius: 6px;
+	background: linear-gradient(45deg, #6a5acd, #836fff);
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: 0.3s ease-in-out;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.button-submit:hover {
+	background: linear-gradient(45deg, #836fff, #6a5acd);
+	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
+	transform: scale(1.05);
+}
+
+.button-submit:active {
+	transform: scale(0.98);
+}
