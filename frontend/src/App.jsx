@@ -1,13 +1,15 @@
 import './App.css'
-import LoginRegister from './pages/LoginRegister'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginRegister from './pages/LoginRegister/LoginRegister'
 
-function App() {
-
+const App = () => {
   return (
-    <>
-    <LoginRegister>/</LoginRegister>
-    </>
-  )
-}
+    <Router>
+        <Routes>
+          <Route path="/" element={<LoginRegister />} />
+        </Routes>
+    </Router>
+  );
+};
 
 export default App
