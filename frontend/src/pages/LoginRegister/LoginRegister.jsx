@@ -89,7 +89,7 @@ const LoginRegister = () => {
 
 
   return (
-    <div>
+    <div className='login-register-container'>
         <main>
             {formVisibleLogin && (
             <form onSubmit={handleSubmitLogin}>

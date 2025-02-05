@@ -1,0 +1,45 @@
+.home-container {
+	background-color: rgb(102, 63, 144);
+	height: 100vh;
+}
+
+.home-informacoes {
+	display: flex;
+	flex-direction: column;
+	margin-left: 200px;
+	margin-top: 60px;
+	gap: 80px;
+	color: white;
+}
+
+.user-informacoes {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.user-informacoes h1 {
+	margin-bottom: 25px;
+	font-weight: 500;
+	font-size: 1.9em;
+}
+
+.span-home {
+	font-weight: 300;
+}
+
+.user-informacoes div {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.treinos-concluidos {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+}
+
+.treinos-concluidos h2 {
+	font-weight: 400;
+}
