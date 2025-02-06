@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './LoginRegister.css'
 
@@ -12,6 +12,12 @@ const LoginRegister = () => {
     const [lastname_user, setLastName] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+
+    if (localStorage.getItem('id')) {useEffect(() => {
+        localStorage.removeItem('id')
+        window.location.reload();
+    }, [])
+};
 
     const toggleForm = () => {
         setformVisibleRegister(!formVisibleRegister);
