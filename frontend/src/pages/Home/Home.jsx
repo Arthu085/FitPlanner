@@ -28,7 +28,7 @@ const Home = () => {
 
   useEffect(() => {
     if (!userId) {
-      alert('Você precisa estar logado');
+      alert('Faça login no sistema');
       navigate('/'); // Redireciona para a página de login se o id não existir
       localStorage.removeItem('id');
     } else {
