@@ -5,6 +5,7 @@ const cors = require('cors');
 
 // Importar Rotas
 const LoginRegisterRoutes = require('./routes/LoginRegister');
+const UsersRoutes = require('./routes/Users');
 
 // Configurações do servidor
 const app = express();
@@ -16,6 +17,8 @@ app.use(cors());
 
 // Rotas
 app.use('/api/loginregister', LoginRegisterRoutes);
+app.use('/api/user', UsersRoutes);
+
 
 
 // Inicialização do servidor

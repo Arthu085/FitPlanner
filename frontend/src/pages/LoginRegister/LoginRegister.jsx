@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './LoginRegister.css'
 
 const LoginRegister = () => {
@@ -9,6 +10,8 @@ const LoginRegister = () => {
     const [password_user, setPassword] = useState('');
     const [name_user, setName] = useState('');
     const [lastname_user, setLastName] = useState('');
+    const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
     const toggleForm = () => {
         setformVisibleRegister(!formVisibleRegister);
@@ -30,20 +33,18 @@ const LoginRegister = () => {
                 },
                 body: JSON.stringify({ email_user, password_user }), 
             });
-    
-            if (!response.ok) {
-                if (response.status === 401) {
-                    alert("Email ou Senha Inválidos.");
-                } else {
-                    alert(`Erro ao fazer login. Código: ${response.status}`);
-                }
-                return;
-            }
-    
+
             const data = await response.json();
-            alert('Login realizado com sucesso.');
-            localStorage.setItem('token', data.token);
     
+            if (data.success) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('id', data.id_user);
+                navigate('/home');
+            } else {
+                setMessage(data.message)
+                alert(message)
+            }
+
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             alert("Erro ao conectar-se ao servidor.");

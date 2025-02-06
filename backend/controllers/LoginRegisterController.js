@@ -69,6 +69,7 @@ const postLogin = async (req, res) => {
             success: true,
             message: 'Login bem-sucedido',
             token: token,
+            id_user: usuario.id_user
           });        
     } catch (error) {
         console.error('Erro ao fazer login:', error);
