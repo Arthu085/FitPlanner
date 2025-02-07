@@ -153,3 +153,49 @@
 .form-add-exercicio button:active {
 	transform: scale(0.98);
 }
+
+.list-btns {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-top: 50px;
+}
+
+.list-btns span {
+	color: white;
+	font-size: 1.2em;
+	text-transform: uppercase;
+}
+
+.edit-delete-btns {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+}
+
+.edit-delete-btns button {
+	padding: 8px 16px;
+	border: none;
+	border-radius: 5px;
+	font-size: 14px;
+	cursor: pointer;
+	transition: 0.3s ease-in-out;
+}
+
+.edit-delete-btns button:first-child {
+	background-color: #3498db;
+	color: white;
+}
+
+.edit-delete-btns button:first-child:hover {
+	background-color: #2980b9;
+}
+
+.edit-delete-btns button:last-child {
+	background-color: #e74c3c;
+	color: white;
+}
+
+.edit-delete-btns button:last-child:hover {
+	background-color: #c0392b;
+}

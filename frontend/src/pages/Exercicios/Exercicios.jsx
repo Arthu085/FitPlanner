@@ -31,7 +31,13 @@ const Exercicios = () => {
                 <h2>Lista de Exercícios</h2>
                 <button className='add-exercise-btn' onClick={toggleForm}>Adicionar Exercício</button>
             </div>
-            <span></span>
+            <div className='list-btns'>
+                <span>Supino</span>
+                <div className='edit-delete-btns'>
+                    <button>Editar</button>
+                    <button>Excluir</button>
+                </div>
+            </div>
         </div>
         {formVisibleAdd && (
             <div className='form-container'>
