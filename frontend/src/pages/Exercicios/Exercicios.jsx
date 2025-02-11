@@ -9,6 +9,7 @@ const Exercicios = () => {
     const [formVisibleAdd, setFormVisibleAdd] = useState(false);
     const [formVisibleEdit, setFormVisibleEdit] = useState(false);
     const [formVisibleDelete, setFormVisibleDelete] = useState(false);
+    const [exercicios, setExercicios] = useState([]);
 
     const userId = localStorage.getItem('id');
     const navigate = useNavigate();
@@ -32,6 +33,26 @@ const Exercicios = () => {
       const toggleFormDelete = () => {
         setFormVisibleDelete(!formVisibleDelete);
       };
+
+      const getExercicios = async() => {
+        try {
+            const result = await fetch('http://localhost:3000/api/exercicios/getexercicios')
+            const data = await result.json();
+
+            if(result.ok) {
+                setExercicios(data.data);
+            } else {
+                alert(`Erro ao buscar exercícios: ${data.message}`);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar exercícios:', error);
+            alert('Erro ao buscar exercícios')
+        }
+      };
+
+      useEffect(() => {
+        getExercicios();
+      }, []);
     
   return (
     <div className='sidebar-pages-container'>
@@ -43,11 +64,19 @@ const Exercicios = () => {
                 <button className='add-exercise-btn' onClick={toggleFormAdd}>Adicionar Exercício</button>
             </div>
             <div className='list-btns'>
-                <span>Supino</span>
-                <div className='edit-delete-btns'>
-                    <button  onClick={toggleFormEdit}>Editar</button>
-                    <button onClick={toggleFormDelete}>Excluir</button>
-                </div>
+            <ul>
+                {exercicios.map((exercicios) => 
+                <li key={exercicios.id_exercises}>
+                    <div className='list-btns'>
+                        <span>{exercicios.exercise_name}</span>
+                        <div className='edit-delete-btns'>
+                            <button  onClick={toggleFormEdit}>Editar</button>
+                            <button onClick={toggleFormDelete}>Excluir</button>
+                        </div>
+                    </div>
+                </li>
+                )}
+            </ul>
             </div>
         </div>
         {formVisibleAdd && (
