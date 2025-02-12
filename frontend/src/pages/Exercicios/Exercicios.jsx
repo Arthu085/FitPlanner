@@ -67,13 +67,11 @@ const Exercicios = () => {
             <ul>
                 {exercicios.map((exercicios) => 
                 <li key={exercicios.id_exercises}>
-                    <div className='list-btns'>
                         <span>{exercicios.exercise_name}</span>
                         <div className='edit-delete-btns'>
                             <button  onClick={toggleFormEdit}>Editar</button>
                             <button onClick={toggleFormDelete}>Excluir</button>
                         </div>
-                    </div>
                 </li>
                 )}
             </ul>

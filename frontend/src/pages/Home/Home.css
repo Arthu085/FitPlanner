@@ -1,15 +1,17 @@
 .home-container {
 	background-color: rgb(102, 63, 144);
-	height: 100vh;
+	min-height: calc(100vh - 0px);
+	width: 100%;
+	overflow: hidden; /* Impede rolagem desnecessária */
 }
 
 .home-informacoes {
 	display: flex;
 	flex-direction: column;
 	margin-left: 200px;
-	margin-top: 60px;
 	gap: 80px;
 	color: white;
+	margin-top: 100px;
 }
 
 .user-informacoes {

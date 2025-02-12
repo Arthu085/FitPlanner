@@ -7,6 +7,7 @@
 	left: 0; /* Alinhado à esquerda */
 	height: 100vh;
 	gap: 40px;
+	top: 70px;
 }
 
 .buttons-sidebar {
