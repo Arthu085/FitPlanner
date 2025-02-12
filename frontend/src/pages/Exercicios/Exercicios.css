@@ -1,6 +1,7 @@
 .sidebar-pages-container {
 	background-color: rgb(102, 63, 144);
 	overflow: hidden; /* Impede rolagem desnecessária */
+	min-height: 703px;
 }
 
 .exercicios-list {

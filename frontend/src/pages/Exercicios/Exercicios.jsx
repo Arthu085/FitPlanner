@@ -10,6 +10,7 @@ const Exercicios = () => {
     const [formVisibleEdit, setFormVisibleEdit] = useState(false);
     const [formVisibleDelete, setFormVisibleDelete] = useState(false);
     const [exercicios, setExercicios] = useState([]);
+    const [exercise_name, setExerciseName] = useState('');
 
     const userId = localStorage.getItem('id');
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ const Exercicios = () => {
         setFormVisibleDelete(!formVisibleDelete);
       };
 
-      const getExercicios = async() => {
+    const getExercicios = async () => {
         try {
             const result = await fetch('http://localhost:3000/api/exercicios/getexercicios')
             const data = await result.json();
@@ -53,6 +54,39 @@ const Exercicios = () => {
       useEffect(() => {
         getExercicios();
       }, []);
+
+    const addExercicio = async (event) => {
+        event.preventDefault();
+
+        if (!exercise_name || exercise_name.trim() === "") {
+            alert("O nome do exercício não pode estar vazio.");
+            return;
+        }
+        const exercicioData = { exercise_name };
+    
+        try {
+            const result = await fetch('http://localhost:3000/api/exercicios/addexercicio', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(exercicioData),
+            });
+    
+            // Verifica se o status da resposta foi 'ok'
+            if (result.ok) {
+                const data = await result.json();  // Só processa a resposta se o status for ok
+                alert(data.message);  // Mensagem de sucesso
+                setFormVisibleAdd(!formVisibleAdd);
+                await getExercicios();
+                setExerciseName('');
+            } else {
+                const data = await result.json();  // Obtém o erro caso a resposta não seja ok
+                alert(`Erro ao adicionar exercício: ${data.error || 'Erro desconhecido'}`);
+            }
+        } catch (error) {
+            console.error('Erro ao adicionar exercício:', error);
+            alert('Erro ao adicionar exercício');
+        }
+    };
     
   return (
     <div className='sidebar-pages-container'>
@@ -82,9 +116,9 @@ const Exercicios = () => {
             <div className='form-overlay' onClick={toggleFormAdd}></div>
                 <div className='form-content'>
                     <h2>Adicionar Exercício</h2>
-                    <form className='form-add-exercicio'>
+                    <form className='form-add-exercicio' onSubmit={addExercicio}>
                         <label htmlFor="name">Nome do Exercício</label>
-                        <input type="text" placeholder='Digite o nome do exercício'/>
+                        <input type="text" placeholder='Digite o nome do exercício' value={exercise_name} onChange={(e) => setExerciseName(e.target.value)} required/>
                         <button type='submit'>Adicionar</button>
                     </form>
                 </div>
