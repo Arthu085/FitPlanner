@@ -1,21 +1,23 @@
 .sidebar-pages-container {
 	background-color: rgb(102, 63, 144);
-	height: 100vh;
+	overflow: hidden; /* Impede rolagem desnecessária */
+	min-height: 703px;
 }
 
 .exercicios-list {
 	margin-left: 250px;
-	margin-top: 60px;
-	background-color: rgba(
-		255,
-		255,
-		255,
-		0.095
-	); /* Branco com 20% de opacidade */
-	position: absolute;
-	border-radius: 10px; /* Borda arredondada opcional */
-	backdrop-filter: blur(8px); /* Efeito de desfoque no fundo */
+	margin-top: 100px;
+	background-color: rgba(255, 255, 255, 0.095);
+	position: relative;
+	border-radius: 10px;
+	backdrop-filter: blur(8px);
 	padding: 20px;
+	flex-grow: 0; /* Removendo a expansão automática */
+	max-width: 800px; /* Define uma largura máxima */
+	width: 80%; /* Define a largura como 80% do contêiner */
+	margin-right: auto; /* Mantém centralizado */
+	margin-left: auto; /* Mantém centralizado */
+	margin-bottom: 20px;
 }
 
 .h2-addbutton {
@@ -23,7 +25,7 @@
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	gap: 200px;
+	margin-bottom: 80px;
 }
 
 .h2-addbutton h2 {
@@ -154,10 +156,11 @@
 	transform: scale(0.98);
 }
 
-.list-btns {
+.list-btns li {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+	align-items: center;
 	margin-top: 50px;
 }
 
@@ -165,12 +168,17 @@
 	color: white;
 	font-size: 1.2em;
 	text-transform: uppercase;
+	word-wrap: break-word; /* Quebra palavras longas se necessário */
+	word-break: break-word; /* Garante a quebra da palavra longa */
+	overflow-wrap: break-word; /* Outras opções de quebra */
+	display: inline-block; /* Permite o controle de largura */
+	max-width: 65%; /* Garante que não ultrapasse a largura do contêiner */
 }
 
 .edit-delete-btns {
 	display: flex;
 	flex-direction: row;
-	gap: 10px;
+	gap: 15px;
 }
 
 .edit-delete-btns button {
@@ -179,6 +187,7 @@
 	border-radius: 5px;
 	font-size: 14px;
 	cursor: pointer;
+	height: 40px;
 	transition: 0.3s ease-in-out;
 }
 
