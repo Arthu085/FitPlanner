@@ -1,7 +1,8 @@
 .sidebar-pages-container {
 	background-color: rgb(102, 63, 144);
+	min-height: calc(100vh - 0px);
+	width: 100%;
 	overflow: hidden; /* Impede rolagem desnecessária */
-	min-height: 703px;
 }
 
 .exercicios-list {
@@ -107,17 +108,17 @@
 	text-align: center;
 }
 
-.form-add-exercicio {
+.form-add {
 	display: flex;
 	flex-direction: column;
 }
 
-.form-add-exercicio label {
+.form-add label {
 	margin-bottom: 10px;
 	text-align: justify;
 }
 
-.form-add-exercicio input {
+.form-add input {
 	padding: 10px;
 	border: 2px solid #6a5acd;
 	border-radius: 6px;
@@ -127,12 +128,12 @@
 	margin-bottom: 30px;
 }
 
-.form-add-exercicio input:focus {
+.form-add input:focus {
 	border-color: #836fff;
 	box-shadow: 0 0 8px rgba(106, 90, 205, 0.5);
 }
 
-.form-add-exercicio button {
+.form-add button {
 	padding: 10px;
 	background: linear-gradient(45deg, #6a5acd, #836fff);
 	border: none;
@@ -146,13 +147,13 @@
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.form-add-exercicio button:hover {
+.form-add button:hover {
 	background: linear-gradient(45deg, #836fff, #6a5acd);
 	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
 	transform: scale(1.05);
 }
 
-.form-add-exercicio button:active {
+.form-add button:active {
 	transform: scale(0.98);
 }
 
