@@ -33,7 +33,16 @@ const Metas = () => {
           { id: 1, titulo: 'Treinar 5x por semana', descricao: 'Criar rotina consistente' },
           { id: 2, titulo: 'Ler 3 livros', descricao: 'Aprimorar conhecimento' },
           { id: 3, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
-          { id: 4, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 5, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 6, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 7, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 8, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 9, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 92, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 93, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 94, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 95, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
+          { id: 9, titulo: 'Melhorar alimentação', descricao: 'Manter dieta equilibrada' },
         ];
 
         // Adicionando a propriedade `concluida` localmente no frontend
@@ -80,22 +89,31 @@ const Metas = () => {
           </select>
         </div>
       </div>
+
       <div className="metas-list">
-        {metasFiltradas.map((meta) => (
-          <div key={meta.id} className={`meta-content ${meta.concluida ? 'checked' : ''}`}>
-            <h2>{meta.titulo}</h2>
-            <div className='p-checkbox'>
-              <p>{meta.descricao}</p>
-              <input
-                type="checkbox"
-                checked={meta.concluida}
-                onChange={() => toggleChecked(meta.id)}
-              />
+        {metasFiltradas.length === 0 ? (
+          <p className="no-metas-message">Nenhuma meta encontrada para o filtro selecionado.</p>
+        ) : (
+          metasFiltradas.map((meta) => (
+            <div key={meta.id} className={`meta-content ${meta.concluida ? 'checked' : ''}`}>
+              <h2>{meta.titulo}</h2>
+              <div className='p-checkbox'>
+                <p>{meta.descricao}</p>
+                <input
+                  type="checkbox"
+                  checked={meta.concluida}
+                  onChange={() => toggleChecked(meta.id)}
+                />
+              </div>
+              <div className='span-datas'>
+                <span>Data de criação:</span>
+                <span>Previsão de finalização:</span>
+              </div>
             </div>
-            <span>Data de criação:</span>
-          </div>
-        ))}
+          ))
+        )}
       </div>
+
       {formVisibleAdd && (
         <div className='form-container'>
           <div className='form-overlay' onClick={() => setFormVisibleAdd(false)}></div>
@@ -106,6 +124,8 @@ const Metas = () => {
               <input type="text" placeholder='Digite o título da meta' required />
               <label htmlFor="descricao">Descrição da Meta</label>
               <textarea placeholder='Digite a descrição da meta' required />
+              <label htmlFor="data">Data de Previsão</label>
+              <input type="date" required />
               <button type='submit'>Adicionar</button>
             </form>
           </div>

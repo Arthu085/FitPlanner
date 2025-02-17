@@ -3,7 +3,6 @@
 	flex-wrap: wrap; /* Permite que as metas se movam para a próxima linha */
 	gap: 20px; /* Espaço entre os itens */
 	overflow-y: auto; /* Habilita a rolagem vertical quando necessário */
-	max-height: 80vh; /* Limite de altura para permitir a rolagem */
 	margin-bottom: 30px;
 	margin-left: 250px;
 	margin-right: 50px;
@@ -38,6 +37,10 @@
 	align-items: baseline;
 	justify-content: space-between;
 	margin-bottom: 25px;
+}
+
+.p-checkbox input[type="checkbox"] {
+	transform: scale(1.3); /* Aumenta o tamanho do checkbox */
 }
 
 .metas-list span {
@@ -88,6 +91,17 @@
 	outline: none;
 	transition: 0.3s ease-in-out;
 	text-align: center;
+	transition: all 0.3s ease;
+}
+
+.filtros select:hover {
+	background-color: #f0f0f0; /* Cor de fundo suave ao passar o mouse */
+	transform: scale(1.05); /* Leve aumento do tamanho do botão */
+}
+
+.filtros select:focus {
+	outline: none; /* Remove o contorno do botão quando está em foco */
+	border-color: #007bff; /* Cor da borda ao focar */
 }
 
 .btn-add-meta:hover {
@@ -127,4 +141,10 @@
 .meta-content.checked span {
 	text-decoration: line-through;
 	opacity: 0.5;
+}
+
+.span-datas {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 }
