@@ -179,7 +179,7 @@ const Exercicios = () => {
             <div className='form-overlay' onClick={toggleFormAdd}></div>
                 <div className='form-content'>
                     <h2>Adicionar Exercício</h2>
-                    <form className='form-add-exercicio' onSubmit={addExercicio}>
+                    <form className='form-add' onSubmit={addExercicio}>
                         <label htmlFor="name">Nome do Exercício</label>
                         <input type="text" placeholder='Digite o nome do exercício' value={exercise_name} onChange={(e) => setExerciseName(e.target.value)} required/>
                         <button type='submit'>Adicionar</button>
@@ -192,7 +192,7 @@ const Exercicios = () => {
             <div className='form-overlay' onClick={toggleFormEdit}></div>
                 <div className='form-content'>
                     <h2>Editar Exercício</h2>
-                    <form className='form-add-exercicio' onSubmit={editExercicio}>
+                    <form className='form-add' onSubmit={editExercicio}>
                         <label htmlFor="name">Nome novo do Exercício</label>
                         <input type="text" placeholder='Digite o novo nome do exercício' required value={exercise_name} onChange={(e) => setExerciseName(e.target.value)}/>
                         <button type='submit'>Salvar</button>

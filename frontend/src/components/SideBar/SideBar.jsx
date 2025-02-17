@@ -21,7 +21,7 @@ const SideBar = () => {
         </div>
         <div className='buttons-img'>
           <img className='img-sidebar' src="../../images/metas.png" alt="Meta icone" />
-          <button className='buttons-sidebar'>Metas</button>
+          <button className='buttons-sidebar' onClick={() => navigate('/metas')}>Metas</button>
         </div>
     </div>
   )
