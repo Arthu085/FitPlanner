@@ -13,7 +13,7 @@ const SideBar = () => {
         </div>
         <div className='buttons-img'>
           <img className='img-sidebar' src="../../images/horarios.png" alt="Horário icone" />
-          <button className='buttons-sidebar'>Horários</button>
+          <button className='buttons-sidebar' onClick={() => navigate('/agenda')}>Agenda</button>
         </div>
         <div className='buttons-img'>
           <img className='img-sidebar' src="../../images/exercicios.png" alt="Exercício icone" />
