@@ -1,0 +1,33 @@
+.agenda-container {
+	margin-left: 250px;
+	margin-top: 100px;
+}
+
+.agenda-container h2 {
+	color: white;
+	margin-bottom: 20px;
+}
+
+.btn-add-agenda {
+	padding: 10px;
+	background: linear-gradient(45deg, #6a5acd, #836fff);
+	border: none;
+	border-radius: 6px;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: 0.3s ease-in-out;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-add-agenda:hover {
+	background: linear-gradient(45deg, #836fff, #6a5acd);
+	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
+	transform: scale(1.05);
+}
+
+.btn-add-agenda:active {
+	transform: scale(0.98);
+}

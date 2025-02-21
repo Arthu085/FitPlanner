@@ -62,13 +62,23 @@
 }
 
 .filtro-btn-container {
-	margin-left: 250px;
-	margin-top: 100px;
-	margin-bottom: 30px;
 	display: flex;
 	flex-direction: row;
 	gap: 70px;
 	justify-content: baseline;
+}
+
+.container-metas {
+	margin-left: 250px;
+	margin-top: 100px;
+	margin-bottom: 30px;
+	display: flex;
+	flex-direction: column;
+}
+
+.container-metas h2 {
+	color: white;
+	margin-bottom: 20px;
 }
 
 .filtros {
