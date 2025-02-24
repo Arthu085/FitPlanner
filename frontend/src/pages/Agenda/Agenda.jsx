@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
 import "./Agenda.css";
@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 
 const Agenda = () => {
 	const [formAddVisible, setFormAddVisible] = useState(false);
+	const [filtro, setFiltro] = useState("todas");
+	const [dataFiltro, setDataFiltro] = useState("");
 
 	const navigate = useNavigate();
 	const userId = localStorage.getItem("id");
@@ -21,6 +23,10 @@ const Agenda = () => {
 		setFormAddVisible(!formAddVisible);
 	};
 
+	const limpaFiltroData = () => {
+		setDataFiltro("");
+	};
+
 	return (
 		<div className="sidebar-pages-container">
 			<NavigationBar />
@@ -33,12 +39,41 @@ const Agenda = () => {
 					</button>
 					<div className="filtros">
 						<label htmlFor="filtro">Filtrar agenda:</label>
-						<select id="filtro">
+						<select
+							id="filtro"
+							value={filtro}
+							onChange={(e) => setFiltro(e.target.value)}>
 							<option value="todas">Todas</option>
 							<option value="concluidas">Concluídas</option>
-							<option value="andamento">Em Andamento</option>
 							<option value="atrasadas">Em Atraso</option>
 						</select>
+					</div>
+					<div className="filtros">
+						<label htmlFor="dataFiltro">Filtrar por data:</label>
+						<input
+							type="date"
+							id="dataFiltro"
+							value={dataFiltro}
+							onChange={(e) => {
+								setDataFiltro(e.target.value);
+								setFiltro("todas"); // Isso agora vai atualizar corretamente o estado do filtro
+							}}
+						/>
+						<button onClick={limpaFiltroData}>Limpar Data</button>
+					</div>
+				</div>
+			</div>
+
+			<div className="metas-list">
+				<p className="no-metas-message">
+					Nenhuma meta encontrada para o filtro selecionado.
+				</p>
+				<div className={`meta-content`}>
+					<h2>Treino A</h2>
+					<div className="span-datas">
+						<span>Data do treino:</span>
+						<span>Hora do treino:</span>
+						<input type="checkbox" />
 					</div>
 				</div>
 			</div>

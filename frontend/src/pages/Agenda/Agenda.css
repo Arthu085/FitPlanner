@@ -20,6 +20,7 @@
 	cursor: pointer;
 	transition: 0.3s ease-in-out;
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+	height: 50px;
 }
 
 .btn-add-agenda:hover {
@@ -30,4 +31,45 @@
 
 .btn-add-agenda:active {
 	transform: scale(0.98);
+}
+
+.filtros input {
+	border: 2px solid #6a5acd;
+	border-radius: 6px;
+	font-size: 16px;
+	outline: none;
+	transition: 0.3s ease-in-out;
+	text-align: center;
+	transition: all 0.3s ease;
+}
+
+.filtros input:hover {
+	background-color: #f0f0f0; /* Cor de fundo suave ao passar o mouse */
+	transform: scale(1.05); /* Leve aumento do tamanho do botão */
+}
+
+.filtros input:focus {
+	outline: none; /* Remove o contorno do botão quando está em foco */
+	border-color: #007bff; /* Cor da borda ao focar */
+}
+
+.filtros button {
+	background-color: #ff4d4d; /* Vermelho suave */
+	color: white;
+	border: none;
+	padding: 8px 12px;
+	cursor: pointer;
+	border-radius: 5px;
+	font-size: 14px;
+	transition: background-color 0.3s ease;
+	margin-top: 10px;
+	text-transform: uppercase;
+}
+
+.filtros button:hover {
+	background-color: #cc0000; /* Vermelho mais escuro no hover */
+}
+
+.filtros button:active {
+	background-color: #a30000; /* Vermelho ainda mais escuro ao clicar */
 }
