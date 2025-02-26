@@ -1,0 +1,77 @@
+.treinos-container {
+	margin-left: 250px;
+	margin-top: 100px;
+}
+
+.treinos-container h2 {
+	color: white;
+	margin-bottom: 20px;
+}
+
+.title-add-treino {
+	color: black;
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+}
+
+.select-btn-remove {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	align-items: center;
+}
+
+.select-btn-remove .form-group {
+	flex: 1; /* Faz o select ocupar todo o espaço disponível */
+}
+
+.select-btn-remove select {
+	width: 100%; /* Garante que o select ocupe todo o espaço do flex */
+}
+
+.btn-remove {
+	background-color: #ff4d4d; /* Vermelho suave */
+	color: white;
+	border: none;
+	padding: 5px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background 0.3s ease;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.btn-remove:hover {
+	background-color: #cc0000; /* Vermelho mais escuro ao passar o mouse */
+}
+
+.add-btn-exercicio {
+	padding: 10px 20px; /* Adiciona padding ao redor do texto */
+	background-color: #4caf50; /* Cor verde para indicar ação positiva */
+	border: none; /* Remove a borda */
+	border-radius: 6px; /* Bordas arredondadas */
+	color: white; /* Texto branco */
+	font-size: 16px; /* Tamanho da fonte */
+	font-weight: bold; /* Deixa o texto em negrito */
+	text-transform: uppercase; /* Transforma o texto para maiúsculas */
+	cursor: pointer; /* Mostra o cursor como mãozinha */
+	transition: background-color 0.3s ease, transform 0.2s ease; /* Transição suave nas interações */
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave para o botão */
+	margin-bottom: 20px;
+	width: 50%;
+}
+
+.add-btn-exercicio:hover {
+	background-color: #45a049; /* Cor um pouco mais escura ao passar o mouse */
+	transform: translateY(-2px); /* Leve animação ao passar o mouse */
+}
+
+.add-btn-exercicio:focus {
+	outline: none; /* Remove o contorno padrão ao clicar */
+	box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.5); /* Destaca o botão com a cor verde ao focar */
+}

@@ -228,7 +228,9 @@ const Metas = () => {
 								min={new Date().toISOString().split("T")[0]}
 								required
 							/>
-							<button type="submit">Adicionar</button>
+							<button type="submit" className="add-btn">
+								Adicionar
+							</button>
 						</form>
 					</div>
 				</div>
