@@ -28,6 +28,7 @@ const Treinos = () => {
 
 	const toggleFormAddVisible = () => {
 		setFormAddVisible(!formAddVisible);
+		setExercicios([{ id: 1, value: "" }]);
 	};
 
 	const handleExercicioChange = (index, value) => {
@@ -44,7 +45,14 @@ const Treinos = () => {
 
 	const removerExercicio = (index) => {
 		const novosExercicios = exercicios.filter((_, i) => i !== index);
-		setExercicios(novosExercicios);
+
+		// Reatribuir IDs sequenciais
+		const exerciciosAtualizados = novosExercicios.map((exercicio, i) => ({
+			...exercicio,
+			id: i + 1, // Reorganiza os IDs a partir de 1
+		}));
+
+		setExercicios(exerciciosAtualizados);
 	};
 
 	return (
@@ -57,6 +65,18 @@ const Treinos = () => {
 					<button className="btn-add-agenda" onClick={toggleFormAddVisible}>
 						Adicionar Treino
 					</button>
+				</div>
+			</div>
+
+			<div className="metas-list">
+				<p className="no-metas-message">Nenhum treino cadastrado.</p>
+				<div className={`meta-content `}>
+					<h2>Treino A</h2>
+					<span className="treinos-list">Exercício 1 - 3x10</span>
+					<div className="btn-edit-delete">
+						<button className="btn-edit-treino">Editar</button>
+						<button className="btn-remove-treino">Excluir</button>
+					</div>
 				</div>
 			</div>
 
@@ -88,6 +108,7 @@ const Treinos = () => {
 											onChange={(e) =>
 												handleExercicioChange(index, e.target.value)
 											}
+											className="select-exercicio"
 											required>
 											<option value="">Selecione um exercício</option>
 											{listaExercicios.map((ex) => (
@@ -96,6 +117,28 @@ const Treinos = () => {
 												</option>
 											))}
 										</select>
+										{exercicio.value && (
+											<div className="serie-repeticao-container">
+												<label htmlFor="serie">Série</label>
+												<input
+													type="number"
+													placeholder="Digite a quantidade de séries"
+													id="serie"
+													min="1"
+													step="1"
+													required
+												/>
+												<label htmlFor="repeticao">Repetição</label>
+												<input
+													type="number"
+													placeholder="Digite a quantidade de repetições"
+													id="repeticao"
+													min="1"
+													step="1"
+													required
+												/>
+											</div>
+										)}
 									</div>
 									{exercicios.length > 1 && (
 										<button
@@ -107,7 +150,6 @@ const Treinos = () => {
 									)}
 								</div>
 							))}
-
 							{exercicios.length < maxExercicios && (
 								<button
 									type="button"
