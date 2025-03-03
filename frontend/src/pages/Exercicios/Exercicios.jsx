@@ -194,6 +194,7 @@ const Exercicios = () => {
 					</ul>
 				</div>
 			</div>
+
 			{formVisibleAdd && (
 				<div className="form-container">
 					<div className="form-overlay" onClick={toggleFormAdd}></div>
@@ -215,6 +216,7 @@ const Exercicios = () => {
 					</div>
 				</div>
 			)}
+
 			{formVisibleEdit && (
 				<div className="form-container">
 					<div className="form-overlay" onClick={toggleFormEdit}></div>
@@ -229,11 +231,14 @@ const Exercicios = () => {
 								value={exercise_name}
 								onChange={(e) => setExerciseName(e.target.value)}
 							/>
-							<button type="submit">Salvar</button>
+							<button type="submit" className="add-btn">
+								Salvar
+							</button>
 						</form>
 					</div>
 				</div>
 			)}
+
 			{formVisibleDelete && (
 				<div className="form-container">
 					<div className="form-overlay" onClick={toggleFormDelete}></div>

@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 import "./Treinos.css";
 
 const Treinos = () => {
-	const [formAddVisible, setFormAddVisible] = useState(false);
+	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
+	const [formVisibleEdit, setFormVisibleEdit] = useState(false);
+	const [formVisibleDelete, setFormVisibleDelete] = useState(false);
 	const [exercicios, setExercicios] = useState([{ id: 1, value: "" }]);
 
 	const maxExercicios = 20;
@@ -27,8 +29,16 @@ const Treinos = () => {
 	}, [userId, navigate]);
 
 	const toggleFormAddVisible = () => {
-		setFormAddVisible(!formAddVisible);
+		setFormVisibleAdd(!formVisibleAdd);
 		setExercicios([{ id: 1, value: "" }]);
+	};
+
+	const toggleFormEditVisible = () => {
+		setFormVisibleEdit(!formVisibleEdit);
+	};
+
+	const toggleFormDeleteVisible = () => {
+		setFormVisibleDelete(!formVisibleDelete);
 	};
 
 	const handleExercicioChange = (index, value) => {
@@ -74,17 +84,23 @@ const Treinos = () => {
 					<h2>Treino A</h2>
 					<span className="treinos-list">Exercício 1 - 3x10</span>
 					<div className="btn-edit-delete">
-						<button className="btn-edit-treino">Editar</button>
-						<button className="btn-remove-treino">Excluir</button>
+						<button className="btn-edit-treino" onClick={toggleFormEditVisible}>
+							Editar
+						</button>
+						<button
+							className="btn-remove-treino"
+							onClick={toggleFormDeleteVisible}>
+							Excluir
+						</button>
 					</div>
 				</div>
 			</div>
 
-			{formAddVisible && (
+			{formVisibleAdd && (
 				<div className="form-container">
 					<div
 						className="form-overlay"
-						onClick={() => setFormAddVisible(false)}></div>
+						onClick={() => setFormVisibleAdd(false)}></div>
 					<div className="form-content">
 						<h2>Adicionar Treino</h2>
 						<form className="form-add">
@@ -161,6 +177,42 @@ const Treinos = () => {
 							<button type="submit" className="add-btn">
 								Salvar Treino
 							</button>
+						</form>
+					</div>
+				</div>
+			)}
+
+			{formVisibleEdit && (
+				<div className="form-container">
+					<div className="form-overlay" onClick={toggleFormEditVisible}></div>
+					<div className="form-content">
+						<h2>Editar Exercício</h2>
+						<form className="form-add">
+							<label htmlFor="name">Nome novo do Exercício</label>
+							<input
+								type="text"
+								placeholder="Digite o novo nome do exercício"
+								required
+							/>
+							<button type="submit" className="add-btn">
+								Salvar
+							</button>
+						</form>
+					</div>
+				</div>
+			)}
+
+			{formVisibleDelete && (
+				<div className="form-container">
+					<div className="form-overlay" onClick={toggleFormDeleteVisible}></div>
+					<div className="form-content">
+						<h2>Excluir Exercício</h2>
+						<form className="form-delete-exercicio">
+							<label htmlFor="name">Deseja excluir o exercício?</label>
+							<div className="delete-btns">
+								<button>SIM</button>
+								<button>NÃO</button>
+							</div>
 						</form>
 					</div>
 				</div>
