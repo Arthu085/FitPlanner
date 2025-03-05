@@ -223,7 +223,7 @@ const Exercicios = () => {
 					<div className="form-content">
 						<h2>Editar Exercício</h2>
 						<form className="form-add" onSubmit={editExercicio}>
-							<label htmlFor="name">Nome novo do Exercício</label>
+							<label htmlFor="name">Novo nome do Exercício</label>
 							<input
 								type="text"
 								placeholder="Digite o novo nome do exercício"
