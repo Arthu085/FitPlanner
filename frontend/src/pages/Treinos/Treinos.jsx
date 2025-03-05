@@ -9,13 +9,7 @@ const Treinos = () => {
 	const [formVisibleEdit, setFormVisibleEdit] = useState(false);
 	const [formVisibleDelete, setFormVisibleDelete] = useState(false);
 	const [exercicios, setExercicios] = useState([{ id: 1, value: "" }]);
-
-	const maxExercicios = 20;
-	const listaExercicios = [
-		{ id: "ex1", nome: "Supino Reto" },
-		{ id: "ex2", nome: "Agachamento Livre" },
-		{ id: "ex3", nome: "Remada Curvada" },
-	];
+	const [treinos, setTreinos] = useState([]);
 
 	const userId = localStorage.getItem("id");
 	const navigate = useNavigate();
@@ -65,6 +59,51 @@ const Treinos = () => {
 		setExercicios(exerciciosAtualizados);
 	};
 
+	const getTreinos = async () => {
+		try {
+			const result = await fetch(
+				`http://localhost:3000/api/treinos/gettreinos/${userId}`,
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+			const data = await result.json();
+
+			if (result.ok) {
+				const groupedTreinos = groupTreinosById(data);
+				setTreinos(groupedTreinos);
+			} else {
+				alert(`Erro ao buscar treinos: ${data.message}`);
+			}
+		} catch (error) {
+			console.error("Erro ao buscar treinos:", error);
+			alert("Erro ao buscar treinos");
+		}
+	};
+
+	useEffect(() => {
+		getTreinos();
+	}, []);
+
+	const groupTreinosById = (treinos) => {
+		const grouped = treinos.reduce((acc, treino) => {
+			if (!acc[treino.id_treino]) {
+				acc[treino.id_treino] = {
+					...treino,
+					exercicios: [treino], // Inicia a lista de exercícios com o primeiro treino
+				};
+			} else {
+				acc[treino.id_treino].exercicios.push(treino); // Adiciona os exercícios à lista
+			}
+			return acc;
+		}, {});
+
+		return Object.values(grouped); // Retorna os treinos agrupados
+	};
+
 	return (
 		<div className="sidebar-pages-container">
 			<NavigationBar />
@@ -79,21 +118,34 @@ const Treinos = () => {
 			</div>
 
 			<div className="metas-list">
-				<p className="no-metas-message">Nenhum treino cadastrado.</p>
-				<div className={`meta-content `}>
-					<h2>Treino A</h2>
-					<span className="treinos-list">Exercício 1 - 3x10</span>
-					<div className="btn-edit-delete">
-						<button className="btn-edit-treino" onClick={toggleFormEditVisible}>
-							Editar
-						</button>
-						<button
-							className="btn-remove-treino"
-							onClick={toggleFormDeleteVisible}>
-							Excluir
-						</button>
-					</div>
-				</div>
+				{treinos.length > 0 ? (
+					treinos.map((treino) => (
+						<div key={treino.id_treino} className="meta-content">
+							<h2>{treino.nome_treino}</h2>
+							{treino.exercicios.map((exercicio, index) => (
+								<div key={index}>
+									<span>{exercicio.exercise_name} -</span>
+									<span> {exercicio.serie}x</span>
+									<span>{exercicio.repeticoes}</span>
+								</div>
+							))}
+							<div className="btn-edit-delete">
+								<button
+									className="btn-edit-treino"
+									onClick={toggleFormEditVisible}>
+									Editar
+								</button>
+								<button
+									className="btn-remove-treino"
+									onClick={toggleFormDeleteVisible}>
+									Excluir
+								</button>
+							</div>
+						</div>
+					))
+				) : (
+					<p className="no-metas-message">Nenhum treino cadastrado.</p>
+				)}
 			</div>
 
 			{formVisibleAdd && (
