@@ -57,6 +57,8 @@
 	position: relative;
 	z-index: 1001;
 	overflow: hidden; /* Para garantir que nada ultrapasse o border-radius */
+	overflow-y: auto;
+	max-height: 80vh;
 }
 
 .form-content h2 {
@@ -104,7 +106,7 @@
 	box-shadow: 0 0 8px rgba(106, 90, 205, 0.5);
 }
 
-.form-add button {
+.add-btn {
 	padding: 10px;
 	background: linear-gradient(45deg, #6a5acd, #836fff);
 	border: none;
@@ -118,12 +120,12 @@
 	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.form-add button:hover {
+.add-btn:hover {
 	background: linear-gradient(45deg, #836fff, #6a5acd);
 	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
 	transform: scale(1.05);
 }
 
-.form-add button:active {
+.add-btn:active {
 	transform: scale(0.98);
 }

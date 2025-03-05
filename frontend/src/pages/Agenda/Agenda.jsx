@@ -99,7 +99,9 @@ const Agenda = () => {
 								min={new Date().toISOString().slice(0, 16)}
 								required
 							/>
-							<button type="submit">Adicionar</button>
+							<button type="submit" className="add-btn">
+								Adicionar
+							</button>
 						</form>
 					</div>
 				</div>
