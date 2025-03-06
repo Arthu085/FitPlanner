@@ -8,8 +8,11 @@ const Treinos = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
 	const [formVisibleEdit, setFormVisibleEdit] = useState(false);
 	const [formVisibleDelete, setFormVisibleDelete] = useState(false);
-	const [exercicios, setExercicios] = useState([{ id: 1, value: "" }]);
 	const [treinos, setTreinos] = useState([]);
+	const [nomeTreino, setNomeTreino] = useState("");
+	const [serie, setSerie] = useState("");
+	const [repeticoes, setRepeticoes] = useState("");
+	const [exercicios, setExercicios] = useState([]);
 
 	const userId = localStorage.getItem("id");
 	const navigate = useNavigate();
@@ -24,7 +27,9 @@ const Treinos = () => {
 
 	const toggleFormAddVisible = () => {
 		setFormVisibleAdd(!formVisibleAdd);
-		setExercicios([{ id: 1, value: "" }]);
+		setNomeTreino("");
+		setSerie("");
+		setRepeticoes("");
 	};
 
 	const toggleFormEditVisible = () => {
@@ -33,30 +38,6 @@ const Treinos = () => {
 
 	const toggleFormDeleteVisible = () => {
 		setFormVisibleDelete(!formVisibleDelete);
-	};
-
-	const handleExercicioChange = (index, value) => {
-		const novosExercicios = [...exercicios];
-		novosExercicios[index].value = value;
-		setExercicios(novosExercicios);
-	};
-
-	const adicionarExercicio = () => {
-		if (exercicios.length < maxExercicios) {
-			setExercicios([...exercicios, { id: exercicios.length + 1, value: "" }]);
-		}
-	};
-
-	const removerExercicio = (index) => {
-		const novosExercicios = exercicios.filter((_, i) => i !== index);
-
-		// Reatribuir IDs sequenciais
-		const exerciciosAtualizados = novosExercicios.map((exercicio, i) => ({
-			...exercicio,
-			id: i + 1, // Reorganiza os IDs a partir de 1
-		}));
-
-		setExercicios(exerciciosAtualizados);
 	};
 
 	const getTreinos = async () => {
@@ -103,6 +84,63 @@ const Treinos = () => {
 
 		return Object.values(grouped); // Retorna os treinos agrupados
 	};
+
+	const addTreino = async (event) => {
+		event.preventDefault();
+
+		try {
+			const result = await fetch(
+				"http://localhost:3000/api/treinos/addtreino",
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						nome_treino: nomeTreino,
+						id_exercise,
+						id_user: userId,
+						serie,
+						repeticoes,
+					}),
+				}
+			);
+			if (result.status === 201) {
+				const data = await result.json();
+				alert(data.message); // Sucesso
+				setFormVisibleAdd(!formVisibleAdd);
+				getTreinos(); // Atualiza as metas
+			} else {
+				const data = await result.json();
+				alert(`Erro ao adicionar treino: ${data.error || "Desconhecido"}`); // Exibe erro
+			}
+		} catch (error) {
+			console.error("Erro ao adicionar treino:", error);
+			alert(
+				"Ocorreu um erro ao adicionar o treino. Tente novamente mais tarde."
+			); // Mensagem de erro genérica
+		}
+	};
+
+	const getExercicios = async () => {
+		try {
+			const result = await fetch(
+				"http://localhost:3000/api/exercicios/getexercicios"
+			);
+			const data = await result.json();
+
+			if (result.ok) {
+				setExercicios(data.data);
+			} else {
+				alert(`Erro ao buscar exercícios: ${data.message}`);
+			}
+		} catch (error) {
+			console.error("Erro ao buscar exercícios:", error);
+			alert("Erro ao buscar exercícios");
+		}
+	};
+
+	useEffect(() => {
+		getExercicios();
+	}, []);
 
 	return (
 		<div className="sidebar-pages-container">
@@ -162,70 +200,54 @@ const Treinos = () => {
 								name="treino"
 								placeholder="Digite o nome do treino"
 								required
+								value={nomeTreino}
+								onChange={(e) => setNomeTreino(e.target.value)}
 							/>
-							{exercicios.map((exercicio, index) => (
-								<div key={exercicio.id} className="select-btn-remove">
-									<div className="form-group">
-										<label htmlFor={`exercicio-${exercicio.id}`}>
-											Exercício {exercicio.id}
-										</label>
-										<select
-											name={`exercicio-${exercicio.id}`}
-											id={`exercicio-${exercicio.id}`}
-											value={exercicio.value}
-											onChange={(e) =>
-												handleExercicioChange(index, e.target.value)
-											}
-											className="select-exercicio"
-											required>
-											<option value="">Selecione um exercício</option>
-											{listaExercicios.map((ex) => (
-												<option key={ex.id} value={ex.id}>
-													{ex.nome}
-												</option>
-											))}
-										</select>
-										{exercicio.value && (
-											<div className="serie-repeticao-container">
-												<label htmlFor="serie">Série</label>
-												<input
-													type="number"
-													placeholder="Digite a quantidade de séries"
-													id="serie"
-													min="1"
-													step="1"
-													required
-												/>
-												<label htmlFor="repeticao">Repetição</label>
-												<input
-													type="number"
-													placeholder="Digite a quantidade de repetições"
-													id="repeticao"
-													min="1"
-													step="1"
-													required
-												/>
-											</div>
-										)}
+							<div className="select-btn-remove">
+								<div className="form-group">
+									<label htmlFor={`exercicio`}>Exercício </label>
+									<select className="select-exercicio" required>
+										<option value="">Selecione um exercício</option>
+										{exercicios.map((exercicio, index) => (
+											<option
+												key={exercicio.id_exercise}
+												value={exercicio.id_exercise}>
+												{exercicio.exercise_name}
+											</option>
+										))}
+									</select>
+									<div className="serie-repeticao-container">
+										<label htmlFor="serie">Série</label>
+										<input
+											type="number"
+											placeholder="Digite a quantidade de séries"
+											id="serie"
+											min="1"
+											step="1"
+											value={serie}
+											onChange={(e) => setSerie(e.target.value)}
+											required
+										/>
+										<label htmlFor="repeticao">Repetição</label>
+										<input
+											type="number"
+											placeholder="Digite a quantidade de repetições"
+											id="repeticao"
+											min="1"
+											step="1"
+											value={repeticoes}
+											onChange={(e) => setRepeticoes(e.target.value)}
+											required
+										/>
 									</div>
-									{exercicios.length > 1 && (
-										<button
-											type="button"
-											onClick={() => removerExercicio(index)}
-											className="btn-remove">
-											Remover
-										</button>
-									)}
 								</div>
-							))}
-							{exercicios.length < maxExercicios && (
-								<button
-									type="button"
-									onClick={adicionarExercicio}
-									className="add-btn-exercicio">
-									Adicionar Exercício
+								<button type="button" className="btn-remove">
+									Remover
 								</button>
-							)}
+							</div>
+							<button type="button" className="add-btn-exercicio">
+								Adicionar Exercício
+							</button>
 							<button type="submit" className="add-btn">
 								Salvar Treino
 							</button>

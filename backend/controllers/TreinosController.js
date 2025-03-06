@@ -15,7 +15,7 @@ const getTreinos = async (req, res) => {
 };
 
 const addTreino = async (req, res) => {
-    const { nome_treino, id_user, exercicios } = req.body; // "exercicios" é um array agora
+    const { nome_treino, id_user, exercicios } = req.body; 
 
     try {
         // Inserção do treino principal e captura do id_treino gerado
