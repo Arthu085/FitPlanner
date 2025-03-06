@@ -10,9 +10,10 @@ const Treinos = () => {
 	const [formVisibleDelete, setFormVisibleDelete] = useState(false);
 	const [treinos, setTreinos] = useState([]);
 	const [nomeTreino, setNomeTreino] = useState("");
-	const [serie, setSerie] = useState("");
-	const [repeticoes, setRepeticoes] = useState("");
 	const [exercicios, setExercicios] = useState([]);
+	const [exercicioSelecionado, setExerciciosSelecionados] = useState([
+		{ id_exercise: "", serie: "", repeticoes: "" },
+	]);
 
 	const userId = localStorage.getItem("id");
 	const navigate = useNavigate();
@@ -28,8 +29,7 @@ const Treinos = () => {
 	const toggleFormAddVisible = () => {
 		setFormVisibleAdd(!formVisibleAdd);
 		setNomeTreino("");
-		setSerie("");
-		setRepeticoes("");
+		setExerciciosSelecionados([{ id_exercise: "", serie: "", repeticoes: "" }]);
 	};
 
 	const toggleFormEditVisible = () => {
@@ -38,6 +38,24 @@ const Treinos = () => {
 
 	const toggleFormDeleteVisible = () => {
 		setFormVisibleDelete(!formVisibleDelete);
+	};
+
+	const adicionarExercicio = () => {
+		setExerciciosSelecionados([
+			...exercicioSelecionado,
+			{ id_exercise: "", serie: "", repeticoes: "" },
+		]);
+	};
+
+	const atualizarExercicio = (index, campo, valor) => {
+		const novosExercicios = [...exercicioSelecionado];
+		novosExercicios[index][campo] = valor;
+		setExerciciosSelecionados(novosExercicios);
+	};
+
+	const removerExercicio = (index) => {
+		const novosExercicios = exercicioSelecionado.filter((_, i) => i !== index);
+		setExerciciosSelecionados(novosExercicios);
 	};
 
 	const getTreinos = async () => {
@@ -96,10 +114,8 @@ const Treinos = () => {
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
 						nome_treino: nomeTreino,
-						id_exercise,
+						exercicios: exercicioSelecionado,
 						id_user: userId,
-						serie,
-						repeticoes,
 					}),
 				}
 			);
@@ -193,7 +209,7 @@ const Treinos = () => {
 						onClick={() => setFormVisibleAdd(false)}></div>
 					<div className="form-content">
 						<h2>Adicionar Treino</h2>
-						<form className="form-add">
+						<form className="form-add" onSubmit={addTreino}>
 							<label htmlFor="treino">Nome do Treino</label>
 							<input
 								type="text"
@@ -203,49 +219,67 @@ const Treinos = () => {
 								value={nomeTreino}
 								onChange={(e) => setNomeTreino(e.target.value)}
 							/>
-							<div className="select-btn-remove">
-								<div className="form-group">
-									<label htmlFor={`exercicio`}>Exercício </label>
-									<select className="select-exercicio" required>
-										<option value="">Selecione um exercício</option>
-										{exercicios.map((exercicio, index) => (
-											<option
-												key={exercicio.id_exercise}
-												value={exercicio.id_exercise}>
-												{exercicio.exercise_name}
-											</option>
-										))}
-									</select>
-									<div className="serie-repeticao-container">
-										<label htmlFor="serie">Série</label>
-										<input
-											type="number"
-											placeholder="Digite a quantidade de séries"
-											id="serie"
-											min="1"
-											step="1"
-											value={serie}
-											onChange={(e) => setSerie(e.target.value)}
-											required
-										/>
-										<label htmlFor="repeticao">Repetição</label>
-										<input
-											type="number"
-											placeholder="Digite a quantidade de repetições"
-											id="repeticao"
-											min="1"
-											step="1"
-											value={repeticoes}
-											onChange={(e) => setRepeticoes(e.target.value)}
-											required
-										/>
+							{exercicioSelecionado.map((exercicio, index) => (
+								<div key={index} className="select-btn-remove">
+									<div className="form-group">
+										<label>Exercício {index + 1}</label>
+										<select
+											className="select-exercicio"
+											value={exercicio.id_exercise}
+											onChange={(e) =>
+												atualizarExercicio(index, "id_exercise", e.target.value)
+											}
+											required>
+											<option value="">Selecione um exercício</option>
+											{exercicios.map((ex) => (
+												<option key={ex.id_exercise} value={ex.id_exercise}>
+													{ex.exercise_name}
+												</option>
+											))}
+										</select>
+										<div className="serie-repeticao-container">
+											<label>Série</label>
+											<input
+												type="number"
+												placeholder="Digite a quantidade de séries"
+												min="1"
+												value={exercicio.serie}
+												onChange={(e) =>
+													atualizarExercicio(index, "serie", e.target.value)
+												}
+												required
+											/>
+											<label>Repetição</label>
+											<input
+												type="number"
+												placeholder="Digite a quantidade de repetições"
+												min="1"
+												value={exercicio.repeticoes}
+												onChange={(e) =>
+													atualizarExercicio(
+														index,
+														"repeticoes",
+														e.target.value
+													)
+												}
+												required
+											/>
+										</div>
 									</div>
+									{exercicioSelecionado.length > 1 && (
+										<button
+											type="button"
+											className="btn-remove"
+											onClick={() => removerExercicio(index)}>
+											Remover
+										</button>
+									)}
 								</div>
-								<button type="button" className="btn-remove">
-									Remover
-								</button>
-							</div>
-							<button type="button" className="add-btn-exercicio">
+							))}
+							<button
+								onClick={adicionarExercicio}
+								type="button"
+								className="add-btn-exercicio">
 								Adicionar Exercício
 							</button>
 							<button type="submit" className="add-btn">
