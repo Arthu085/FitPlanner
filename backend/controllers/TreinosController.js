@@ -49,4 +49,22 @@ const addTreino = async (req, res) => {
     }
 };
 
-module.exports = { getTreinos, addTreino };
+const deleteTreino = async (req, res) => {
+    const { id_treino } = req.params;
+
+    try {
+        const query = 'DELETE FROM treinos WHERE id_treino = $1';
+        const result = await pool.query(query, [id_treino]);
+
+        if (result.rowCount > 0) {
+            res.status(200).json({ message: 'Treino excluído com sucesso' });
+        } else {
+            res.status(404).json({ message: 'Treino não encontrado' });
+        }
+    } catch (error) {
+        console.error('Erro no backend', error);
+        res.status(500).json({ error: 'Erro ao excluir treino', details: error.message });
+    }
+};
+
+module.exports = { getTreinos, addTreino, deleteTreino };

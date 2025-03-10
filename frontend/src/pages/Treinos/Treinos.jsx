@@ -14,6 +14,7 @@ const Treinos = () => {
 	const [exercicioSelecionado, setExerciciosSelecionados] = useState([
 		{ id_exercise: "", serie: "", repeticoes: "" },
 	]);
+	const [idTreino, setIdTreino] = useState(null);
 
 	const userId = localStorage.getItem("id");
 	const navigate = useNavigate();
@@ -36,8 +37,9 @@ const Treinos = () => {
 		setFormVisibleEdit(!formVisibleEdit);
 	};
 
-	const toggleFormDeleteVisible = () => {
+	const toggleFormDeleteVisible = (id_treino) => {
 		setFormVisibleDelete(!formVisibleDelete);
+		setIdTreino(id_treino);
 	};
 
 	const adicionarExercicio = () => {
@@ -158,6 +160,36 @@ const Treinos = () => {
 		getExercicios();
 	}, []);
 
+	const cancelDelete = () => {
+		setFormVisibleDelete(false);
+	};
+
+	const deleteTreino = async (event) => {
+		event.preventDefault();
+
+		try {
+			const result = await fetch(
+				`http://localhost:3000/api/treinos/deletetreino/${idTreino}`,
+				{
+					method: "DELETE",
+					headers: { "Content-Type": "application/json" },
+				}
+			);
+			const data = await result.json();
+
+			if (result.ok) {
+				alert(data.message);
+				setFormVisibleDelete(false);
+				getTreinos();
+			} else {
+				alert(`Erro ao excluir treino: ${data.message}`);
+			}
+		} catch (error) {
+			console.error("Erro ao excluir treino:", error);
+			alert("Erro ao excluir treino");
+		}
+	};
+
 	return (
 		<div className="sidebar-pages-container">
 			<NavigationBar />
@@ -191,7 +223,7 @@ const Treinos = () => {
 								</button>
 								<button
 									className="btn-remove-treino"
-									onClick={toggleFormDeleteVisible}>
+									onClick={() => toggleFormDeleteVisible(treino.id_treino)}>
 									Excluir
 								</button>
 							</div>
@@ -381,8 +413,8 @@ const Treinos = () => {
 						<form className="form-delete-exercicio">
 							<label htmlFor="name">Deseja excluir o treino?</label>
 							<div className="delete-btns">
-								<button>SIM</button>
-								<button>NÃO</button>
+								<button onClick={deleteTreino}>SIM</button>
+								<button onClick={cancelDelete}>NÃO</button>
 							</div>
 						</form>
 					</div>
