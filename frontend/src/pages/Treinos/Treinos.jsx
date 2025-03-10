@@ -12,13 +12,16 @@ const Treinos = () => {
 	const [nomeTreino, setNomeTreino] = useState("");
 	const [exercicios, setExercicios] = useState([]);
 	const [exercicioSelecionado, setExerciciosSelecionados] = useState([
-		{ id_exercise: "", serie: "", repeticoes: "" },
+		{ id_exercise: "", serie: "", repeticoes: "", exercise_name: "" },
 	]);
 	const [idTreino, setIdTreino] = useState(null);
+	const [treinoSelecionado, setTreinoSelecionado] = useState({
+		id_treino: "",
+		nome_treino: "",
+	});
 
 	const userId = localStorage.getItem("id");
 	const navigate = useNavigate();
-
 	useEffect(() => {
 		if (!userId) {
 			alert("Faça login no sistema");
@@ -33,8 +36,27 @@ const Treinos = () => {
 		setExerciciosSelecionados([{ id_exercise: "", serie: "", repeticoes: "" }]);
 	};
 
-	const toggleFormEditVisible = () => {
+	const toggleFormEditVisible = (id_treino) => {
 		setFormVisibleEdit(!formVisibleEdit);
+		setIdTreino(id_treino);
+
+		// Encontrar o treino pelo id_treino
+		const treino = treinos.find((t) => t.id_treino === id_treino);
+
+		// Atualizar treinoSelecionado com os exercícios do treino
+		setTreinoSelecionado(treino);
+
+		// Atualizar os exercícios no estado
+		if (treino && treino.exercicios) {
+			setExerciciosSelecionados(
+				treino.exercicios.map((exercicio) => ({
+					id_exercise: exercicio.id_exercise,
+					serie: exercicio.serie || "",
+					repeticoes: exercicio.repeticoes || "",
+					exercise_name: exercicio.exercise_name,
+				}))
+			);
+		}
 	};
 
 	const toggleFormDeleteVisible = (id_treino) => {
@@ -121,20 +143,22 @@ const Treinos = () => {
 					}),
 				}
 			);
+
+			const data = await result.json();
+
 			if (result.status === 201) {
-				const data = await result.json();
-				alert(data.message); // Sucesso
+				alert(data.message); // Treino criado com sucesso
 				setFormVisibleAdd(!formVisibleAdd);
-				getTreinos(); // Atualiza as metas
-			} else {
-				const data = await result.json();
-				alert(`Erro ao adicionar treino: ${data.error || "Desconhecido"}`); // Exibe erro
+			} else if (result.status === 400) {
+				alert(`Erro: ${data.error}`); // Exibe o erro se o exercício já existir no treino
 			}
+
+			getTreinos(); // Atualiza a lista de treinos
 		} catch (error) {
 			console.error("Erro ao adicionar treino:", error);
 			alert(
 				"Ocorreu um erro ao adicionar o treino. Tente novamente mais tarde."
-			); // Mensagem de erro genérica
+			);
 		}
 	};
 
@@ -218,7 +242,7 @@ const Treinos = () => {
 							<div className="btn-edit-delete">
 								<button
 									className="btn-edit-treino"
-									onClick={toggleFormEditVisible}>
+									onClick={() => toggleFormEditVisible(treino.id_treino)}>
 									Editar
 								</button>
 								<button
@@ -332,54 +356,80 @@ const Treinos = () => {
 							<input
 								type="text"
 								placeholder="Digite o novo nome do treino"
+								value={treinoSelecionado.nome_treino}
+								onChange={(e) => {
+									const novoTreino = { ...treinoSelecionado };
+									novoTreino.nome_treino = e.target.value;
+									setTreinoSelecionado(novoTreino);
+								}}
 								required
 							/>
-							{exercicios.map((exercicio, index) => (
-								<div key={exercicio.id} className="select-btn-remove">
+							{exercicioSelecionado.map((exercicio, index) => (
+								<div key={exercicio.id_exercise} className="select-btn-remove">
 									<div className="form-group">
-										<label htmlFor={`exercicio-${exercicio.id}`}>
-											Exercício {exercicio.id}
+										<label htmlFor={`exercicio-${exercicio.id_exercise}`}>
+											Exercício {index + 1}
 										</label>
 										<select
-											name={`exercicio-${exercicio.id}`}
-											id={`exercicio-${exercicio.id}`}
-											value={exercicio.value}
+											name={`exercicio-${exercicio.id_exercise}`}
+											id={`exercicio-${exercicio.id_exercise}`}
+											value={exercicio.id_exercise}
 											onChange={(e) =>
 												handleExercicioChange(index, e.target.value)
 											}
 											className="select-exercicio"
 											required>
 											<option value="">Selecione um exercício</option>
-											{listaExercicios.map((ex) => (
-												<option key={ex.id} value={ex.id}>
-													{ex.nome}
-												</option>
-											))}
+											<option
+												key={exercicio.id_exercise}
+												value={exercicio.id_exercise}>
+												{exercicio.exercise_name}
+											</option>
 										</select>
-										{exercicio.value && (
-											<div className="serie-repeticao-container">
-												<label htmlFor="serie">Série</label>
-												<input
-													type="number"
-													placeholder="Digite a quantidade de séries"
-													id="serie"
-													min="1"
-													step="1"
-													required
-												/>
-												<label htmlFor="repeticao">Repetição</label>
-												<input
-													type="number"
-													placeholder="Digite a quantidade de repetições"
-													id="repeticao"
-													min="1"
-													step="1"
-													required
-												/>
-											</div>
-										)}
+										<div className="serie-repeticao-container">
+											<label htmlFor="serie">Série</label>
+											<input
+												type="number"
+												placeholder="Digite a quantidade de séries"
+												id="serie"
+												value={exercicio.serie}
+												onChange={(e) => {
+													const novosExercicios = [
+														...exercicioSelecionado.exercicios,
+													];
+													novosExercicios[index].serie = e.target.value;
+													setExerciciosSelecionados({
+														...exercicioSelecionado,
+														exercicios: novosExercicios,
+													});
+												}}
+												min="1"
+												step="1"
+												required
+											/>
+											<label htmlFor="repeticao">Repetição</label>
+											<input
+												type="number"
+												placeholder="Digite a quantidade de repetições"
+												id="repeticao"
+												value={exercicio.repeticoes}
+												onChange={(e) => {
+													const novosExercicios = [
+														...exercicioSelecionado.exercicios,
+													];
+													novosExercicios[index].repeticoes = e.target.value;
+													setExerciciosSelecionados({
+														...exercicioSelecionado,
+														exercicios: novosExercicios,
+													});
+												}}
+												min="1"
+												step="1"
+												required
+											/>
+										</div>
 									</div>
-									{exercicios.length > 1 && (
+									{exercicioSelecionado.length > 1 && (
 										<button
 											type="button"
 											onClick={() => removerExercicio(index)}
@@ -389,14 +439,12 @@ const Treinos = () => {
 									)}
 								</div>
 							))}
-							{exercicios.length < maxExercicios && (
-								<button
-									type="button"
-									onClick={adicionarExercicio}
-									className="add-btn-exercicio">
-									Adicionar Exercício
-								</button>
-							)}
+							<button
+								type="button"
+								onClick={adicionarExercicio}
+								className="add-btn-exercicio">
+								Adicionar Exercício
+							</button>
 							<button type="submit" className="add-btn">
 								Salvar
 							</button>
