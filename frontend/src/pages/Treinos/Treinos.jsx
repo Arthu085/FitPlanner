@@ -15,6 +15,7 @@ const Treinos = () => {
 		{ id_exercise: "", serie: "", repeticoes: "", exercise_name: "" },
 	]);
 	const [idTreino, setIdTreino] = useState(null);
+	const [idTreinoExercicio, setIdTreinoExercicio] = useState([]);
 	const [treinoSelecionado, setTreinoSelecionado] = useState({
 		id_treino: "",
 		nome_treino: "",
@@ -36,7 +37,7 @@ const Treinos = () => {
 		setExerciciosSelecionados([{ id_exercise: "", serie: "", repeticoes: "" }]);
 	};
 
-	const toggleFormEditVisible = (id_treino) => {
+	const toggleFormEditVisible = (id_treino, id_treino_exercicio) => {
 		setFormVisibleEdit(!formVisibleEdit);
 		setIdTreino(id_treino);
 
@@ -57,6 +58,7 @@ const Treinos = () => {
 				}))
 			);
 		}
+		setIdTreinoExercicio(id_treino_exercicio);
 	};
 
 	const toggleFormDeleteVisible = (id_treino) => {
@@ -214,6 +216,65 @@ const Treinos = () => {
 		}
 	};
 
+	const editTreino = async (e) => {
+		e.preventDefault();
+
+		try {
+			const responseUpdateNome = await fetch(
+				`http://localhost:3000/api/treinos/edittreino/${idTreino}`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						nome_treino: treinoSelecionado.nome_treino,
+					}),
+				}
+			);
+
+			const responseUpdateData = await fetch(
+				`http://localhost:3000/api/treinos/edittreino/${idTreino}/${idTreinoExercicio}`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						nome_treino: treinoSelecionado.nome_treino,
+						exercicios: exercicioSelecionado.map((exercicio) => ({
+							id_treino_exercicio: exercicio.id_treino_exercicio,
+							id_exercise: exercicio.id_exercise,
+							serie: exercicio.serie,
+							repeticoes: exercicio.repeticoes,
+						})),
+					}),
+				}
+			);
+
+			const dataUpdateNome = await responseUpdateNome.json();
+			const dataUpdateData = await responseUpdateData.json();
+
+			if (responseUpdateData.ok) {
+				alert("Treino atualizado com sucesso!");
+				toggleFormEditVisible();
+				l;
+			} else {
+				alert("Erro ao atualizar treino: " + data.error);
+			}
+
+			if (responseUpdateNome.ok) {
+				alert("Nome do treino atualizado com sucesso!");
+				toggleFormEditVisible();
+			} else {
+				alert("Erro ao atualizar treino: " + data.error);
+			}
+		} catch (error) {
+			console.error("Erro ao atualizar treino:", error);
+			alert("Erro ao conectar ao servidor");
+		}
+	};
+
 	return (
 		<div className="sidebar-pages-container">
 			<NavigationBar />
@@ -242,7 +303,12 @@ const Treinos = () => {
 							<div className="btn-edit-delete">
 								<button
 									className="btn-edit-treino"
-									onClick={() => toggleFormEditVisible(treino.id_treino)}>
+									onClick={() =>
+										toggleFormEditVisible(
+											treino.id_treino,
+											treino.id_treino_exercicio
+										)
+									}>
 									Editar
 								</button>
 								<button
@@ -351,7 +417,7 @@ const Treinos = () => {
 					<div className="form-overlay" onClick={toggleFormEditVisible}></div>
 					<div className="form-content">
 						<h2>Editar Treino</h2>
-						<form className="form-add">
+						<form className="form-add" onSubmit={editTreino}>
 							<label htmlFor="name">Novo nome do Treino</label>
 							<input
 								type="text"

@@ -4,7 +4,7 @@ const getTreinos = async (req, res) => {
     const { id_user } = req.params;
 
     try {
-        const query = 'SELECT a.id_user, a.id_treino, a.nome_treino, b.id_exercise, b.serie, b.repeticoes, c.exercise_name  FROM treinos a INNER JOIN treino_exercicio b ON a.id_treino = b.id_treino INNER JOIN exercises c ON b.id_exercise = c.id_exercise WHERE a.id_user = $1';
+        const query = 'SELECT a.id_user, a.id_treino, a.nome_treino, b.id_exercise, b.serie, b.repeticoes, c.exercise_name, b.id_treino_exercicio  FROM treinos a INNER JOIN treino_exercicio b ON a.id_treino = b.id_treino INNER JOIN exercises c ON b.id_exercise = c.id_exercise WHERE a.id_user = $1';
         const result = await pool.query(query, [id_user]);
 
         res.status(200).json(result.rows);
@@ -84,4 +84,115 @@ const deleteTreino = async (req, res) => {
     }
 };
 
-module.exports = { getTreinos, addTreino, deleteTreino };
+const editTreino = async (req, res) => {
+    const { id_treino, id_treino_exercicio } = req.params;
+    const { nome_treino, serie, repeticoes, id_exercise, adicionarExercicio, removerExercicio } = req.body;
+
+    try {
+        let treinoAtualizado = null;
+        let exercicioAtualizado = null;
+
+        // Atualiza o nome do treino se um novo nome for enviado
+        if (nome_treino && nome_treino.trim() !== "") {
+            const queryUpdateNome = 'UPDATE treinos SET nome_treino = $1 WHERE id_treino = $2 RETURNING *';
+            const resultUpdateNome = await pool.query(queryUpdateNome, [nome_treino, id_treino]);
+
+            if (resultUpdateNome.rows.length === 0) {
+                return res.status(404).json({ error: 'Treino não encontrado' });
+            }
+            treinoAtualizado = resultUpdateNome.rows[0];
+        }
+
+        // Verifica se o id_treino_exercicio foi passado
+        if (!id_treino_exercicio) {
+            return res.status(200).json({ message: 'Nome do treino atualizado com sucesso' });
+        }
+
+        // Se foi passado um id_treino_exercicio, verifica e atualiza os campos necessários
+        if (id_treino_exercicio) {
+            const queryCheckExercicio = 'SELECT * FROM treino_exercicio WHERE id_treino_exercicio = $1';
+            const resultCheckExercicio = await pool.query(queryCheckExercicio, [id_treino_exercicio]);
+
+            if (resultCheckExercicio.rows.length === 0) {
+                return res.status(404).json({ error: 'Exercício não encontrado' });
+            }
+
+            // Monta dinamicamente a query de UPDATE para atualizar apenas os campos enviados
+            const fieldsToUpdate = [];
+            const values = [];
+
+            if (serie) {
+                fieldsToUpdate.push(`serie = $${values.length + 1}`);
+                values.push(serie);
+            }
+            if (repeticoes) {
+                fieldsToUpdate.push(`repeticoes = $${values.length + 1}`);
+                values.push(repeticoes);
+            }
+            if (id_exercise) {
+                fieldsToUpdate.push(`id_exercise = $${values.length + 1}`);
+                values.push(id_exercise);
+            }
+
+            // Atualiza os campos do exercício
+            if (fieldsToUpdate.length > 0) {
+                values.push(id_treino_exercicio);
+                const queryUpdateExercicio = `
+                    UPDATE treino_exercicio 
+                    SET ${fieldsToUpdate.join(', ')}
+                    WHERE id_treino_exercicio = $${values.length} 
+                    RETURNING *;
+                `;
+                const resultUpdateExercicio = await pool.query(queryUpdateExercicio, values);
+                exercicioAtualizado = resultUpdateExercicio.rows[0];
+            }
+
+            // Verifica e remove exercício, se for solicitado
+            if (removerExercicio) {
+                const queryRemoveExercicio = 'DELETE FROM treino_exercicio WHERE id_treino_exercicio = $1 RETURNING *';
+                const resultRemoveExercicio = await pool.query(queryRemoveExercicio, [id_treino_exercicio]);
+
+                if (resultRemoveExercicio.rows.length === 0) {
+                    return res.status(404).json({ error: 'Exercício não encontrado para remoção' });
+                }
+
+                return res.status(200).json({
+                    message: 'Exercício removido com sucesso',
+                    exercicioRemovido: resultRemoveExercicio.rows[0]
+                });
+            }
+
+            // Verifica e adiciona um novo exercício
+            if (adicionarExercicio) {
+                const { novoIdExercicio, novaSerie, novaRepeticao } = adicionarExercicio;
+
+                if (!novoIdExercicio || !novaSerie || !novaRepeticao) {
+                    return res.status(400).json({ error: 'Dados do novo exercício incompletos' });
+                }
+
+                const queryAddExercicio = `
+                    INSERT INTO treino_exercicio (id_treino, id_exercise, serie, repeticoes)
+                    VALUES ($1, $2, $3, $4) RETURNING *;
+                `;
+                const resultAddExercicio = await pool.query(queryAddExercicio, [id_treino, novoIdExercicio, novaSerie, novaRepeticao]);
+
+                return res.status(200).json({
+                    message: 'Exercício adicionado com sucesso',
+                    novoExercicio: resultAddExercicio.rows[0]
+                });
+            }
+        }
+
+        return res.status(200).json({
+            message: 'Atualização realizada com sucesso',
+            treino: treinoAtualizado,
+            exercicio: exercicioAtualizado
+        });
+
+    } catch (error) {
+        console.error('Erro no backend', error);
+        return res.status(500).json({ error: 'Erro ao editar treino', details: error.message });
+    }
+};
+
+module.exports = { getTreinos, addTreino, deleteTreino, editTreino };
