@@ -104,11 +104,6 @@ const editTreino = async (req, res) => {
         }
 
         // Verifica se o id_treino_exercicio foi passado
-        if (!id_treino_exercicio) {
-            return res.status(200).json({ message: 'Nome do treino atualizado com sucesso' });
-        }
-
-        // Se foi passado um id_treino_exercicio, verifica e atualiza os campos necessários
         if (id_treino_exercicio) {
             const queryCheckExercicio = 'SELECT * FROM treino_exercicio WHERE id_treino_exercicio = $1';
             const resultCheckExercicio = await pool.query(queryCheckExercicio, [id_treino_exercicio]);
