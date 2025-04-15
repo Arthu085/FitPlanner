@@ -16,19 +16,16 @@ export const AuthProvider = ({ children }) => {
 
 	const login = async (email, password) => {
 		try {
-			const response = await fetch(
-				"http://localhost:3000/api/loginregister/logar",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						email_user: email,
-						password_user: password,
-					}),
-				}
-			);
+			const response = await fetch("http://localhost:3000/api/auth/login", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email_user: email,
+					password_user: password,
+				}),
+			});
 
 			const data = await response.json();
 
@@ -41,41 +38,35 @@ export const AuthProvider = ({ children }) => {
 				alert(data.message);
 			}
 		} catch (error) {
-			alert("Erro ao conectar-se ao servidor,", error.message);
+			alert("Erro ao conectar-se ao servidor: " + error.message);
 		}
 	};
 
-	const register = async (name, lastName, email, password) => {
+	const register = async (email, password, name, lastName) => {
 		try {
-			const response = await fetch(
-				"http://localhost:3000/api/loginregister/registrar",
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						name_user: name,
-						lastname_user: lastName,
-						email_user: email,
-						password_user: password,
-					}),
-				}
-			);
+			const response = await fetch("http://localhost:3000/api/auth/register", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email_user: email,
+					password_user: password,
+					name_user: name,
+					lastname_user: lastName,
+				}),
+			});
 
 			const data = await response.json();
-			if (!response.ok) {
-				alert(
-					data.message === "Email já cadastrado."
-						? "Este email já foi registrado. Tente outro."
-						: "Erro ao registrar: " + data.message
-				);
-				return false;
-			}
 
-			alert("Conta registrada com sucesso.");
-			return true;
+			if (response.ok) {
+				alert("Conta registrada com sucesso!");
+				return true;
+			} else {
+				alert(data.message || "Erro ao registrar usuário.");
+			}
 		} catch (error) {
-			alert("Erro ao registrar conta. Detalhes: " + error.message);
-			return false;
+			alert("Erro ao conectar-se ao servidor: " + error.message);
 		}
 	};
 

@@ -21,12 +21,47 @@ const LoginRegister = () => {
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
+
+		if (!email.trim() || !password.trim()) {
+			alert("Preencha o e-mail e a senha corretamente.");
+			return;
+		}
+
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			alert("Por favor, insira um e-mail válido.");
+			return;
+		}
+
 		await login(email, password);
 	};
 
 	const handleRegister = async (e) => {
 		e.preventDefault();
-		const success = await register(name, lastName, email, password);
+
+		const trimmedEmail = email.trim();
+		const trimmedPassword = password.trim();
+		const trimmedName = name.trim();
+		const trimmedLastName = lastName.trim();
+
+		if (!trimmedEmail || !trimmedPassword || !trimmedName || !trimmedLastName) {
+			alert("Preencha todos os campos");
+			return;
+		}
+
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+		if (!emailRegex.test(trimmedEmail)) {
+			alert("Por favor, insira um e-mail válido.");
+			return;
+		}
+
+		if (password.length < 6) {
+			alert("A senha deve ter no mínimo 6 caracteres.");
+			return;
+		}
+
+		const success = await register(email, password, name, lastName);
 		if (success) toggleForm();
 	};
 
@@ -40,24 +75,24 @@ const LoginRegister = () => {
 							<label htmlFor="email-login">Email</label>
 							<input
 								type="email"
-								id="email-login"
+								name="email-login"
 								placeholder="Digite seu Email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
-								required
 								autoComplete="email-login"
+								required
 							/>
 						</div>
 						<div className="input-label">
 							<label htmlFor="password-login">Senha</label>
 							<input
 								type="password"
-								id="password-login"
+								name="password-login"
 								placeholder="Digite sua Senha"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
-								required
 								autoComplete="current-password"
+								required
 							/>
 						</div>
 						<div className="span-button">
@@ -80,48 +115,48 @@ const LoginRegister = () => {
 							<label htmlFor="name">Nome</label>
 							<input
 								type="text"
-								id="name"
+								name="name"
 								placeholder="Digite seu Nome"
 								value={name}
 								onChange={(e) => setName(e.target.value)}
-								required
 								autoComplete="given-name"
+								required
 							/>
 						</div>
 						<div className="input-label">
 							<label htmlFor="last-name">Sobrenome</label>
 							<input
 								type="text"
-								id="last-name"
+								name="last-name"
 								placeholder="Digite seu Sobrenome"
 								value={lastName}
 								onChange={(e) => setLastName(e.target.value)}
-								required
 								autoComplete="family-name"
+								required
 							/>
 						</div>
 						<div className="input-label">
 							<label htmlFor="email-register">Email</label>
 							<input
 								type="email"
-								id="email-register"
+								name="email-register"
 								placeholder="Digite seu Email"
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
-								required
 								autoComplete="email-register"
+								required
 							/>
 						</div>
 						<div className="input-label">
 							<label htmlFor="password-register">Senha</label>
 							<input
 								type="password"
-								id="password-register"
+								name="password-register"
 								placeholder="Digite sua Senha"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
-								required
 								autoComplete="new-password"
+								required
 							/>
 						</div>
 						<div className="span-button">
