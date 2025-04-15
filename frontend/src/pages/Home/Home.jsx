@@ -9,9 +9,10 @@ import SideBar from "../../components/SideBar/SideBar";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
+import { fetchUser } from "../../hooks/api/homeApi";
 
 const Home = () => {
-	const [userData, setUserData] = useState(null);
+	const [userData, setUserData] = useState([]);
 
 	const { userId, isLoggedIn } = useAuth();
 
@@ -19,26 +20,17 @@ const Home = () => {
 		isLoggedIn();
 	}, []);
 
-	const getUser = async () => {
-		if (userId) {
-			try {
-				const response = await fetch(
-					`http://localhost:3000/api/user/getuser/${userId}`
-				);
-				const data = await response.json();
-				if (data.data) {
-					setUserData(data.data);
-				} else {
-					console.error("Usuário não encontrado");
-				}
-			} catch (error) {
-				console.error("Erro ao buscar usuário", error);
-			}
-		}
-	};
-
 	useEffect(() => {
-		getUser();
+		const loadUser = async () => {
+			try {
+				const data = await fetchUser(userId);
+				setUserData(data.data);
+			} catch (error) {
+				alert("Erro ao buscar usuário");
+			}
+		};
+
+		loadUser();
 	}, [userId]);
 
 	return (
@@ -46,7 +38,7 @@ const Home = () => {
 			<NavigationBar />
 			<SideBar />
 			<div className="home-informacoes">
-				{userData ? ( // Verifica se os dados do usuário existem antes de acessar
+				{userData ? (
 					<div>
 						<div className="user-informacoes">
 							<h1>

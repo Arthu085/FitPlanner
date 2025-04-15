@@ -9,6 +9,10 @@ import SideBar from "../../components/SideBar/SideBar";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
+import {
+	fetchExercicios,
+	createExercicio,
+} from "../../hooks/api/exerciciosApi";
 
 const Exercicios = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
@@ -22,6 +26,7 @@ const Exercicios = () => {
 
 	useEffect(() => {
 		isLoggedIn();
+		loadExercicios();
 	}, []);
 
 	const toggleFormAdd = () => {
@@ -38,63 +43,39 @@ const Exercicios = () => {
 		setExercicioId(id_exercise);
 	};
 
-	const getExercicios = async () => {
+	const loadExercicios = async () => {
 		try {
-			const result = await fetch(
-				"http://localhost:3000/api/exercicios/getexercicios"
-			);
-			const data = await result.json();
-
-			if (result.ok) {
-				setExercicios(data.data);
-			} else {
-				alert(`Erro ao buscar exercícios: ${data.message}`);
-			}
+			const data = await fetchExercicios();
+			setExercicios(data.data);
 		} catch (error) {
-			console.error("Erro ao buscar exercícios:", error);
-			alert("Erro ao buscar exercícios");
+			alert("Erro ao buscar exercícios", error);
 		}
 	};
 
-	useEffect(() => {
-		getExercicios();
-	}, []);
-
-	const addExercicio = async (event) => {
-		event.preventDefault();
+	const handleCreateExercicio = async (e) => {
+		e.preventDefault();
 
 		if (!exercise_name || exercise_name.trim() === "") {
 			alert("O nome do exercício não pode estar vazio.");
 			return;
 		}
+
 		const exercicioData = { exercise_name };
 
 		try {
-			const result = await fetch(
-				"http://localhost:3000/api/exercicios/addexercicio",
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(exercicioData),
-				}
-			);
+			const data = await createExercicio(exercicioData);
 
-			// Verifica se o status da resposta foi 'ok'
-			if (result.ok) {
-				const data = await result.json(); // Só processa a resposta se o status for ok
-				alert(data.message); // Mensagem de sucesso
-				setFormVisibleAdd(!formVisibleAdd);
-				await getExercicios();
+			if (data && !data.error) {
+				await loadExercicios();
 				setExerciseName("");
+				alert(data.message);
+				toggleFormAdd();
 			} else {
-				const data = await result.json(); // Obtém o erro caso a resposta não seja ok
-				alert(
-					`Erro ao adicionar exercício: ${data.error || "Erro desconhecido"}`
-				);
+				alert(data.message || "Erro desconhecido");
 			}
 		} catch (error) {
-			console.error("Erro ao adicionar exercício:", error);
 			alert("Erro ao adicionar exercício");
+			console.error("Erro ao adicionar exercício:", error);
 		}
 	};
 
@@ -177,21 +158,25 @@ const Exercicios = () => {
 				</div>
 				<div className="list-btns">
 					<ul>
-						{exercicios.map((exercicios) => (
-							<li key={exercicios.id_exercise}>
-								<span>{exercicios.exercise_name}</span>
-								<div className="edit-delete-btns">
-									<button
-										onClick={() => toggleFormEdit(exercicios.id_exercise)}>
-										Editar
-									</button>
-									<button
-										onClick={() => toggleFormDelete(exercicios.id_exercise)}>
-										Excluir
-									</button>
-								</div>
-							</li>
-						))}
+						{exercicios.length > 0 ? (
+							exercicios.map((exercicio) => (
+								<li key={exercicio.id_exercise}>
+									<span>{exercicio.exercise_name}</span>
+									<div className="edit-delete-btns">
+										<button
+											onClick={() => toggleFormEdit(exercicio.id_exercise)}>
+											Editar
+										</button>
+										<button
+											onClick={() => toggleFormDelete(exercicio.id_exercise)}>
+											Excluir
+										</button>
+									</div>
+								</li>
+							))
+						) : (
+							<p>Nenhum exercício cadastrado.</p>
+						)}
 					</ul>
 				</div>
 			</div>
@@ -201,7 +186,7 @@ const Exercicios = () => {
 					<div className="form-overlay" onClick={toggleFormAdd}></div>
 					<div className="form-content">
 						<h2>Adicionar Exercício</h2>
-						<form className="form-add" onSubmit={addExercicio}>
+						<form className="form-add" onSubmit={handleCreateExercicio}>
 							<label>Nome do Exercício</label>
 							<input
 								type="text"
