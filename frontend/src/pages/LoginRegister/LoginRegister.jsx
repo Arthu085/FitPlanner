@@ -1,111 +1,40 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 import "./LoginRegister.css";
 
 const LoginRegister = () => {
-	const [formVisibleRegister, setformVisibleRegister] = useState(false);
-	const [formVisibleLogin, setformVisibleLogin] = useState(true);
-	const [email_user, setEmail] = useState("");
-	const [password_user, setPassword] = useState("");
-	const [name_user, setName] = useState("");
-	const [lastname_user, setLastName] = useState("");
+	const [isLogin, setIsLogin] = useState(true);
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [name, setName] = useState("");
+	const [lastName, setLastName] = useState("");
 
-	const navigate = useNavigate();
-
-	if (localStorage.getItem("id")) {
-		useEffect(() => {
-			localStorage.removeItem("id");
-			window.location.reload();
-		}, []);
-	}
+	const { login, register } = useAuth();
 
 	const toggleForm = () => {
-		setformVisibleRegister(!formVisibleRegister);
-		setformVisibleLogin(!formVisibleLogin);
+		setIsLogin(!isLogin);
 		setEmail("");
 		setPassword("");
 		setName("");
 		setLastName("");
 	};
 
-	const handleSubmitLogin = async (event) => {
-		event.preventDefault();
-
-		try {
-			const response = await fetch(
-				"http://localhost:3000/api/loginregister/logar",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ email_user, password_user }),
-				}
-			);
-
-			const data = await response.json();
-
-			if (data.success) {
-				localStorage.setItem("token", data.token);
-				localStorage.setItem("id", data.id_user);
-				navigate("/home");
-			} else {
-				alert(data.message);
-			}
-		} catch (error) {
-			console.error("Erro ao fazer login:", error);
-			alert("Erro ao conectar-se ao servidor.");
-		}
+	const handleLogin = async (e) => {
+		e.preventDefault();
+		await login(email, password);
 	};
 
-	const handleSubmitRegister = async (event) => {
-		event.preventDefault();
-
-		try {
-			const response = await fetch(
-				"http://localhost:3000/api/loginregister/registrar",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						email_user,
-						password_user,
-						name_user,
-						lastname_user,
-					}),
-				}
-			);
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				if (data.message === "Email já cadastrado.") {
-					alert("Este email já foi registrado. Tente outro.");
-				} else {
-					alert("Erro ao registrar: " + data.message);
-				}
-				return;
-			}
-
-			alert("Conta registrada com sucesso.");
-			toggleForm();
-			setEmail("");
-			setPassword("");
-			setName("");
-			setLastName("");
-		} catch (error) {
-			console.error("Erro ao registrar conta:", error);
-			alert("Erro ao registrar conta. Detalhes: " + error.message);
-		}
+	const handleRegister = async (e) => {
+		e.preventDefault();
+		const success = await register(name, lastName, email, password);
+		if (success) toggleForm();
 	};
 
 	return (
 		<div className="login-register-container">
 			<main>
-				{formVisibleLogin && (
-					<form onSubmit={handleSubmitLogin}>
+				{isLogin ? (
+					<form onSubmit={handleLogin}>
 						<h2>Login</h2>
 						<div className="input-label">
 							<label htmlFor="email-login">Email</label>
@@ -113,7 +42,7 @@ const LoginRegister = () => {
 								type="email"
 								id="email-login"
 								placeholder="Digite seu Email"
-								value={email_user}
+								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								required
 								autoComplete="email-login"
@@ -125,7 +54,7 @@ const LoginRegister = () => {
 								type="password"
 								id="password-login"
 								placeholder="Digite sua Senha"
-								value={password_user}
+								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 								required
 								autoComplete="current-password"
@@ -144,10 +73,8 @@ const LoginRegister = () => {
 							Entrar
 						</button>
 					</form>
-				)}
-
-				{formVisibleRegister && (
-					<form onSubmit={handleSubmitRegister}>
+				) : (
+					<form onSubmit={handleRegister}>
 						<h2>Registrar-se</h2>
 						<div className="input-label">
 							<label htmlFor="name">Nome</label>
@@ -155,7 +82,7 @@ const LoginRegister = () => {
 								type="text"
 								id="name"
 								placeholder="Digite seu Nome"
-								value={name_user}
+								value={name}
 								onChange={(e) => setName(e.target.value)}
 								required
 								autoComplete="given-name"
@@ -167,7 +94,7 @@ const LoginRegister = () => {
 								type="text"
 								id="last-name"
 								placeholder="Digite seu Sobrenome"
-								value={lastname_user}
+								value={lastName}
 								onChange={(e) => setLastName(e.target.value)}
 								required
 								autoComplete="family-name"
@@ -179,7 +106,7 @@ const LoginRegister = () => {
 								type="email"
 								id="email-register"
 								placeholder="Digite seu Email"
-								value={email_user}
+								value={email}
 								onChange={(e) => setEmail(e.target.value)}
 								required
 								autoComplete="email-register"
@@ -191,7 +118,7 @@ const LoginRegister = () => {
 								type="password"
 								id="password-register"
 								placeholder="Digite sua Senha"
-								value={password_user}
+								value={password}
 								onChange={(e) => setPassword(e.target.value)}
 								required
 								autoComplete="new-password"
