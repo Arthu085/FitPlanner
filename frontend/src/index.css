@@ -129,3 +129,56 @@
 .add-btn:active {
 	transform: scale(0.98);
 }
+
+.delete-btns {
+	display: flex;
+	flex-direction: row;
+	gap: 20px;
+	justify-content: space-between;
+	margin-top: 20px;
+}
+
+.delete-btns button {
+	padding: 10px;
+	background: linear-gradient(45deg, #cd5a5a, #ef5063);
+	border: none;
+	border-radius: 6px;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: 0.3s ease-in-out;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+	width: 100%;
+}
+
+.delete-btns button:hover {
+	background: linear-gradient(45deg, #ef5063, #cd5a5a);
+	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
+	transform: scale(1.05);
+}
+.delete-btns button:last-child {
+	padding: 10px;
+	background: linear-gradient(45deg, #6a5acd, #836fff);
+	border: none;
+	border-radius: 6px;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: 0.3s ease-in-out;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+	width: 100%;
+}
+
+.delete-btns button:last-child:hover {
+	background: linear-gradient(45deg, #836fff, #6a5acd);
+	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
+	transform: scale(1.05);
+}
+
+.delete-btns button:active {
+	transform: scale(0.98);
+}

@@ -8,6 +8,7 @@ const LoginRegisterRoutes = require('./routes/LoginRegister');
 const UsersRoutes = require('./routes/Users');
 const ExerciciosRoutes = require('./routes/Exercicios');
 const MetasRoutes = require('./routes/Metas');
+const TreinosRoutes = require('./routes/Treinos');
 
 // Configurações do servidor
 const app = express();
@@ -22,6 +23,7 @@ app.use('/api/loginregister', LoginRegisterRoutes);
 app.use('/api/user', UsersRoutes);
 app.use('/api/exercicios', ExerciciosRoutes);
 app.use('/api/metas', MetasRoutes)
+app.use('/api/treinos', TreinosRoutes)
 
 
 // Inicialização do servidor
