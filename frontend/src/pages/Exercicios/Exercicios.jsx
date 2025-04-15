@@ -1,8 +1,14 @@
+import "./Exercicios.css";
+
+// react
 import React, { useEffect, useState } from "react";
+
+// components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
-import { useNavigate } from "react-router-dom";
-import "./Exercicios.css";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
 
 const Exercicios = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
@@ -12,16 +18,11 @@ const Exercicios = () => {
 	const [exercise_name, setExerciseName] = useState("");
 	const [id_exercise, setExercicioId] = useState(null);
 
-	const userId = localStorage.getItem("id");
-	const navigate = useNavigate();
+	const { isLoggedIn } = useAuth();
 
 	useEffect(() => {
-		if (!userId) {
-			alert("Faça login no sistema");
-			navigate("/"); // Redireciona para a página de login se o id não existir
-			localStorage.removeItem("id");
-		}
-	}, [userId, navigate]);
+		isLoggedIn();
+	}, []);
 
 	const toggleFormAdd = () => {
 		setFormVisibleAdd(!formVisibleAdd);
@@ -201,7 +202,7 @@ const Exercicios = () => {
 					<div className="form-content">
 						<h2>Adicionar Exercício</h2>
 						<form className="form-add" onSubmit={addExercicio}>
-							<label htmlFor="name">Nome do Exercício</label>
+							<label>Nome do Exercício</label>
 							<input
 								type="text"
 								placeholder="Digite o nome do exercício"
@@ -223,7 +224,7 @@ const Exercicios = () => {
 					<div className="form-content">
 						<h2>Editar Exercício</h2>
 						<form className="form-add" onSubmit={editExercicio}>
-							<label htmlFor="name">Novo nome do Exercício</label>
+							<label>Novo nome do Exercício</label>
 							<input
 								type="text"
 								placeholder="Digite o novo nome do exercício"
@@ -245,7 +246,7 @@ const Exercicios = () => {
 					<div className="form-content">
 						<h2>Excluir Exercício</h2>
 						<form className="form-delete-exercicio">
-							<label htmlFor="name">Deseja excluir o exercício?</label>
+							<label>Deseja excluir o exercício?</label>
 							<div className="delete-btns">
 								<button onClick={deleteExercicio}>SIM</button>
 								<button onClick={toggleFormDelete}>NÃO</button>

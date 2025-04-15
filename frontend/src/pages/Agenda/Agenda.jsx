@@ -1,23 +1,27 @@
-import { data, useNavigate } from "react-router-dom";
+import "./Agenda.css";
+
+// components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
-import "./Agenda.css";
+
+// react
 import { useEffect, useState } from "react";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
 
 const Agenda = () => {
 	const [formAddVisible, setFormAddVisible] = useState(false);
 	const [filtro, setFiltro] = useState("todas");
 	const [dataFiltro, setDataFiltro] = useState("");
 
-	const navigate = useNavigate();
-	const userId = localStorage.getItem("id");
+	const { isLoggedIn } = useAuth();
+
+	// const userId = localStorage.getItem("id");
+
 	useEffect(() => {
-		if (!userId) {
-			alert("Faça login no sistema");
-			navigate("/");
-			localStorage.removeItem("id");
-		}
-	}, [userId, navigate]);
+		isLoggedIn();
+	}, []);
 
 	const toggleFormAddVisible = () => {
 		setFormAddVisible(!formAddVisible);
@@ -38,7 +42,7 @@ const Agenda = () => {
 						Agendar Treino
 					</button>
 					<div className="filtros">
-						<label htmlFor="filtro">Filtrar agenda:</label>
+						<label>Filtrar agenda:</label>
 						<select
 							id="filtro"
 							value={filtro}
@@ -49,7 +53,7 @@ const Agenda = () => {
 						</select>
 					</div>
 					<div className="filtros">
-						<label htmlFor="dataFiltro">Filtrar por data:</label>
+						<label>Filtrar por data:</label>
 						<input
 							type="date"
 							id="dataFiltro"
@@ -86,13 +90,13 @@ const Agenda = () => {
 					<div className="form-content">
 						<h2>Adicionar Data de Treino</h2>
 						<form className="form-add">
-							<label htmlFor="treino">Selecione o treino</label>
+							<label>Selecione o treino</label>
 							<select name="treino" id="treino" required>
 								<option value="1">Treino 1</option>
 								<option value="2">Treino 2</option>
 								<option value="3">Treino 3</option>
 							</select>
-							<label htmlFor="data">Data e hora</label>
+							<label>Data e hora</label>
 							<input
 								type="datetime-local"
 								name="data"

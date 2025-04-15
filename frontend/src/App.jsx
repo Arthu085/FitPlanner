@@ -1,5 +1,9 @@
 import "./App.css";
+
+// react
 import { Routes, Route } from "react-router-dom";
+
+// pages
 import LoginRegister from "./pages/LoginRegister/LoginRegister";
 import Home from "./pages/Home/Home";
 import Exercicios from "./pages/Exercicios/Exercicios";

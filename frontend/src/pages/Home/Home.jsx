@@ -1,13 +1,23 @@
+import "./Home.css";
+
+// react
 import { useEffect, useState } from "react";
+
+// components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
-import "./Home.css";
-import { useNavigate } from "react-router-dom";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
 
 const Home = () => {
 	const [userData, setUserData] = useState(null);
-	const userId = localStorage.getItem("id");
-	const navigate = useNavigate();
+
+	const { userId, isLoggedIn } = useAuth();
+
+	useEffect(() => {
+		isLoggedIn();
+	}, []);
 
 	const getUser = async () => {
 		if (userId) {
@@ -28,14 +38,8 @@ const Home = () => {
 	};
 
 	useEffect(() => {
-		if (!userId) {
-			alert("Faça login no sistema");
-			navigate("/"); // Redireciona para a página de login se o id não existir
-			localStorage.removeItem("id");
-		} else {
-			getUser();
-		}
-	}, [userId, navigate]);
+		getUser();
+	}, [userId]);
 
 	return (
 		<div className="home-container">

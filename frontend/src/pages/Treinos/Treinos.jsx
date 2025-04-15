@@ -1,8 +1,14 @@
+import "./Treinos.css";
+
+// react
 import React, { useEffect, useState } from "react";
+
+// components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
-import { useNavigate } from "react-router-dom";
-import "./Treinos.css";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
 
 const Treinos = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
@@ -21,15 +27,11 @@ const Treinos = () => {
 		nome_treino: "",
 	});
 
-	const userId = localStorage.getItem("id");
-	const navigate = useNavigate();
+	const { userId, isLoggedIn } = useAuth();
+
 	useEffect(() => {
-		if (!userId) {
-			alert("Faça login no sistema");
-			localStorage.removeItem("id");
-			navigate("/");
-		}
-	}, [userId, navigate]);
+		isLoggedIn();
+	}, []);
 
 	const toggleFormAddVisible = () => {
 		setFormVisibleAdd(!formVisibleAdd);
@@ -111,7 +113,7 @@ const Treinos = () => {
 
 	useEffect(() => {
 		getTreinos();
-	}, []);
+	}, [userId]);
 
 	const groupTreinosById = (treinos) => {
 		const grouped = treinos.reduce((acc, treino) => {
@@ -332,7 +334,7 @@ const Treinos = () => {
 					<div className="form-content">
 						<h2>Adicionar Treino</h2>
 						<form className="form-add" onSubmit={addTreino}>
-							<label htmlFor="treino">Nome do Treino</label>
+							<label>Nome do Treino</label>
 							<input
 								type="text"
 								name="treino"
@@ -418,7 +420,7 @@ const Treinos = () => {
 					<div className="form-content">
 						<h2>Editar Treino</h2>
 						<form className="form-add" onSubmit={editTreino}>
-							<label htmlFor="name">Novo nome do Treino</label>
+							<label>Novo nome do Treino</label>
 							<input
 								type="text"
 								placeholder="Digite o novo nome do treino"
@@ -453,7 +455,7 @@ const Treinos = () => {
 											</option>
 										</select>
 										<div className="serie-repeticao-container">
-											<label htmlFor="serie">Série</label>
+											<label>Série</label>
 											<input
 												type="number"
 												placeholder="Digite a quantidade de séries"
@@ -473,7 +475,7 @@ const Treinos = () => {
 												step="1"
 												required
 											/>
-											<label htmlFor="repeticao">Repetição</label>
+											<label>Repetição</label>
 											<input
 												type="number"
 												placeholder="Digite a quantidade de repetições"
@@ -525,7 +527,7 @@ const Treinos = () => {
 					<div className="form-content">
 						<h2>Excluir Treino</h2>
 						<form className="form-delete-exercicio">
-							<label htmlFor="name">Deseja excluir o treino?</label>
+							<label>Deseja excluir o treino?</label>
 							<div className="delete-btns">
 								<button onClick={deleteTreino}>SIM</button>
 								<button onClick={cancelDelete}>NÃO</button>

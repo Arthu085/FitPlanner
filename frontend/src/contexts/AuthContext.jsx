@@ -1,3 +1,4 @@
+// react
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -77,8 +78,18 @@ export const AuthProvider = ({ children }) => {
 		navigate("/");
 	};
 
+	const isLoggedIn = () => {
+		if (!userId) {
+			navigate("/");
+			alert("Faça login no sistema");
+			localStorage.removeItem("id");
+			localStorage.removeItem("token");
+		}
+	};
+
 	return (
-		<AuthContext.Provider value={{ userId, login, register, logout }}>
+		<AuthContext.Provider
+			value={{ userId, login, register, logout, isLoggedIn }}>
 			{children}
 		</AuthContext.Provider>
 	);

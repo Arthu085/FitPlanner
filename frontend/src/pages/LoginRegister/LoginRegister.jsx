@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
 import "./LoginRegister.css";
+
+// react
+import { useState } from "react";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
 
 const LoginRegister = () => {
 	const [isLogin, setIsLogin] = useState(true);
@@ -72,7 +76,7 @@ const LoginRegister = () => {
 					<form onSubmit={handleLogin}>
 						<h2>Login</h2>
 						<div className="input-label">
-							<label htmlFor="email-login">Email</label>
+							<label>Email</label>
 							<input
 								type="email"
 								name="email-login"
@@ -84,7 +88,7 @@ const LoginRegister = () => {
 							/>
 						</div>
 						<div className="input-label">
-							<label htmlFor="password-login">Senha</label>
+							<label>Senha</label>
 							<input
 								type="password"
 								name="password-login"
@@ -112,7 +116,7 @@ const LoginRegister = () => {
 					<form onSubmit={handleRegister}>
 						<h2>Registrar-se</h2>
 						<div className="input-label">
-							<label htmlFor="name">Nome</label>
+							<label>Nome</label>
 							<input
 								type="text"
 								name="name"
@@ -124,7 +128,7 @@ const LoginRegister = () => {
 							/>
 						</div>
 						<div className="input-label">
-							<label htmlFor="last-name">Sobrenome</label>
+							<label>Sobrenome</label>
 							<input
 								type="text"
 								name="last-name"
@@ -136,7 +140,7 @@ const LoginRegister = () => {
 							/>
 						</div>
 						<div className="input-label">
-							<label htmlFor="email-register">Email</label>
+							<label>Email</label>
 							<input
 								type="email"
 								name="email-register"
@@ -148,7 +152,7 @@ const LoginRegister = () => {
 							/>
 						</div>
 						<div className="input-label">
-							<label htmlFor="password-register">Senha</label>
+							<label>Senha</label>
 							<input
 								type="password"
 								name="password-register"

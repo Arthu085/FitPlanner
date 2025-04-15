@@ -1,8 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import "./Metas.css";
+
+// components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
+
+// react
 import { useEffect, useState } from "react";
-import "./Metas.css";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
 
 const Metas = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
@@ -14,16 +20,11 @@ const Metas = () => {
 	const [id_meta, setIdMeta] = useState("");
 	const [metasFiltradas, setMetasFiltradas] = useState(metas); // estado para as metas filtradas
 
-	const userId = localStorage.getItem("id");
-	const navigate = useNavigate();
+	const { userId, isLoggedIn } = useAuth();
 
 	useEffect(() => {
-		if (!userId) {
-			alert("Faça login no sistema");
-			localStorage.removeItem("id");
-			navigate("/");
-		}
-	}, [userId, navigate]);
+		isLoggedIn();
+	}, []);
 
 	const formatarData = (dataISO) => {
 		const data = new Date(dataISO);
@@ -69,7 +70,7 @@ const Metas = () => {
 
 	useEffect(() => {
 		getMeta(); // Chama a API para buscar todas as metas
-	}, []); // Apenas chama na primeira renderização
+	}, [userId]); // Apenas chama na primeira renderização
 
 	const addMeta = async (event) => {
 		event.preventDefault();
@@ -145,7 +146,7 @@ const Metas = () => {
 						Adicionar Meta
 					</button>
 					<div className="filtros">
-						<label htmlFor="filtro">Filtrar metas:</label>
+						<label>Filtrar metas:</label>
 						<select
 							id="filtro"
 							value={filtro}
@@ -205,7 +206,7 @@ const Metas = () => {
 					<div className="form-content">
 						<h2>Adicionar Meta</h2>
 						<form className="form-add" onSubmit={addMeta}>
-							<label htmlFor="titulo">Título da Meta</label>
+							<label>Título da Meta</label>
 							<input
 								type="text"
 								placeholder="Digite o título da meta"
@@ -213,14 +214,14 @@ const Metas = () => {
 								onChange={(e) => setTituloMeta(e.target.value)}
 								required
 							/>
-							<label htmlFor="descricao">Descrição da Meta</label>
+							<label>Descrição da Meta</label>
 							<textarea
 								placeholder="Digite a descrição da meta"
 								value={descricao_meta}
 								onChange={(e) => setDescricaoMeta(e.target.value)}
 								required
 							/>
-							<label htmlFor="data">Data de Previsão</label>
+							<label>Data de Previsão</label>
 							<input
 								type="date"
 								value={data_finalizacao_meta}
