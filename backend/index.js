@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Rotas
-app.use('/api/loginregister', LoginRegisterRoutes);
+app.use('/api/auth', LoginRegisterRoutes);
 app.use('/api/user', UsersRoutes);
 app.use('/api/exercicios', ExerciciosRoutes);
 app.use('/api/metas', MetasRoutes)

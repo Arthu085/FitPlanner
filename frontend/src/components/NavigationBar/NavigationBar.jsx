@@ -1,22 +1,28 @@
-import { useNavigate } from 'react-router-dom';
-import './NavigationBar.css'
+import "./NavigationBar.css";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
+
+// react
+import { useNavigate } from "react-router-dom";
 
 const NavigationBar = () => {
+	const { logout } = useAuth();
 
-  const navigate = useNavigate();
-  const handleLogout = () => {
-    localStorage.removeItem('id');
-    navigate('/');
-  }
+	const navigate = useNavigate();
 
-  return (
-    <div className="navigation-bar-container">
-        <nav>
-            <button className='home-button' onClick={() => navigate('/home')}>Fit Planner</button>
-            <button className='logout-button' onClick={handleLogout}>Sair</button>
-        </nav>
-    </div>
-  )
-}
+	return (
+		<nav className="navigation-bar-container">
+			<div>
+				<button className="home-button" onClick={() => navigate("/home")}>
+					Fit Planner
+				</button>
+				<button className="logout-button" onClick={logout}>
+					Sair
+				</button>
+			</div>
+		</nav>
+	);
+};
 
-export default NavigationBar
+export default NavigationBar;

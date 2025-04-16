@@ -1,8 +1,20 @@
+import "./Exercicios.css";
+
+// react
 import React, { useEffect, useState } from "react";
+
+// components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
-import { useNavigate } from "react-router-dom";
-import "./Exercicios.css";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
+import {
+	fetchExercicios,
+	createExercicio,
+	deleteExercicio,
+	editExercicio,
+} from "../../hooks/api/exerciciosApi";
 
 const Exercicios = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
@@ -12,16 +24,12 @@ const Exercicios = () => {
 	const [exercise_name, setExerciseName] = useState("");
 	const [id_exercise, setExercicioId] = useState(null);
 
-	const userId = localStorage.getItem("id");
-	const navigate = useNavigate();
+	const { isLoggedIn } = useAuth();
 
 	useEffect(() => {
-		if (!userId) {
-			alert("Faça login no sistema");
-			navigate("/"); // Redireciona para a página de login se o id não existir
-			localStorage.removeItem("id");
-		}
-	}, [userId, navigate]);
+		isLoggedIn();
+		loadExercicios();
+	}, []);
 
 	const toggleFormAdd = () => {
 		setFormVisibleAdd(!formVisibleAdd);
@@ -37,130 +45,87 @@ const Exercicios = () => {
 		setExercicioId(id_exercise);
 	};
 
-	const getExercicios = async () => {
+	const loadExercicios = async () => {
 		try {
-			const result = await fetch(
-				"http://localhost:3000/api/exercicios/getexercicios"
-			);
-			const data = await result.json();
-
-			if (result.ok) {
-				setExercicios(data.data);
-			} else {
-				alert(`Erro ao buscar exercícios: ${data.message}`);
-			}
+			const data = await fetchExercicios();
+			setExercicios(data.data);
 		} catch (error) {
-			console.error("Erro ao buscar exercícios:", error);
-			alert("Erro ao buscar exercícios");
+			alert("Erro ao buscar exercícios", error);
 		}
 	};
 
-	useEffect(() => {
-		getExercicios();
-	}, []);
-
-	const addExercicio = async (event) => {
-		event.preventDefault();
+	const handleCreateExercicio = async (e) => {
+		e.preventDefault();
 
 		if (!exercise_name || exercise_name.trim() === "") {
 			alert("O nome do exercício não pode estar vazio.");
 			return;
 		}
+
 		const exercicioData = { exercise_name };
 
 		try {
-			const result = await fetch(
-				"http://localhost:3000/api/exercicios/addexercicio",
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(exercicioData),
-				}
-			);
+			const data = await createExercicio(exercicioData);
 
-			// Verifica se o status da resposta foi 'ok'
-			if (result.ok) {
-				const data = await result.json(); // Só processa a resposta se o status for ok
-				alert(data.message); // Mensagem de sucesso
-				setFormVisibleAdd(!formVisibleAdd);
-				await getExercicios();
+			if (data && !data.error) {
+				await loadExercicios();
 				setExerciseName("");
+				alert(data.message);
+				toggleFormAdd();
 			} else {
-				const data = await result.json(); // Obtém o erro caso a resposta não seja ok
-				alert(
-					`Erro ao adicionar exercício: ${data.error || "Erro desconhecido"}`
-				);
+				alert(data.message || "Erro desconhecido");
 			}
 		} catch (error) {
-			console.error("Erro ao adicionar exercício:", error);
 			alert("Erro ao adicionar exercício");
+			console.error("Erro ao adicionar exercício:", error);
 		}
 	};
 
-	const deleteExercicio = async (event) => {
-		event.preventDefault();
+	const handleDeleteExercicio = async (e) => {
+		e.preventDefault();
 
 		try {
-			const result = await fetch(
-				`http://localhost:3000/api/exercicios/deleteexercicio/${id_exercise}`,
-				{
-					method: "DELETE",
-				}
-			);
-			const data = await result.json();
+			const data = await deleteExercicio(id_exercise);
 
-			if (result.ok) {
+			if (data && !data.error) {
+				await loadExercicios();
 				alert(data.message);
-				getExercicios();
+				setFormVisibleDelete(!formVisibleDelete);
 			} else {
-				alert(`Erro: ${data.error}`);
+				alert(data.message || "Erro desconhecido");
 			}
-		} catch (err) {
-			console.error("Erro ao deleter exercício", err);
+		} catch (error) {
 			alert("Erro ao deletar exercício");
+			console.error("Erro ao deletar exercício:", error);
 		}
-		setFormVisibleDelete(!formVisibleDelete);
 	};
 
-	const editExercicio = async (event) => {
-		event.preventDefault();
+	const handleEditExercicio = async (e) => {
+		e.preventDefault();
 
 		if (!exercise_name || exercise_name.trim() === "") {
 			alert("O nome do exercício não pode estar vazio.");
 			return;
 		}
 
+		const exercicioData = { id_exercise, exercise_name };
+
 		try {
-			const result = await fetch(
-				`http://localhost:3000/api/exercicios/editexercicio/${id_exercise}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ exercise_name }),
-				}
-			);
-			const data = await result.json();
+			const data = await editExercicio(exercicioData);
 
-			if (result.status === 400) {
-				alert(data.error);
-				setExerciseName("");
-				return;
-			}
-
-			if (result.ok) {
+			if (data && !data.error) {
+				await loadExercicios();
 				alert(data.message);
-				getExercicios();
+				setFormVisibleEdit(!formVisibleEdit);
 				setExerciseName("");
 			} else {
-				alert(`Erro: ${data.error}`);
+				alert(data.message || "Erro desconhecido");
+				setExerciseName("");
 			}
-		} catch (err) {
-			console.error("Erro ao editar exercício", err);
+		} catch (error) {
 			alert("Erro ao editar exercício");
+			console.error("Erro ao editar exercício:", error);
 		}
-		setFormVisibleEdit(!formVisibleEdit);
 	};
 
 	return (
@@ -176,21 +141,25 @@ const Exercicios = () => {
 				</div>
 				<div className="list-btns">
 					<ul>
-						{exercicios.map((exercicios) => (
-							<li key={exercicios.id_exercise}>
-								<span>{exercicios.exercise_name}</span>
-								<div className="edit-delete-btns">
-									<button
-										onClick={() => toggleFormEdit(exercicios.id_exercise)}>
-										Editar
-									</button>
-									<button
-										onClick={() => toggleFormDelete(exercicios.id_exercise)}>
-										Excluir
-									</button>
-								</div>
-							</li>
-						))}
+						{exercicios.length > 0 ? (
+							exercicios.map((exercicio) => (
+								<li key={exercicio.id_exercise}>
+									<span>{exercicio.exercise_name}</span>
+									<div className="edit-delete-btns">
+										<button
+											onClick={() => toggleFormEdit(exercicio.id_exercise)}>
+											Editar
+										</button>
+										<button
+											onClick={() => toggleFormDelete(exercicio.id_exercise)}>
+											Excluir
+										</button>
+									</div>
+								</li>
+							))
+						) : (
+							<p>Nenhum exercício cadastrado.</p>
+						)}
 					</ul>
 				</div>
 			</div>
@@ -200,8 +169,8 @@ const Exercicios = () => {
 					<div className="form-overlay" onClick={toggleFormAdd}></div>
 					<div className="form-content">
 						<h2>Adicionar Exercício</h2>
-						<form className="form-add" onSubmit={addExercicio}>
-							<label htmlFor="name">Nome do Exercício</label>
+						<form className="form-add" onSubmit={handleCreateExercicio}>
+							<label>Nome do Exercício</label>
 							<input
 								type="text"
 								placeholder="Digite o nome do exercício"
@@ -222,8 +191,8 @@ const Exercicios = () => {
 					<div className="form-overlay" onClick={toggleFormEdit}></div>
 					<div className="form-content">
 						<h2>Editar Exercício</h2>
-						<form className="form-add" onSubmit={editExercicio}>
-							<label htmlFor="name">Novo nome do Exercício</label>
+						<form className="form-add" onSubmit={handleEditExercicio}>
+							<label>Novo nome do Exercício</label>
 							<input
 								type="text"
 								placeholder="Digite o novo nome do exercício"
@@ -241,14 +210,16 @@ const Exercicios = () => {
 
 			{formVisibleDelete && (
 				<div className="form-container">
-					<div className="form-overlay" onClick={toggleFormDelete}></div>
+					<div
+						className="form-overlay"
+						onClick={() => toggleFormDelete()}></div>
 					<div className="form-content">
 						<h2>Excluir Exercício</h2>
 						<form className="form-delete-exercicio">
-							<label htmlFor="name">Deseja excluir o exercício?</label>
+							<label>Deseja excluir o exercício?</label>
 							<div className="delete-btns">
-								<button onClick={deleteExercicio}>SIM</button>
-								<button onClick={toggleFormDelete}>NÃO</button>
+								<button onClick={handleDeleteExercicio}>SIM</button>
+								<button onClick={() => toggleFormDelete()}>NÃO</button>
 							</div>
 						</form>
 					</div>

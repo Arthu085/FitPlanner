@@ -1,134 +1,102 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./LoginRegister.css";
 
+// react
+import { useState } from "react";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
+
 const LoginRegister = () => {
-	const [formVisibleRegister, setformVisibleRegister] = useState(false);
-	const [formVisibleLogin, setformVisibleLogin] = useState(true);
-	const [email_user, setEmail] = useState("");
-	const [password_user, setPassword] = useState("");
-	const [name_user, setName] = useState("");
-	const [lastname_user, setLastName] = useState("");
+	const [isLogin, setIsLogin] = useState(true);
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [name, setName] = useState("");
+	const [lastName, setLastName] = useState("");
 
-	const navigate = useNavigate();
-
-	if (localStorage.getItem("id")) {
-		useEffect(() => {
-			localStorage.removeItem("id");
-			window.location.reload();
-		}, []);
-	}
+	const { login, register } = useAuth();
 
 	const toggleForm = () => {
-		setformVisibleRegister(!formVisibleRegister);
-		setformVisibleLogin(!formVisibleLogin);
+		setIsLogin(!isLogin);
 		setEmail("");
 		setPassword("");
 		setName("");
 		setLastName("");
 	};
 
-	const handleSubmitLogin = async (event) => {
-		event.preventDefault();
+	const handleLogin = async (e) => {
+		e.preventDefault();
 
-		try {
-			const response = await fetch(
-				"http://localhost:3000/api/loginregister/logar",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ email_user, password_user }),
-				}
-			);
-
-			const data = await response.json();
-
-			if (data.success) {
-				localStorage.setItem("token", data.token);
-				localStorage.setItem("id", data.id_user);
-				navigate("/home");
-			} else {
-				alert(data.message);
-			}
-		} catch (error) {
-			console.error("Erro ao fazer login:", error);
-			alert("Erro ao conectar-se ao servidor.");
+		if (!email.trim() || !password.trim()) {
+			alert("Preencha o e-mail e a senha corretamente.");
+			return;
 		}
+
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			alert("Por favor, insira um e-mail válido.");
+			return;
+		}
+
+		await login(email, password);
 	};
 
-	const handleSubmitRegister = async (event) => {
-		event.preventDefault();
+	const handleRegister = async (e) => {
+		e.preventDefault();
 
-		try {
-			const response = await fetch(
-				"http://localhost:3000/api/loginregister/registrar",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						email_user,
-						password_user,
-						name_user,
-						lastname_user,
-					}),
-				}
-			);
+		const trimmedEmail = email.trim();
+		const trimmedPassword = password.trim();
+		const trimmedName = name.trim();
+		const trimmedLastName = lastName.trim();
 
-			const data = await response.json();
-
-			if (!response.ok) {
-				if (data.message === "Email já cadastrado.") {
-					alert("Este email já foi registrado. Tente outro.");
-				} else {
-					alert("Erro ao registrar: " + data.message);
-				}
-				return;
-			}
-
-			alert("Conta registrada com sucesso.");
-			toggleForm();
-			setEmail("");
-			setPassword("");
-			setName("");
-			setLastName("");
-		} catch (error) {
-			console.error("Erro ao registrar conta:", error);
-			alert("Erro ao registrar conta. Detalhes: " + error.message);
+		if (!trimmedEmail || !trimmedPassword || !trimmedName || !trimmedLastName) {
+			alert("Preencha todos os campos");
+			return;
 		}
+
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+		if (!emailRegex.test(trimmedEmail)) {
+			alert("Por favor, insira um e-mail válido.");
+			return;
+		}
+
+		if (password.length < 6) {
+			alert("A senha deve ter no mínimo 6 caracteres.");
+			return;
+		}
+
+		const success = await register(email, password, name, lastName);
+		if (success) toggleForm();
 	};
 
 	return (
 		<div className="login-register-container">
 			<main>
-				{formVisibleLogin && (
-					<form onSubmit={handleSubmitLogin}>
+				{isLogin ? (
+					<form onSubmit={handleLogin}>
 						<h2>Login</h2>
 						<div className="input-label">
-							<label htmlFor="email-login">Email</label>
+							<label>Email</label>
 							<input
 								type="email"
-								id="email-login"
+								name="email-login"
 								placeholder="Digite seu Email"
-								value={email_user}
+								value={email}
 								onChange={(e) => setEmail(e.target.value)}
-								required
 								autoComplete="email-login"
+								required
 							/>
 						</div>
 						<div className="input-label">
-							<label htmlFor="password-login">Senha</label>
+							<label>Senha</label>
 							<input
 								type="password"
-								id="password-login"
+								name="password-login"
 								placeholder="Digite sua Senha"
-								value={password_user}
+								value={password}
 								onChange={(e) => setPassword(e.target.value)}
-								required
 								autoComplete="current-password"
+								required
 							/>
 						</div>
 						<div className="span-button">
@@ -144,57 +112,55 @@ const LoginRegister = () => {
 							Entrar
 						</button>
 					</form>
-				)}
-
-				{formVisibleRegister && (
-					<form onSubmit={handleSubmitRegister}>
+				) : (
+					<form onSubmit={handleRegister}>
 						<h2>Registrar-se</h2>
 						<div className="input-label">
-							<label htmlFor="name">Nome</label>
+							<label>Nome</label>
 							<input
 								type="text"
-								id="name"
+								name="name"
 								placeholder="Digite seu Nome"
-								value={name_user}
+								value={name}
 								onChange={(e) => setName(e.target.value)}
-								required
 								autoComplete="given-name"
+								required
 							/>
 						</div>
 						<div className="input-label">
-							<label htmlFor="last-name">Sobrenome</label>
+							<label>Sobrenome</label>
 							<input
 								type="text"
-								id="last-name"
+								name="last-name"
 								placeholder="Digite seu Sobrenome"
-								value={lastname_user}
+								value={lastName}
 								onChange={(e) => setLastName(e.target.value)}
-								required
 								autoComplete="family-name"
+								required
 							/>
 						</div>
 						<div className="input-label">
-							<label htmlFor="email-register">Email</label>
+							<label>Email</label>
 							<input
 								type="email"
-								id="email-register"
+								name="email-register"
 								placeholder="Digite seu Email"
-								value={email_user}
+								value={email}
 								onChange={(e) => setEmail(e.target.value)}
-								required
 								autoComplete="email-register"
+								required
 							/>
 						</div>
 						<div className="input-label">
-							<label htmlFor="password-register">Senha</label>
+							<label>Senha</label>
 							<input
 								type="password"
-								id="password-register"
+								name="password-register"
 								placeholder="Digite sua Senha"
-								value={password_user}
+								value={password}
 								onChange={(e) => setPassword(e.target.value)}
-								required
 								autoComplete="new-password"
+								required
 							/>
 						</div>
 						<div className="span-button">

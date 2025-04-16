@@ -1,48 +1,44 @@
+import "./Home.css";
+
+// react
 import { useEffect, useState } from "react";
+
+// components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
-import "./Home.css";
-import { useNavigate } from "react-router-dom";
+
+// hooks
+import { useAuth } from "../../hooks/useAuth";
+import { fetchUser } from "../../hooks/api/homeApi";
 
 const Home = () => {
-	const [userData, setUserData] = useState(null);
-	const userId = localStorage.getItem("id");
-	const navigate = useNavigate();
+	const [userData, setUserData] = useState([]);
 
-	const getUser = async () => {
-		if (userId) {
-			try {
-				const response = await fetch(
-					`http://localhost:3000/api/user/getuser/${userId}`
-				);
-				const data = await response.json();
-				if (data.data) {
-					setUserData(data.data);
-				} else {
-					console.error("Usuário não encontrado");
-				}
-			} catch (error) {
-				console.error("Erro ao buscar usuário", error);
-			}
-		}
-	};
+	const { userId, isLoggedIn } = useAuth();
 
 	useEffect(() => {
-		if (!userId) {
-			alert("Faça login no sistema");
-			navigate("/"); // Redireciona para a página de login se o id não existir
-			localStorage.removeItem("id");
-		} else {
-			getUser();
-		}
-	}, [userId, navigate]);
+		isLoggedIn();
+	}, []);
+
+	useEffect(() => {
+		const loadUser = async () => {
+			try {
+				const data = await fetchUser(userId);
+				setUserData(data.data);
+			} catch (error) {
+				alert("Erro ao buscar usuário");
+			}
+		};
+
+		loadUser();
+	}, [userId]);
 
 	return (
 		<div className="home-container">
 			<NavigationBar />
 			<SideBar />
 			<div className="home-informacoes">
-				{userData ? ( // Verifica se os dados do usuário existem antes de acessar
+				{userData ? (
 					<div>
 						<div className="user-informacoes">
 							<h1>

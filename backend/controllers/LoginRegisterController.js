@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = '2025'; 
 
-const addUser = async (req, res) => {
+const register = async (req, res) => {
     const { email_user, password_user, name_user, lastname_user } = req.body;
 
     try {
@@ -39,42 +39,39 @@ const addUser = async (req, res) => {
     }
 };
 
-const postLogin = async (req, res) => {
-    const { email_user, password_user } = req.body;
+const login = async (req, res) => {
+	const { email_user, password_user } = req.body;
 
-    if (!email_user || !password_user) {
-        return res.status(400).json({ success: false, message: 'Email e senha são obrigatórios' });
-    }
+	if (!email_user?.trim() || !password_user?.trim()) {
+		return res.status(400).json({ success: false, message: 'Email e senha são obrigatórios' });
+	}
 
-    try {
-        const user = await pool.query('SELECT * FROM users WHERE email_user = $1', [email_user]);
+	try {
+		const user = await pool.query('SELECT * FROM users WHERE email_user = $1', [email_user]);
 
-        if (!user.rows.length) {
-            return res.status(401).json({ success: false, message: 'E-mail ou senha inválidos.' });
-        }
+		if (!user.rows.length) {
+			return res.status(401).json({ success: false, message: 'E-mail ou senha inválidos.' });
+		}
 
-        const usuario = user.rows[0];
-        const match = await bcrypt.compare(password_user, usuario.password_user);
+		const usuario = user.rows[0];
+		const match = await bcrypt.compare(password_user, usuario.password_user);
 
-        if (!match) {
-            return res.status(401).json({ success: false, message: 'E-mail ou senha inválidos.' });
-        }
+		if (!match) {
+			return res.status(401).json({ success: false, message: 'E-mail ou senha inválidos.' });
+		}
 
-        const token = jwt.sign({ userId: usuario.id_user }, JWT_SECRET, {
-            expiresIn: '1h',
-        });
-        
-      
-          res.status(200).json({
-            success: true,
-            message: 'Login bem-sucedido',
-            token: token,
-            id_user: usuario.id_user
-          });        
-    } catch (error) {
-        console.error('Erro ao fazer login:', error);
-        res.status(500).json({ success: false, message: 'Erro interno no servidor' });
-    }
+		const token = jwt.sign({ userId: usuario.id_user }, JWT_SECRET, { expiresIn: '1h' });
+
+		res.status(200).json({
+			success: true,
+			message: 'Login bem-sucedido',
+			token,
+			id_user: usuario.id_user
+		});
+	} catch (error) {
+		console.error('Erro ao fazer login do usuário:', email_user, error);
+		res.status(500).json({ success: false, message: 'Erro interno no servidor' });
+	}
 };
 
-module.exports = { addUser, postLogin };
+module.exports = { register, login };
