@@ -9,6 +9,12 @@ import SideBar from "../../components/SideBar/SideBar";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
+import {
+	fetchTreinos,
+	createTreino,
+	deleteTreino,
+} from "../../hooks/api/treinosApi";
+import { fetchExercicios } from "../../hooks/api/exerciciosApi";
 
 const Treinos = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
@@ -31,7 +37,12 @@ const Treinos = () => {
 
 	useEffect(() => {
 		isLoggedIn();
+		loadExercicios();
 	}, []);
+
+	useEffect(() => {
+		loadTreinos();
+	}, [userId]);
 
 	const toggleFormAddVisible = () => {
 		setFormVisibleAdd(!formVisibleAdd);
@@ -86,34 +97,16 @@ const Treinos = () => {
 		setExerciciosSelecionados(novosExercicios);
 	};
 
-	const getTreinos = async () => {
+	const loadTreinos = async () => {
 		try {
-			const result = await fetch(
-				`http://localhost:3000/api/treinos/gettreinos/${userId}`,
-				{
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
-			const data = await result.json();
-
-			if (result.ok) {
-				const groupedTreinos = groupTreinosById(data);
-				setTreinos(groupedTreinos);
-			} else {
-				alert(`Erro ao buscar treinos: ${data.message}`);
-			}
+			const data = await fetchTreinos(userId);
+			const groupedTreinos = groupTreinosById(data);
+			setTreinos(groupedTreinos);
 		} catch (error) {
 			console.error("Erro ao buscar treinos:", error);
 			alert("Erro ao buscar treinos");
 		}
 	};
-
-	useEffect(() => {
-		getTreinos();
-	}, [userId]);
 
 	const groupTreinosById = (treinos) => {
 		const grouped = treinos.reduce((acc, treino) => {
@@ -131,33 +124,26 @@ const Treinos = () => {
 		return Object.values(grouped); // Retorna os treinos agrupados
 	};
 
-	const addTreino = async (event) => {
-		event.preventDefault();
+	const handleCreateTreino = async (e) => {
+		e.preventDefault();
+
+		const treinoData = {
+			nome_treino: nomeTreino,
+			exercicios: exercicioSelecionado,
+			id_user: userId,
+		};
 
 		try {
-			const result = await fetch(
-				"http://localhost:3000/api/treinos/addtreino",
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({
-						nome_treino: nomeTreino,
-						exercicios: exercicioSelecionado,
-						id_user: userId,
-					}),
-				}
-			);
+			const data = await createTreino(treinoData);
 
-			const data = await result.json();
-
-			if (result.status === 201) {
-				alert(data.message); // Treino criado com sucesso
-				setFormVisibleAdd(!formVisibleAdd);
-			} else if (result.status === 400) {
-				alert(`Erro: ${data.error}`); // Exibe o erro se o exercício já existir no treino
+			if (data.error === "O exercício já está cadastrado neste treino!") {
+				alert(data.error);
+				return;
 			}
 
-			getTreinos(); // Atualiza a lista de treinos
+			alert(data.message);
+			setFormVisibleAdd(!formVisibleAdd);
+			loadTreinos();
 		} catch (error) {
 			console.error("Erro ao adicionar treino:", error);
 			alert(
@@ -166,116 +152,89 @@ const Treinos = () => {
 		}
 	};
 
-	const getExercicios = async () => {
+	const loadExercicios = async () => {
 		try {
-			const result = await fetch(
-				"http://localhost:3000/api/exercicios/getexercicios"
-			);
-			const data = await result.json();
-
-			if (result.ok) {
-				setExercicios(data.data);
-			} else {
-				alert(`Erro ao buscar exercícios: ${data.message}`);
-			}
+			const data = await fetchExercicios();
+			setExercicios(data.data);
 		} catch (error) {
 			console.error("Erro ao buscar exercícios:", error);
 			alert("Erro ao buscar exercícios");
 		}
 	};
 
-	useEffect(() => {
-		getExercicios();
-	}, []);
-
-	const cancelDelete = () => {
-		setFormVisibleDelete(false);
-	};
-
-	const deleteTreino = async (event) => {
-		event.preventDefault();
+	const handleDeleteTreino = async (e) => {
+		e.preventDefault();
 
 		try {
-			const result = await fetch(
-				`http://localhost:3000/api/treinos/deletetreino/${idTreino}`,
-				{
-					method: "DELETE",
-					headers: { "Content-Type": "application/json" },
-				}
-			);
-			const data = await result.json();
+			const data = await deleteTreino(idTreino);
 
-			if (result.ok) {
-				alert(data.message);
-				setFormVisibleDelete(false);
-				getTreinos();
-			} else {
-				alert(`Erro ao excluir treino: ${data.message}`);
-			}
+			alert(data.message);
+			setFormVisibleDelete(false);
+			loadTreinos();
 		} catch (error) {
 			console.error("Erro ao excluir treino:", error);
 			alert("Erro ao excluir treino");
 		}
 	};
 
-	const editTreino = async (e) => {
-		e.preventDefault();
+	// const editTreino = async (e) => {
+	// 	e.preventDefault();
 
-		try {
-			const responseUpdateNome = await fetch(
-				`http://localhost:3000/api/treinos/edittreino/${idTreino}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						nome_treino: treinoSelecionado.nome_treino,
-					}),
-				}
-			);
+	// 	try {
+	// 		const responseUpdateNome = await fetch(
+	// 			`http://localhost:3000/api/treinos/edittreino/${idTreino}`,
+	// 			{
+	// 				method: "PUT",
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 				},
+	// 				body: JSON.stringify({
+	// 					nome_treino: treinoSelecionado.nome_treino,
+	// 				}),
+	// 			}
+	// 		);
 
-			const responseUpdateData = await fetch(
-				`http://localhost:3000/api/treinos/edittreino/${idTreino}/${idTreinoExercicio}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						nome_treino: treinoSelecionado.nome_treino,
-						exercicios: exercicioSelecionado.map((exercicio) => ({
-							id_treino_exercicio: exercicio.id_treino_exercicio,
-							id_exercise: exercicio.id_exercise,
-							serie: exercicio.serie,
-							repeticoes: exercicio.repeticoes,
-						})),
-					}),
-				}
-			);
+	// 		const responseUpdateData = await fetch(
+	// 			`http://localhost:3000/api/treinos/edittreino/${idTreino}/${idTreinoExercicio}`,
+	// 			{
+	// 				method: "PUT",
+	// 				headers: {
+	// 					"Content-Type": "application/json",
+	// 				},
+	// 				body: JSON.stringify({
+	// 					nome_treino: treinoSelecionado.nome_treino,
+	// 					exercicios: exercicioSelecionado.map((exercicio) => ({
+	// 						id_treino_exercicio: exercicio.id_treino_exercicio,
+	// 						id_exercise: exercicio.id_exercise,
+	// 						serie: exercicio.serie,
+	// 						repeticoes: exercicio.repeticoes,
+	// 					})),
+	// 				}),
+	// 			}
+	// 		);
 
-			const dataUpdateNome = await responseUpdateNome.json();
-			const dataUpdateData = await responseUpdateData.json();
+	// 		const dataUpdateNome = await responseUpdateNome.json();
+	// 		const dataUpdateData = await responseUpdateData.json();
 
-			if (responseUpdateData.ok) {
-				alert("Treino atualizado com sucesso!");
-				toggleFormEditVisible();
-				l;
-			} else {
-				alert("Erro ao atualizar treino: " + data.error);
-			}
+	// 		if (responseUpdateData.ok) {
+	// 			alert("Treino atualizado com sucesso!");
+	// 			toggleFormEditVisible();
+	// 			l;
+	// 		} else {
+	// 			alert("Erro ao atualizar treino: " + data.error);
+	// 		}
 
-			if (responseUpdateNome.ok) {
-				alert("Nome do treino atualizado com sucesso!");
-				toggleFormEditVisible();
-			} else {
-				alert("Erro ao atualizar treino: " + data.error);
-			}
-		} catch (error) {
-			console.error("Erro ao atualizar treino:", error);
-			alert("Erro ao conectar ao servidor");
-		}
-	};
+	// 		if (responseUpdateNome.ok) {
+	// 			alert("Nome do treino atualizado com sucesso!");
+	// 			toggleFormEditVisible();
+	// 		} else {
+	// 			alert("Erro ao atualizar treino: " + data.error);
+	// 		}
+	// 	} catch (error) {
+	// 		console.error("Erro ao atualizar treino:", error);
+	// 		alert("Erro ao conectar ao servidor");
+	// 	}
+	// };
 
 	return (
 		<div className="sidebar-pages-container">
@@ -333,7 +292,7 @@ const Treinos = () => {
 						onClick={() => setFormVisibleAdd(false)}></div>
 					<div className="form-content">
 						<h2>Adicionar Treino</h2>
-						<form className="form-add" onSubmit={addTreino}>
+						<form className="form-add" onSubmit={handleCreateTreino}>
 							<label>Nome do Treino</label>
 							<input
 								type="text"
@@ -414,7 +373,7 @@ const Treinos = () => {
 				</div>
 			)}
 
-			{formVisibleEdit && (
+			{/* {formVisibleEdit && (
 				<div className="form-container">
 					<div className="form-overlay" onClick={toggleFormEditVisible}></div>
 					<div className="form-content">
@@ -519,7 +478,7 @@ const Treinos = () => {
 						</form>
 					</div>
 				</div>
-			)}
+			)} */}
 
 			{formVisibleDelete && (
 				<div className="form-container">
@@ -529,8 +488,11 @@ const Treinos = () => {
 						<form className="form-delete-exercicio">
 							<label>Deseja excluir o treino?</label>
 							<div className="delete-btns">
-								<button onClick={deleteTreino}>SIM</button>
-								<button onClick={cancelDelete}>NÃO</button>
+								<button onClick={handleDeleteTreino}>SIM</button>
+								<button
+									onClick={() => setFormVisibleDelete(!formVisibleDelete)}>
+									NÃO
+								</button>
 							</div>
 						</form>
 					</div>
