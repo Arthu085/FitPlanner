@@ -34,3 +34,40 @@ export const createExercicio = async (exercicioData) => {
 		throw error;
 	}
 };
+
+export const deleteExercicio = async (id_exercise) => {
+	try {
+		const result = await fetch(
+			`http://localhost:3000/api/exercicios/deleteexercicio/${id_exercise}`,
+			{
+				method: "DELETE",
+			}
+		);
+
+		const data = await result.json();
+		return data;
+	} catch (error) {
+		console.error("Erro ao deletar exercício:", error);
+		throw error;
+	}
+};
+
+export const editExercicio = async (exercicioData) => {
+	try {
+		const result = await fetch(
+			`http://localhost:3000/api/exercicios/editexercicio/${exercicioData.id_exercise}`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ exercise_name: exercicioData.exercise_name }),
+			}
+		);
+		const data = await result.json();
+		return data;
+	} catch (error) {
+		console.error("Erro ao editar exercício", error);
+		throw error;
+	}
+};

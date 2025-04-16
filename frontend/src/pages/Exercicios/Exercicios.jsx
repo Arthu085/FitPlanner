@@ -12,6 +12,8 @@ import { useAuth } from "../../hooks/useAuth";
 import {
 	fetchExercicios,
 	createExercicio,
+	deleteExercicio,
+	editExercicio,
 } from "../../hooks/api/exerciciosApi";
 
 const Exercicios = () => {
@@ -79,70 +81,51 @@ const Exercicios = () => {
 		}
 	};
 
-	const deleteExercicio = async (event) => {
-		event.preventDefault();
+	const handleDeleteExercicio = async (e) => {
+		e.preventDefault();
 
 		try {
-			const result = await fetch(
-				`http://localhost:3000/api/exercicios/deleteexercicio/${id_exercise}`,
-				{
-					method: "DELETE",
-				}
-			);
-			const data = await result.json();
+			const data = await deleteExercicio(id_exercise);
 
-			if (result.ok) {
+			if (data && !data.error) {
+				await loadExercicios();
 				alert(data.message);
-				getExercicios();
+				setFormVisibleDelete(!formVisibleDelete);
 			} else {
-				alert(`Erro: ${data.error}`);
+				alert(data.message || "Erro desconhecido");
 			}
-		} catch (err) {
-			console.error("Erro ao deleter exercício", err);
+		} catch (error) {
 			alert("Erro ao deletar exercício");
+			console.error("Erro ao deletar exercício:", error);
 		}
-		setFormVisibleDelete(!formVisibleDelete);
 	};
 
-	const editExercicio = async (event) => {
-		event.preventDefault();
+	const handleEditExercicio = async (e) => {
+		e.preventDefault();
 
 		if (!exercise_name || exercise_name.trim() === "") {
 			alert("O nome do exercício não pode estar vazio.");
 			return;
 		}
 
+		const exercicioData = { id_exercise, exercise_name };
+
 		try {
-			const result = await fetch(
-				`http://localhost:3000/api/exercicios/editexercicio/${id_exercise}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ exercise_name }),
-				}
-			);
-			const data = await result.json();
+			const data = await editExercicio(exercicioData);
 
-			if (result.status === 400) {
-				alert(data.error);
-				setExerciseName("");
-				return;
-			}
-
-			if (result.ok) {
+			if (data && !data.error) {
+				await loadExercicios();
 				alert(data.message);
-				getExercicios();
+				setFormVisibleEdit(!formVisibleEdit);
 				setExerciseName("");
 			} else {
-				alert(`Erro: ${data.error}`);
+				alert(data.message || "Erro desconhecido");
+				setExerciseName("");
 			}
-		} catch (err) {
-			console.error("Erro ao editar exercício", err);
+		} catch (error) {
 			alert("Erro ao editar exercício");
+			console.error("Erro ao editar exercício:", error);
 		}
-		setFormVisibleEdit(!formVisibleEdit);
 	};
 
 	return (
@@ -208,7 +191,7 @@ const Exercicios = () => {
 					<div className="form-overlay" onClick={toggleFormEdit}></div>
 					<div className="form-content">
 						<h2>Editar Exercício</h2>
-						<form className="form-add" onSubmit={editExercicio}>
+						<form className="form-add" onSubmit={handleEditExercicio}>
 							<label>Novo nome do Exercício</label>
 							<input
 								type="text"
@@ -227,14 +210,16 @@ const Exercicios = () => {
 
 			{formVisibleDelete && (
 				<div className="form-container">
-					<div className="form-overlay" onClick={toggleFormDelete}></div>
+					<div
+						className="form-overlay"
+						onClick={() => toggleFormDelete()}></div>
 					<div className="form-content">
 						<h2>Excluir Exercício</h2>
 						<form className="form-delete-exercicio">
 							<label>Deseja excluir o exercício?</label>
 							<div className="delete-btns">
-								<button onClick={deleteExercicio}>SIM</button>
-								<button onClick={toggleFormDelete}>NÃO</button>
+								<button onClick={handleDeleteExercicio}>SIM</button>
+								<button onClick={() => toggleFormDelete()}>NÃO</button>
 							</div>
 						</form>
 					</div>
