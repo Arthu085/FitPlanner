@@ -7,7 +7,7 @@
 }
 
 .sidebar-pages-container {
-	background-color: rgb(102, 63, 144);
+	background-color: #0d0d0d;
 	min-height: calc(100vh - 0px);
 	width: 100%;
 	overflow: hidden; /* Impede rolagem desnecessária */
@@ -181,4 +181,9 @@
 
 .delete-btns button:active {
 	transform: scale(0.98);
+}
+
+.logo {
+	width: 200px;
+	height: 200px;
 }

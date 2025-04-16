@@ -74,7 +74,13 @@ const LoginRegister = () => {
 			<main>
 				{isLogin ? (
 					<form onSubmit={handleLogin}>
-						<h2>Login</h2>
+						<div className="logo-img">
+							<img
+								className="logo"
+								src="../../public/images/logo_branco.svg"
+								alt="Logo do sistema"></img>
+						</div>
+						<h2>Entrar</h2>
 						<div className="input-label">
 							<label>Email</label>
 							<input

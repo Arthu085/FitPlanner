@@ -1,5 +1,5 @@
 .home-container {
-	background-color: rgb(102, 63, 144);
+	background-color: #0f0f0f;
 	min-height: calc(100vh - 0px);
 	width: 100%;
 	overflow: hidden; /* Impede rolagem desnecessária */
