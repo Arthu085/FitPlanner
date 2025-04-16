@@ -9,6 +9,10 @@ import { useEffect, useState } from "react";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
+import { fetchMeta, createMeta, editMeta } from "../../hooks/api/metaApi";
+
+// utils
+import { formatarData } from "../../utils/formatters";
 
 const Metas = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
@@ -26,107 +30,64 @@ const Metas = () => {
 		isLoggedIn();
 	}, []);
 
-	const formatarData = (dataISO) => {
-		const data = new Date(dataISO);
-		const dia = data.getDate().toString().padStart(2, "0");
-		const mes = (data.getMonth() + 1).toString().padStart(2, "0");
-		const ano = data.getFullYear();
-		return `${dia}/${mes}/${ano}`;
-	};
+	useEffect(() => {
+		if (filtro === "todas") {
+			setMetasFiltradas(metas);
+		} else {
+			const status = filtro === "concluidas" ? 2 : 1;
+			setMetasFiltradas(metas.filter((meta) => meta.id_status === status));
+		}
+	}, [filtro, metas]);
 
-	const getMeta = async () => {
+	useEffect(() => {
+		loadMeta();
+	}, [userId]);
+
+	const loadMeta = async () => {
 		try {
-			const result = await fetch(
-				`http://localhost:3000/api/metas/getmeta/${userId}`,
-				{
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
+			const data = await fetchMeta(userId);
 
-			const data = await result.json();
-
-			if (result.ok) {
-				setMetas(data.meta); // Aqui, a chave correta retornada no backend é 'meta'
-			} else {
-				alert(`Erro ao buscar metas: ${data.error}`);
-			}
+			setMetas(data.meta);
 		} catch (error) {
 			console.error("Erro ao buscar metas", error);
 		}
 	};
 
-	useEffect(() => {
-		// Filtra as metas com base no filtro selecionado
-		if (filtro === "todas") {
-			setMetasFiltradas(metas); // Se for 'todas', mostra todas as metas
-		} else {
-			const status = filtro === "concluidas" ? 2 : 1; // Se for 'concluídas', id_status = 2, senão id_status = 1
-			setMetasFiltradas(metas.filter((meta) => meta.id_status === status));
-		}
-	}, [filtro, metas]); // Sempre que o filtro ou metas mudarem, atualize as metas filtradas
+	const handleCreateMeta = async (e) => {
+		e.preventDefault();
 
-	useEffect(() => {
-		getMeta(); // Chama a API para buscar todas as metas
-	}, [userId]); // Apenas chama na primeira renderização
-
-	const addMeta = async (event) => {
-		event.preventDefault();
+		const metaData = {
+			userId,
+			titulo_meta,
+			descricao_meta,
+			data_finalizacao_meta,
+		};
 
 		try {
-			const result = await fetch("http://localhost:3000/api/metas/addmeta", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					id_user: userId,
-					titulo_meta,
-					descricao_meta,
-					data_finalizacao_meta,
-				}),
-			});
+			const data = await createMeta(metaData);
 
-			if (result.status === 201) {
-				const data = await result.json();
-				alert(data.message); // Sucesso
-				setFormVisibleAdd(!formVisibleAdd);
-				getMeta(); // Atualiza as metas
-			} else {
-				const data = await result.json();
-				alert(`Erro ao adicionar meta: ${data.error || "Desconhecido"}`); // Exibe erro
-			}
+			alert(data.message);
+			setFormVisibleAdd(!formVisibleAdd);
+			loadMeta();
+			setTituloMeta("");
+			setDescricaoMeta("");
+			setDataFinalizacaoMeta("");
 		} catch (error) {
 			console.error("Erro ao adicionar meta:", error);
 			alert("Ocorreu um erro ao adicionar a meta. Tente novamente mais tarde."); // Mensagem de erro genérica
 		}
 	};
 
-	const editMeta = async (event, idMeta, concluida) => {
-		event.preventDefault();
+	const handleEditMeta = async (e, idMeta, concluida) => {
+		e.preventDefault();
 
-		const statusMeta = concluida ? 2 : 1; // 2 para concluída, 1 para em andamento
+		const statusMeta = concluida ? 2 : 1;
+
+		const metaData = { id_meta: idMeta, statusMeta };
 
 		try {
-			// Fazendo o PUT para editar o status da meta
-			const result = await fetch(
-				`http://localhost:3000/api/metas/editmeta/${idMeta}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ id_status: statusMeta }), // Enviando o status
-				}
-			);
-
-			if (result.status === 200) {
-				const data = await result.json();
-				getMeta(); // Atualiza as metas na tela
-			} else {
-				const data = await result.json();
-				alert(`Erro ao editar meta: ${data.error || "Desconhecido"}`);
-			}
+			await editMeta(metaData);
+			loadMeta();
 		} catch (error) {
 			console.error("Erro ao editar meta:", error);
 			alert("Ocorreu um erro ao editar a meta. Tente novamente mais tarde.");
@@ -180,7 +141,7 @@ const Metas = () => {
 									onChange={(e) => {
 										// Alterando o estado do checkbox
 										setIdMeta(meta.id_meta); // Atualiza o id da meta
-										editMeta(e, meta.id_meta, e.target.checked); // Atualiza o status da meta no backend
+										handleEditMeta(e, meta.id_meta, e.target.checked); // Atualiza o status da meta no backend
 									}}
 								/>
 							</div>
@@ -205,7 +166,7 @@ const Metas = () => {
 						onClick={() => setFormVisibleAdd(false)}></div>
 					<div className="form-content">
 						<h2>Adicionar Meta</h2>
-						<form className="form-add" onSubmit={addMeta}>
+						<form className="form-add" onSubmit={handleCreateMeta}>
 							<label>Título da Meta</label>
 							<input
 								type="text"
