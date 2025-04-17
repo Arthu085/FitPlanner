@@ -1,17 +1,8 @@
-.home-container {
-	background-color: #0f0f0f;
-	min-height: calc(100vh - 0px);
-	width: 100%;
-	overflow: hidden; /* Impede rolagem desnecessária */
-}
-
-.home-informacoes {
+.user-informacoes {
 	display: flex;
 	flex-direction: column;
-	margin-left: 200px;
 	gap: 80px;
 	color: white;
-	margin-top: 100px;
 }
 
 .user-informacoes {
@@ -41,6 +32,7 @@
 	flex-direction: column;
 	gap: 30px;
 	margin-top: 30px;
+	color: white;
 }
 
 .treinos-concluidos h2 {

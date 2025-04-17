@@ -108,7 +108,7 @@
 
 .add-btn {
 	padding: 10px;
-	background: linear-gradient(45deg, #6a5acd, #836fff);
+	background: linear-gradient(45deg, #273ec2, #0025f5);
 	border: none;
 	border-radius: 6px;
 	color: white;
@@ -121,7 +121,7 @@
 }
 
 .add-btn:hover {
-	background: linear-gradient(45deg, #836fff, #6a5acd);
+	background: linear-gradient(45deg, #0025f5, #273ec2);
 	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
 	transform: scale(1.05);
 }
@@ -160,7 +160,7 @@
 }
 .delete-btns button:last-child {
 	padding: 10px;
-	background: linear-gradient(45deg, #6a5acd, #836fff);
+	background: linear-gradient(45deg, #273ec2, #0025f5);
 	border: none;
 	border-radius: 6px;
 	color: white;
@@ -174,7 +174,7 @@
 }
 
 .delete-btns button:last-child:hover {
-	background: linear-gradient(45deg, #836fff, #6a5acd);
+	background: linear-gradient(45deg, #0025f5, #273ec2);
 	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
 	transform: scale(1.05);
 }
@@ -186,4 +186,15 @@
 .logo {
 	width: 200px;
 	height: 200px;
+}
+
+.container-page {
+	margin-top: 100px;
+	transition: margin-left 0.3s ease;
+	padding: 20px;
+	margin-left: 50px; /* Padrão sem a sidebar visível */
+}
+
+.side-bar-container:hover ~ .container-page {
+	margin-left: 100px; /* Empurrando o conteúdo para a direita quando a sidebar é expandida */
 }

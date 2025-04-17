@@ -98,8 +98,8 @@ const Metas = () => {
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
-			<div className="container-metas">
-				<h2>Lista de Metas</h2>
+			<div className="container-page">
+				<h2 className="tittle-page">Lista de Metas</h2>
 				<div className="filtro-btn-container">
 					<button
 						className="btn-add-meta"
@@ -118,45 +118,45 @@ const Metas = () => {
 						</select>
 					</div>
 				</div>
-			</div>
 
-			<div className="metas-list">
-				{metasFiltradas.length === 0 ? (
-					<p className="no-metas-message">
-						Nenhuma meta encontrada para o filtro selecionado.
-					</p>
-				) : (
-					metasFiltradas.map((meta) => (
-						<div
-							key={meta.id_meta}
-							className={`meta-content ${
-								meta.id_status === 2 ? "checked" : ""
-							}`}>
-							<h2>{meta.titulo_meta}</h2>
-							<div className="p-checkbox">
-								<p>{meta.descricao_meta}</p>
-								<input
-									type="checkbox"
-									checked={meta.id_status === 2} // Checkbox marcado se a meta for concluída (id_status 2)
-									onChange={(e) => {
-										// Alterando o estado do checkbox
-										setIdMeta(meta.id_meta); // Atualiza o id da meta
-										handleEditMeta(e, meta.id_meta, e.target.checked); // Atualiza o status da meta no backend
-									}}
-								/>
+				<div className="metas-list">
+					{metasFiltradas.length === 0 ? (
+						<p className="no-metas-message">
+							Nenhuma meta encontrada para o filtro selecionado.
+						</p>
+					) : (
+						metasFiltradas.map((meta) => (
+							<div
+								key={meta.id_meta}
+								className={`meta-content ${
+									meta.id_status === 2 ? "checked" : ""
+								}`}>
+								<h2>{meta.titulo_meta}</h2>
+								<div className="p-checkbox">
+									<p>{meta.descricao_meta}</p>
+									<input
+										type="checkbox"
+										checked={meta.id_status === 2} // Checkbox marcado se a meta for concluída (id_status 2)
+										onChange={(e) => {
+											// Alterando o estado do checkbox
+											setIdMeta(meta.id_meta); // Atualiza o id da meta
+											handleEditMeta(e, meta.id_meta, e.target.checked); // Atualiza o status da meta no backend
+										}}
+									/>
+								</div>
+								<div className="span-datas">
+									<span>
+										Data de criação: {formatarData(meta.data_criacao_meta)}
+									</span>
+									<span>
+										Previsão de finalização:{" "}
+										{formatarData(meta.data_finalizacao_meta)}
+									</span>
+								</div>
 							</div>
-							<div className="span-datas">
-								<span>
-									Data de criação: {formatarData(meta.data_criacao_meta)}
-								</span>
-								<span>
-									Previsão de finalização:{" "}
-									{formatarData(meta.data_finalizacao_meta)}
-								</span>
-							</div>
-						</div>
-					))
-				)}
+						))
+					)}
+				</div>
 			</div>
 
 			{formVisibleAdd && (

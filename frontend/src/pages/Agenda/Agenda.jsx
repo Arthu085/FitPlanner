@@ -35,8 +35,8 @@ const Agenda = () => {
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
-			<div className="agenda-container">
-				<h2>Agenda de Treinos</h2>
+			<div className="container-page">
+				<h2 className="tittle-page">Agenda de Treinos</h2>
 				<div className="filtro-btn-container">
 					<button className="btn-add-agenda" onClick={toggleFormAddVisible}>
 						Agendar Treino
@@ -66,18 +66,18 @@ const Agenda = () => {
 						<button onClick={limpaFiltroData}>Limpar Data</button>
 					</div>
 				</div>
-			</div>
 
-			<div className="metas-list">
-				<p className="no-metas-message">
-					Nenhuma meta encontrada para o filtro selecionado.
-				</p>
-				<div className={`meta-content`}>
-					<h2>Treino A</h2>
-					<div className="span-datas">
-						<span>Data do treino:</span>
-						<span>Hora do treino:</span>
-						<input type="checkbox" />
+				<div className="metas-list">
+					<p className="no-metas-message">
+						Nenhuma meta encontrada para o filtro selecionado.
+					</p>
+					<div className={`meta-content`}>
+						<h2>Treino A</h2>
+						<div className="span-datas">
+							<span>Data do treino:</span>
+							<span>Hora do treino:</span>
+							<input type="checkbox" />
+						</div>
 					</div>
 				</div>
 			</div>

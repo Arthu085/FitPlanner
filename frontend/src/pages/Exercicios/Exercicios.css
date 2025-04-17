@@ -1,5 +1,4 @@
 .exercicios-list {
-	margin-left: 250px;
 	margin-top: 100px;
 	background-color: rgba(255, 255, 255, 0.095);
 	position: relative;
@@ -9,8 +8,6 @@
 	flex-grow: 0; /* Removendo a expansão automática */
 	max-width: 800px; /* Define uma largura máxima */
 	width: 80%; /* Define a largura como 80% do contêiner */
-	margin-right: auto; /* Mantém centralizado */
-	margin-left: auto; /* Mantém centralizado */
 	margin-bottom: 20px;
 }
 
@@ -30,7 +27,7 @@
 	padding: 8px;
 	border: none;
 	border-radius: 6px;
-	background: linear-gradient(45deg, #6a5acd, #836fff);
+	background: linear-gradient(45deg, #273ec2, #0025f5);
 	color: white;
 	font-size: 14px;
 	font-weight: bold;
@@ -41,7 +38,7 @@
 }
 
 .add-exercise-btn:hover {
-	background: linear-gradient(45deg, #836fff, #6a5acd);
+	background: linear-gradient(45deg, #0025f5, #273ec2);
 	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
 	transform: scale(1.05);
 }

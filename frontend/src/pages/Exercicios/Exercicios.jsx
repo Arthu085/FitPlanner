@@ -132,7 +132,7 @@ const Exercicios = () => {
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
-			<div className="exercicios-list">
+			<div className="container-page">
 				<div className="h2-addbutton">
 					<h2>Lista de Exercícios</h2>
 					<button className="add-exercise-btn" onClick={toggleFormAdd}>

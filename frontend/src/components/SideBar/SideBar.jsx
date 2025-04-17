@@ -1,57 +1,52 @@
 import "./SideBar.css";
-
-// react
 import { useNavigate } from "react-router-dom";
 
 const SideBar = () => {
 	const navigate = useNavigate();
 
+	const buttons = [
+		{
+			src: "../../images/treino.png",
+			alt: "Treino",
+			title: "Treinos",
+			route: "/treinos",
+			className: "treino-icon",
+		},
+		{
+			src: "../../images/horarios.png",
+			alt: "Horário",
+			title: "Agenda",
+			route: "/agenda",
+		},
+		{
+			src: "../../images/exercicios.png",
+			alt: "Exercício",
+			title: "Exercícios",
+			route: "/exercicios",
+		},
+		{
+			src: "../../images/metas.png",
+			alt: "Meta",
+			title: "Metas",
+			route: "/metas",
+		},
+	];
+
 	return (
 		<div className="side-bar-container">
-			<div className="buttons-img">
-				<img
-					className="img-sidebar"
-					src="../../images/treino.png"
-					alt="Treino icone"
-				/>
-				<button
-					className="buttons-sidebar"
-					onClick={() => navigate("/treinos")}>
-					Treinos
-				</button>
-			</div>
-			<div className="buttons-img">
-				<img
-					className="img-sidebar"
-					src="../../images/horarios.png"
-					alt="Horário icone"
-				/>
-				<button className="buttons-sidebar" onClick={() => navigate("/agenda")}>
-					Agenda
-				</button>
-			</div>
-			<div className="buttons-img">
-				<img
-					className="img-sidebar"
-					src="../../images/exercicios.png"
-					alt="Exercício icone"
-				/>
-				<button
-					className="buttons-sidebar"
-					onClick={() => navigate("/exercicios")}>
-					Exercícios
-				</button>
-			</div>
-			<div className="buttons-img">
-				<img
-					className="img-sidebar"
-					src="../../images/metas.png"
-					alt="Meta icone"
-				/>
-				<button className="buttons-sidebar" onClick={() => navigate("/metas")}>
-					Metas
-				</button>
-			</div>
+			{buttons.map((btn, index) => (
+				<div
+					key={index}
+					className="buttons-img"
+					onClick={() => navigate(btn.route)}>
+					<img
+						className={`img-sidebar ${btn.className || ""}`}
+						src={btn.src}
+						alt={`${btn.alt} ícone`}
+						title={btn.title}
+					/>
+				</div>
+			))}
 		</div>
 	);
 };
