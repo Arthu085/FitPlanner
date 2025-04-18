@@ -4,13 +4,12 @@
 	gap: 20px; /* Espaço entre os itens */
 	overflow-y: auto; /* Habilita a rolagem vertical quando necessário */
 	margin-bottom: 30px;
-	margin-right: 50px;
 }
 
 /* Cada meta vai ocupar o espaço disponível até o limite, mas não pode ser menor que 300px */
 .meta-content {
 	flex: 1 1 300px; /* A largura das metas vai ser flexível, mas não menor que 300px */
-	min-width: 300px; /* Define a largura mínima */
+	min-width: 285px; /* Define a largura mínima */
 	background: rgba(255, 255, 255, 0.095); /* Transparência */
 	padding: 20px;
 	border-radius: 8px;

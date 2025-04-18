@@ -179,17 +179,19 @@ const Exercicios = () => {
 					</ul>
 				</div>
 
-				<div className="pagination-controls">
-					<button onClick={prevPage} disabled={currentPage === 1}>
-						Anterior
-					</button>
-					<span>
-						Página {currentPage} de {totalPages}
-					</span>
-					<button onClick={nextPage} disabled={currentPage === totalPages}>
-						Próxima
-					</button>
-				</div>
+				{totalPages > 1 && (
+					<div className="pagination-controls">
+						<button onClick={prevPage} disabled={currentPage === 1}>
+							Anterior
+						</button>
+						<span>
+							Página {currentPage} de {totalPages}
+						</span>
+						<button onClick={nextPage} disabled={currentPage === totalPages}>
+							Próxima
+						</button>
+					</div>
+				)}
 			</div>
 
 			{formVisibleAdd && (
