@@ -16,6 +16,8 @@ import {
 	editExercicio,
 } from "../../hooks/api/exerciciosApi";
 
+const itemsPerPage = 8;
+
 const Exercicios = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
 	const [formVisibleEdit, setFormVisibleEdit] = useState(false);
@@ -23,13 +25,18 @@ const Exercicios = () => {
 	const [exercicios, setExercicios] = useState([]);
 	const [exercise_name, setExerciseName] = useState("");
 	const [id_exercise, setExercicioId] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
 
 	const { isLoggedIn } = useAuth();
 
 	useEffect(() => {
 		isLoggedIn();
-		loadExercicios();
 	}, []);
+
+	useEffect(() => {
+		loadExercicios();
+	}, [currentPage]);
 
 	const toggleFormAdd = () => {
 		setFormVisibleAdd(!formVisibleAdd);
@@ -47,11 +54,20 @@ const Exercicios = () => {
 
 	const loadExercicios = async () => {
 		try {
-			const data = await fetchExercicios();
+			const data = await fetchExercicios(currentPage, itemsPerPage);
 			setExercicios(data.data);
+			setTotalPages(data.totalPages);
 		} catch (error) {
 			alert("Erro ao buscar exercícios", error);
 		}
+	};
+
+	const nextPage = () => {
+		if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+	};
+
+	const prevPage = () => {
+		if (currentPage > 1) setCurrentPage(currentPage - 1);
 	};
 
 	const handleCreateExercicio = async (e) => {
@@ -161,6 +177,18 @@ const Exercicios = () => {
 							<p>Nenhum exercício cadastrado.</p>
 						)}
 					</ul>
+				</div>
+
+				<div className="pagination-controls">
+					<button onClick={prevPage} disabled={currentPage === 1}>
+						Anterior
+					</button>
+					<span>
+						Página {currentPage} de {totalPages}
+					</span>
+					<button onClick={nextPage} disabled={currentPage === totalPages}>
+						Próxima
+					</button>
 				</div>
 			</div>
 
