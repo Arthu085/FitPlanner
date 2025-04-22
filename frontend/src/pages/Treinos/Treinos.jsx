@@ -241,9 +241,10 @@ const Treinos = () => {
 			<NavigationBar />
 			<SideBar />
 			<div className="container-page">
-				<h2 className="tittle-page">Lista de Treinos</h2>
-				<div className="btn-add-treino">
-					<button className="btn-add-agenda" onClick={toggleFormAddVisible}>
+				<h1 className="tittle">Treinos</h1>
+				<div className="container-subtitle-btns">
+					<h2 className="tittle-page">Lista de Treinos:</h2>
+					<button className="add-btn" onClick={toggleFormAddVisible}>
 						Adicionar Treino
 					</button>
 				</div>

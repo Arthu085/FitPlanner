@@ -99,23 +99,26 @@ const Metas = () => {
 			<NavigationBar />
 			<SideBar />
 			<div className="container-page">
-				<h2 className="tittle-page">Lista de Metas</h2>
-				<div className="filtro-btn-container">
-					<button
-						className="btn-add-meta"
-						onClick={() => setFormVisibleAdd(!formVisibleAdd)}>
-						Adicionar Meta
-					</button>
-					<div className="filtros">
-						<label>Filtrar metas:</label>
-						<select
-							id="filtro"
-							value={filtro}
-							onChange={(e) => setFiltro(e.target.value)}>
-							<option value="todas">Todas</option>
-							<option value="concluidas">Concluídas</option>
-							<option value="andamento">Em Andamento</option>
-						</select>
+				<h1 className="tittle">Metas</h1>
+				<div className="container-subtitle-btns">
+					<h2 className="tittle-page">Metas Adicionadas:</h2>
+					<div className="container-filtros-btns">
+						<div className="filtros">
+							<label>Filtrar metas:</label>
+							<select
+								id="filtro"
+								value={filtro}
+								onChange={(e) => setFiltro(e.target.value)}>
+								<option value="todas">Todas</option>
+								<option value="concluidas">Concluídas</option>
+								<option value="andamento">Em Andamento</option>
+							</select>
+						</div>
+						<button
+							className="add-btn"
+							onClick={() => setFormVisibleAdd(!formVisibleAdd)}>
+							Adicionar Meta
+						</button>
 					</div>
 				</div>
 

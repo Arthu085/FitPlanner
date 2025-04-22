@@ -36,34 +36,37 @@ const Agenda = () => {
 			<NavigationBar />
 			<SideBar />
 			<div className="container-page">
-				<h2 className="tittle-page">Agenda de Treinos</h2>
-				<div className="filtro-btn-container">
-					<button className="btn-add-agenda" onClick={toggleFormAddVisible}>
-						Agendar Treino
-					</button>
-					<div className="filtros">
-						<label>Filtrar agenda:</label>
-						<select
-							id="filtro"
-							value={filtro}
-							onChange={(e) => setFiltro(e.target.value)}>
-							<option value="todas">Todas</option>
-							<option value="concluidas">Concluídas</option>
-							<option value="atrasadas">Em Atraso</option>
-						</select>
-					</div>
-					<div className="filtros">
-						<label>Filtrar por data:</label>
-						<input
-							type="date"
-							id="dataFiltro"
-							value={dataFiltro}
-							onChange={(e) => {
-								setDataFiltro(e.target.value);
-								setFiltro("todas"); // Isso agora vai atualizar corretamente o estado do filtro
-							}}
-						/>
-						<button onClick={limpaFiltroData}>Limpar Data</button>
+				<h1 className="tittle">Agenda</h1>
+				<div className="container-subtitle-btns">
+					<h2 className="tittle-page">Treinos Agendados:</h2>
+					<div className="container-filtros-btns">
+						<div className="filtros">
+							<label>Filtrar agenda:</label>
+							<select
+								id="filtro"
+								value={filtro}
+								onChange={(e) => setFiltro(e.target.value)}>
+								<option value="todas">Todas</option>
+								<option value="concluidas">Concluídas</option>
+								<option value="atrasadas">Em Atraso</option>
+							</select>
+						</div>
+						<div className="filtros">
+							<label>Filtrar por data:</label>
+							<input
+								type="date"
+								id="dataFiltro"
+								value={dataFiltro}
+								onChange={(e) => {
+									setDataFiltro(e.target.value);
+									setFiltro("todas"); // Isso agora vai atualizar corretamente o estado do filtro
+								}}
+							/>
+							<button onClick={limpaFiltroData}>Limpar Data</button>
+						</div>
+						<button className="add-btn" onClick={toggleFormAddVisible}>
+							Agendar Treino
+						</button>
 					</div>
 				</div>
 

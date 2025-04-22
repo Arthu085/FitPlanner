@@ -149,9 +149,10 @@ const Exercicios = () => {
 			<NavigationBar />
 			<SideBar />
 			<div className="container-page">
-				<div className="h2-addbutton">
-					<h2>Lista de Exercícios</h2>
-					<button className="add-exercise-btn" onClick={toggleFormAdd}>
+				<h1 className="tittle">Exercícios</h1>
+				<div className="container-subtitle-btns">
+					<h2>Lista de Exercícios:</h2>
+					<button className="add-btn" onClick={toggleFormAdd}>
 						Adicionar Exercício
 					</button>
 				</div>

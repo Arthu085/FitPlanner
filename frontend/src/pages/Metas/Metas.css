@@ -45,28 +45,6 @@
 	color: white;
 }
 
-.btn-add-meta {
-	padding: 10px;
-	background: linear-gradient(45deg, #273ec2, #0025f5);
-	border: none;
-	border-radius: 6px;
-	color: white;
-	font-size: 16px;
-	font-weight: bold;
-	text-transform: uppercase;
-	cursor: pointer;
-	transition: 0.3s ease-in-out;
-	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.filtro-btn-container {
-	display: flex;
-	flex-direction: row;
-	gap: 70px;
-	justify-content: baseline;
-	margin-bottom: 20px;
-}
-
 .container-metas {
 	margin-top: 100px;
 	margin-bottom: 30px;
@@ -110,16 +88,6 @@
 .filtros select:focus {
 	outline: none; /* Remove o contorno do botão quando está em foco */
 	border-color: #007bff; /* Cor da borda ao focar */
-}
-
-.btn-add-meta:hover {
-	background: linear-gradient(45deg, #0025f5, #273ec2);
-	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
-	transform: scale(1.05);
-}
-
-.btn-add-meta:active {
-	transform: scale(0.98);
 }
 
 .form-add textarea {

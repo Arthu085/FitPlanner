@@ -196,5 +196,37 @@
 }
 
 .side-bar-container:hover ~ .container-page {
-	margin-left: 100px; /* Empurrando o conteúdo para a direita quando a sidebar é expandida */
+	margin-left: 111px; /* Empurrando o conteúdo para a direita quando a sidebar é expandida */
+}
+
+.tittle {
+	color: white;
+	text-align: center;
+}
+
+.container-subtitle-btns {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 20px;
+	margin-top: 20px;
+	justify-content: space-between;
+	margin-right: 70px;
+	transition: margin-right 0.3s ease;
+}
+
+.side-bar-container:hover ~ .container-page .container-subtitle-btns {
+	margin-right: 10px;
+}
+
+.container-subtitle-btns h2 {
+	display: flex;
+	align-items: last baseline;
+	color: white;
+}
+
+.container-filtros-btns {
+	display: flex;
+	flex-direction: row;
+	gap: 30px;
+	align-items: center;
 }

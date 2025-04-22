@@ -53,6 +53,12 @@
 	justify-content: space-between;
 	align-items: center;
 	margin-top: 50px;
+	margin-right: 70px;
+	transition: margin-right 0.3s ease;
+}
+
+.side-bar-container:hover ~ .container-page .list-btns li {
+	margin-right: 10px;
 }
 
 .list-btns span {
