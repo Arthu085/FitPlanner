@@ -1,0 +1,53 @@
+.sidebar-pages-container {
+	background-color: var(--bg-color);
+	transition: all 0.3s ease;
+}
+
+.login-register-container {
+	background-color: var(--bg-color);
+	transition: all 0.3s ease;
+}
+
+main {
+	background-color: var(--bg-color-auth);
+	transition: all 0.3s ease;
+}
+
+main h2 {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+main label {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+main span {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.input-label input {
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.input-label input::placeholder {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.input-label input:focus {
+	border-color: var(--focus-input-auth-border);
+	box-shadow: var(--focus-input-auth-box);
+	background-color: var(--focus-input-auth-bg);
+	transition: all 0.3s ease;
+}
+
+.button-toggleform {
+	background-color: var(--bg-color-auth);
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}

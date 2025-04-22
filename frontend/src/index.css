@@ -7,7 +7,6 @@
 }
 
 .sidebar-pages-container {
-	background-color: #0d0d0d;
 	min-height: calc(100vh - 0px);
 	width: 100%;
 	overflow: hidden; /* Impede rolagem desnecessária */
@@ -229,4 +228,8 @@
 	flex-direction: row;
 	gap: 30px;
 	align-items: center;
+}
+
+.theme-toggle {
+	margin-right: 1420px;
 }
