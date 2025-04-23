@@ -1,0 +1,130 @@
+.sidebar-pages-container {
+	background-color: var(--bg-color);
+	transition: all 0.3s ease;
+}
+
+.login-register-container {
+	background-color: var(--bg-color);
+	transition: all 0.3s ease;
+}
+
+main {
+	background-color: var(--bg-color-auth);
+	transition: all 0.3s ease;
+}
+
+main h2 {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+main label {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+main span {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.input-label input {
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.input-label input::placeholder {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.input-label input:focus {
+	border-color: var(--focus-input-auth-border);
+	box-shadow: var(--focus-input-auth-box);
+	background-color: var(--focus-input-auth-bg);
+	transition: all 0.3s ease;
+}
+
+.button-toggleform {
+	background-color: var(--bg-color-auth);
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.navigation-bar-container {
+	background-color: var(--bg-color-auth);
+	transition: all 0.3s ease;
+}
+
+.home-icon {
+	filter: var(--filter-invert);
+	transition: all 0.3s ease;
+}
+
+.logout-icon {
+	filter: var(--filter-invert);
+	transition: all 0.3s ease;
+}
+
+.side-bar-container {
+	background-color: var(--focus-input-auth-bg);
+	transition: all 0.3s ease;
+}
+.img-sidebar {
+	filter: var(--filter-invert);
+	transition: all 0.3s ease;
+}
+
+.user-informacoes {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.treinos-concluidos {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.tittle {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.tittle-page {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.meta-content {
+	background: var(--bg-card-color);
+	transition: all 0.3s ease;
+}
+
+.metas-list h2,
+p,
+span {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.filtros label {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.list-btns span,
+p {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.pagination-controls span {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+.buttons-img {
+	filter: var(--filter-invert);
+	transition: all 0.3s ease;
+}

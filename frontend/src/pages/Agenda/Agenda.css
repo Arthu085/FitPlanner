@@ -1,16 +1,10 @@
-.agenda-container {
-	margin-left: 250px;
-	margin-top: 100px;
-}
-
-.agenda-container h2 {
-	color: white;
+.tittle-page {
 	margin-bottom: 20px;
 }
 
 .btn-add-agenda {
 	padding: 10px;
-	background: linear-gradient(45deg, #6a5acd, #836fff);
+	background: linear-gradient(45deg, #273ec2, #0025f5);
 	border: none;
 	border-radius: 6px;
 	color: white;
@@ -24,7 +18,7 @@
 }
 
 .btn-add-agenda:hover {
-	background: linear-gradient(45deg, #836fff, #6a5acd);
+	background: linear-gradient(45deg, #0025f5, #273ec2);
 	box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.3);
 	transform: scale(1.05);
 }
@@ -34,7 +28,7 @@
 }
 
 .filtros input {
-	border: 2px solid #6a5acd;
+	border: 2px solid #0025f5;
 	border-radius: 6px;
 	font-size: 16px;
 	outline: none;

@@ -31,7 +31,7 @@ const getMeta = async(req, res) => {
     const { id_user } = req.params;
 
     try {
-        const result = await pool.query('SELECT * FROM metas WHERE id_user = $1 ORDER BY id_meta', [id_user]);
+        const result = await pool.query('SELECT * FROM metas WHERE id_user = $1 ORDER BY id_meta DESC', [id_user]);
 
         return res.status(200).json({ message: 'Metas encontradas', meta: result.rows });
     } catch (error) {

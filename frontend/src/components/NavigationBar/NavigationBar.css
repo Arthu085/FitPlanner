@@ -1,56 +1,40 @@
 .navigation-bar-container {
-	background-color: #201b2c;
 	position: fixed; /* Torna a barra fixa */
-	top: 0; /* Fixa no topo */
-	left: 0;
-	width: 100%; /* Ocupa toda a largura */
 	z-index: 1000; /* Garante que fique acima de outros elementos */
 	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para destaque */
-}
-
-.navigation-bar-container div {
 	display: flex;
 	flex-direction: row;
+	width: 100%;
 	justify-content: space-between;
 	align-items: center;
-	padding: 20px;
+	padding-bottom: 20px;
+	padding-top: 20px;
 }
 
-.home-button {
-	background: none;
-	border: none;
-	color: white;
-	font-size: 25px;
+.home-icon {
+	width: 40px;
+	height: 40px;
+	margin-left: 20px;
+}
+
+.home-icon:hover {
 	cursor: pointer;
-	text-decoration: none;
-	padding: 0;
-	font-weight: 500;
 }
 
-.home-button:hover {
-	text-decoration: underline;
-}
-
-.home-button:active {
+.home-icon:active {
 	transform: scale(1.05);
 }
 
-.logout-button {
-	background: none;
-	border: none;
-	color: white;
-	font-size: inherit;
+.logout-icon {
+	width: 35px;
+	height: 35px;
+	margin-right: 20px;
+}
+
+.logout-icon:hover {
 	cursor: pointer;
-	text-decoration: none;
-	padding: 0;
-	font-weight: 500;
-	margin-right: 30px;
 }
 
-.logout-button:hover {
-	text-decoration: underline;
-}
-
-.logout-button:active {
+.logout-icon:active {
 	transform: scale(1.05);
 }

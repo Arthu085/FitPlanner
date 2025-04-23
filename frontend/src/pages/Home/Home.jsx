@@ -34,10 +34,10 @@ const Home = () => {
 	}, [userId]);
 
 	return (
-		<div className="home-container">
+		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
-			<div className="home-informacoes">
+			<div className="container-page">
 				{userData ? (
 					<div>
 						<div className="user-informacoes">

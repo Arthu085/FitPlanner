@@ -240,49 +240,50 @@ const Treinos = () => {
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
-			<div className="treinos-container">
-				<h2>Lista de Treinos</h2>
-				<div className="btn-add-treino">
-					<button className="btn-add-agenda" onClick={toggleFormAddVisible}>
+			<div className="container-page">
+				<h1 className="tittle">Treinos</h1>
+				<div className="container-subtitle-btns">
+					<h2 className="tittle-page">Lista de Treinos:</h2>
+					<button className="add-btn" onClick={toggleFormAddVisible}>
 						Adicionar Treino
 					</button>
 				</div>
-			</div>
 
-			<div className="metas-list">
-				{treinos.length > 0 ? (
-					treinos.map((treino) => (
-						<div key={treino.id_treino} className="meta-content">
-							<h2>{treino.nome_treino}</h2>
-							{treino.exercicios.map((exercicio, index) => (
-								<div key={index}>
-									<span>{exercicio.exercise_name} -</span>
-									<span> {exercicio.serie}x</span>
-									<span>{exercicio.repeticoes}</span>
+				<div className="metas-list">
+					{treinos.length > 0 ? (
+						treinos.map((treino) => (
+							<div key={treino.id_treino} className="meta-content">
+								<h2>{treino.nome_treino}</h2>
+								{treino.exercicios.map((exercicio, index) => (
+									<div key={index}>
+										<span>{exercicio.exercise_name} -</span>
+										<span> {exercicio.serie}x</span>
+										<span>{exercicio.repeticoes}</span>
+									</div>
+								))}
+								<div className="btn-edit-delete">
+									<button
+										className="btn-edit-treino"
+										onClick={() =>
+											toggleFormEditVisible(
+												treino.id_treino,
+												treino.id_treino_exercicio
+											)
+										}>
+										Editar
+									</button>
+									<button
+										className="btn-remove-treino"
+										onClick={() => toggleFormDeleteVisible(treino.id_treino)}>
+										Excluir
+									</button>
 								</div>
-							))}
-							<div className="btn-edit-delete">
-								<button
-									className="btn-edit-treino"
-									onClick={() =>
-										toggleFormEditVisible(
-											treino.id_treino,
-											treino.id_treino_exercicio
-										)
-									}>
-									Editar
-								</button>
-								<button
-									className="btn-remove-treino"
-									onClick={() => toggleFormDeleteVisible(treino.id_treino)}>
-									Excluir
-								</button>
 							</div>
-						</div>
-					))
-				) : (
-					<p className="no-metas-message">Nenhum treino cadastrado.</p>
-				)}
+						))
+					) : (
+						<p>Nenhum treino cadastrado.</p>
+					)}
+				</div>
 			</div>
 
 			{formVisibleAdd && (

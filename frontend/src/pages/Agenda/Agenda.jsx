@@ -35,49 +35,50 @@ const Agenda = () => {
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
-			<div className="agenda-container">
-				<h2>Agenda de Treinos</h2>
-				<div className="filtro-btn-container">
-					<button className="btn-add-agenda" onClick={toggleFormAddVisible}>
-						Agendar Treino
-					</button>
-					<div className="filtros">
-						<label>Filtrar agenda:</label>
-						<select
-							id="filtro"
-							value={filtro}
-							onChange={(e) => setFiltro(e.target.value)}>
-							<option value="todas">Todas</option>
-							<option value="concluidas">Concluídas</option>
-							<option value="atrasadas">Em Atraso</option>
-						</select>
-					</div>
-					<div className="filtros">
-						<label>Filtrar por data:</label>
-						<input
-							type="date"
-							id="dataFiltro"
-							value={dataFiltro}
-							onChange={(e) => {
-								setDataFiltro(e.target.value);
-								setFiltro("todas"); // Isso agora vai atualizar corretamente o estado do filtro
-							}}
-						/>
-						<button onClick={limpaFiltroData}>Limpar Data</button>
+			<div className="container-page">
+				<h1 className="tittle">Agenda</h1>
+				<div className="container-subtitle-btns">
+					<h2 className="tittle-page">Treinos Agendados:</h2>
+					<div className="container-filtros-btns">
+						<div className="filtros">
+							<label>Filtrar agenda:</label>
+							<select
+								id="filtro"
+								value={filtro}
+								onChange={(e) => setFiltro(e.target.value)}>
+								<option value="todas">Todas</option>
+								<option value="concluidas">Concluídas</option>
+								<option value="atrasadas">Em Atraso</option>
+							</select>
+						</div>
+						<div className="filtros">
+							<label>Filtrar por data:</label>
+							<input
+								type="date"
+								id="dataFiltro"
+								value={dataFiltro}
+								onChange={(e) => {
+									setDataFiltro(e.target.value);
+									setFiltro("todas"); // Isso agora vai atualizar corretamente o estado do filtro
+								}}
+							/>
+							<button onClick={limpaFiltroData}>Limpar Data</button>
+						</div>
+						<button className="add-btn" onClick={toggleFormAddVisible}>
+							Agendar Treino
+						</button>
 					</div>
 				</div>
-			</div>
 
-			<div className="metas-list">
-				<p className="no-metas-message">
-					Nenhuma meta encontrada para o filtro selecionado.
-				</p>
-				<div className={`meta-content`}>
-					<h2>Treino A</h2>
-					<div className="span-datas">
-						<span>Data do treino:</span>
-						<span>Hora do treino:</span>
-						<input type="checkbox" />
+				<div className="metas-list">
+					<p>Nenhuma meta encontrada para o filtro selecionado.</p>
+					<div className={`meta-content`}>
+						<h2>Treino A</h2>
+						<div className="span-datas">
+							<span>Data do treino:</span>
+							<span>Hora do treino:</span>
+							<input type="checkbox" />
+						</div>
 					</div>
 				</div>
 			</div>

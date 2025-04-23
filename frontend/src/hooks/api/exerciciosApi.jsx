@@ -1,7 +1,7 @@
-export const fetchExercicios = async () => {
+export const fetchExercicios = async (page = 1, limit = 8) => {
 	try {
 		const response = await fetch(
-			"http://localhost:3000/api/exercicios/getexercicios"
+			`http://localhost:3000/api/exercicios/getexercicios?page=${page}&limit=${limit}`
 		);
 		const data = await response.json();
 		return data;

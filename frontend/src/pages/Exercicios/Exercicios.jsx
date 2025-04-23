@@ -16,6 +16,8 @@ import {
 	editExercicio,
 } from "../../hooks/api/exerciciosApi";
 
+const itemsPerPage = 8;
+
 const Exercicios = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
 	const [formVisibleEdit, setFormVisibleEdit] = useState(false);
@@ -23,13 +25,18 @@ const Exercicios = () => {
 	const [exercicios, setExercicios] = useState([]);
 	const [exercise_name, setExerciseName] = useState("");
 	const [id_exercise, setExercicioId] = useState(null);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
 
 	const { isLoggedIn } = useAuth();
 
 	useEffect(() => {
 		isLoggedIn();
-		loadExercicios();
 	}, []);
+
+	useEffect(() => {
+		loadExercicios();
+	}, [currentPage]);
 
 	const toggleFormAdd = () => {
 		setFormVisibleAdd(!formVisibleAdd);
@@ -47,11 +54,20 @@ const Exercicios = () => {
 
 	const loadExercicios = async () => {
 		try {
-			const data = await fetchExercicios();
+			const data = await fetchExercicios(currentPage, itemsPerPage);
 			setExercicios(data.data);
+			setTotalPages(data.totalPages);
 		} catch (error) {
 			alert("Erro ao buscar exercícios", error);
 		}
+	};
+
+	const nextPage = () => {
+		if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+	};
+
+	const prevPage = () => {
+		if (currentPage > 1) setCurrentPage(currentPage - 1);
 	};
 
 	const handleCreateExercicio = async (e) => {
@@ -132,10 +148,11 @@ const Exercicios = () => {
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
-			<div className="exercicios-list">
-				<div className="h2-addbutton">
-					<h2>Lista de Exercícios</h2>
-					<button className="add-exercise-btn" onClick={toggleFormAdd}>
+			<div className="container-page">
+				<h1 className="tittle">Exercícios</h1>
+				<div className="container-subtitle-btns">
+					<h2>Lista de Exercícios:</h2>
+					<button className="add-btn" onClick={toggleFormAdd}>
 						Adicionar Exercício
 					</button>
 				</div>
@@ -162,6 +179,20 @@ const Exercicios = () => {
 						)}
 					</ul>
 				</div>
+
+				{totalPages > 1 && (
+					<div className="pagination-controls">
+						<button onClick={prevPage} disabled={currentPage === 1}>
+							Anterior
+						</button>
+						<span>
+							Página {currentPage} de {totalPages}
+						</span>
+						<button onClick={nextPage} disabled={currentPage === totalPages}>
+							Próxima
+						</button>
+					</div>
+				)}
 			</div>
 
 			{formVisibleAdd && (

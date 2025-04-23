@@ -1,57 +1,63 @@
 import "./SideBar.css";
 
-// react
 import { useNavigate } from "react-router-dom";
+import { Goal, Dumbbell, History, NotebookTabs } from "lucide-react";
+
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const SideBar = () => {
 	const navigate = useNavigate();
 
+	const buttons = [
+		{
+			icon: <NotebookTabs size={38} />,
+			alt: "Treino",
+			title: "Treinos",
+			route: "/treinos",
+			className: "treino-icon",
+		},
+		{
+			icon: <History size={38} />,
+			alt: "Horário",
+			title: "Agenda",
+			route: "/agenda",
+		},
+		{
+			icon: <Dumbbell size={38} />,
+			alt: "Exercício",
+			title: "Exercícios",
+			route: "/exercicios",
+		},
+		{
+			icon: <Goal size={38} />,
+			alt: "Meta",
+			title: "Metas",
+			route: "/metas",
+		},
+	];
+
 	return (
 		<div className="side-bar-container">
-			<div className="buttons-img">
-				<img
-					className="img-sidebar"
-					src="../../images/treino.png"
-					alt="Treino icone"
-				/>
-				<button
-					className="buttons-sidebar"
-					onClick={() => navigate("/treinos")}>
-					Treinos
-				</button>
+			<div>
+				{buttons.map((btn, index) => (
+					<div
+						key={index}
+						className="buttons-img"
+						onClick={() => navigate(btn.route)}
+						title={btn.title}>
+						{btn.icon ? (
+							<div className="icon-sidebar">{btn.icon}</div>
+						) : (
+							<img
+								className={`img-sidebar ${btn.className || ""}`}
+								src={btn.src}
+								alt={`${btn.alt} ícone`}
+							/>
+						)}
+					</div>
+				))}
 			</div>
-			<div className="buttons-img">
-				<img
-					className="img-sidebar"
-					src="../../images/horarios.png"
-					alt="Horário icone"
-				/>
-				<button className="buttons-sidebar" onClick={() => navigate("/agenda")}>
-					Agenda
-				</button>
-			</div>
-			<div className="buttons-img">
-				<img
-					className="img-sidebar"
-					src="../../images/exercicios.png"
-					alt="Exercício icone"
-				/>
-				<button
-					className="buttons-sidebar"
-					onClick={() => navigate("/exercicios")}>
-					Exercícios
-				</button>
-			</div>
-			<div className="buttons-img">
-				<img
-					className="img-sidebar"
-					src="../../images/metas.png"
-					alt="Meta icone"
-				/>
-				<button className="buttons-sidebar" onClick={() => navigate("/metas")}>
-					Metas
-				</button>
-			</div>
+			<ThemeToggle className="theme-btn" />
 		</div>
 	);
 };

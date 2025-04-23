@@ -1,14 +1,33 @@
 const pool = require('../config/dbConfig');
 
 const getExercicios = async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM exercises ORDER BY id_exercise');
-        res.status(200).json({ data: result.rows });
-    } catch(error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erro ao obter exercícios', error });
-    };
+	try {
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 8;
+		const offset = (page - 1) * limit;
+
+		const result = await pool.query(
+			'SELECT * FROM exercises ORDER BY id_exercise LIMIT $1 OFFSET $2',
+			[limit, offset]
+		);
+
+		const totalResult = await pool.query('SELECT COUNT(*) FROM exercises');
+		const totalItems = parseInt(totalResult.rows[0].count);
+		const totalPages = Math.ceil(totalItems / limit);
+
+		res.status(200).json({
+			data: result.rows,
+			page,
+			limit,
+			totalItems,
+			totalPages
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Erro ao obter exercícios', error });
+	}
 };
+
 
 const addExercicios = async (req, res) => {
     let { exercise_name } = req.body;

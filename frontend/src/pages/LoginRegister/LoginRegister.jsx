@@ -5,6 +5,9 @@ import { useState } from "react";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
+import { useTheme } from "../../hooks/useTheme";
+
+import ThemeToggle from "../../components/ThemeToggle/ThemeToggle";
 
 const LoginRegister = () => {
 	const [isLogin, setIsLogin] = useState(true);
@@ -12,6 +15,13 @@ const LoginRegister = () => {
 	const [password, setPassword] = useState("");
 	const [name, setName] = useState("");
 	const [lastName, setLastName] = useState("");
+
+	const { theme } = useTheme();
+
+	const logoSrc =
+		theme === "light"
+			? "../../public/images/logo_preto.svg"
+			: "../../public/images/logo_branco.svg";
 
 	const { login, register } = useAuth();
 
@@ -74,7 +84,10 @@ const LoginRegister = () => {
 			<main>
 				{isLogin ? (
 					<form onSubmit={handleLogin}>
-						<h2>Login</h2>
+						<div className="logo-img">
+							<img className="logo" src={logoSrc} alt="Logo do sistema"></img>
+						</div>
+						<h2>Entrar</h2>
 						<div className="input-label">
 							<label>Email</label>
 							<input
@@ -178,6 +191,9 @@ const LoginRegister = () => {
 					</form>
 				)}
 			</main>
+			<div className="theme-toggle">
+				<ThemeToggle />
+			</div>
 		</div>
 	);
 };
