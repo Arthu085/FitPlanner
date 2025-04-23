@@ -31,6 +31,7 @@ export default function ThemeToggle({ className = "" }) {
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
 			style={baseStyle}
+			title="Alterar tema"
 			className={className}>
 			{theme === "light" ? (
 				<Moon style={iconStyle} />
