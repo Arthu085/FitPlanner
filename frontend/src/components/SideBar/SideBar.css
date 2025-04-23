@@ -34,9 +34,10 @@
 .buttons-img {
 	display: flex;
 	margin-bottom: 50px;
-	margin-left: 5px;
+	margin-right: 1px;
 	opacity: 0; /* escondido inicialmente */
 	transition: opacity 0.3s ease;
+	cursor: pointer;
 }
 
 .side-bar-container:hover .buttons-img {

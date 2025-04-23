@@ -1,6 +1,7 @@
 import "./SideBar.css";
 
 import { useNavigate } from "react-router-dom";
+import { Goal, Dumbbell, History, NotebookTabs } from "lucide-react";
 
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
@@ -9,26 +10,26 @@ const SideBar = () => {
 
 	const buttons = [
 		{
-			src: "../../images/treino.png",
+			icon: <NotebookTabs size={38} />,
 			alt: "Treino",
 			title: "Treinos",
 			route: "/treinos",
 			className: "treino-icon",
 		},
 		{
-			src: "../../images/horarios.png",
+			icon: <History size={38} />,
 			alt: "Horário",
 			title: "Agenda",
 			route: "/agenda",
 		},
 		{
-			src: "../../images/exercicios.png",
+			icon: <Dumbbell size={38} />,
 			alt: "Exercício",
 			title: "Exercícios",
 			route: "/exercicios",
 		},
 		{
-			src: "../../images/metas.png",
+			icon: <Goal size={38} />,
 			alt: "Meta",
 			title: "Metas",
 			route: "/metas",
@@ -42,13 +43,17 @@ const SideBar = () => {
 					<div
 						key={index}
 						className="buttons-img"
-						onClick={() => navigate(btn.route)}>
-						<img
-							className={`img-sidebar ${btn.className || ""}`}
-							src={btn.src}
-							alt={`${btn.alt} ícone`}
-							title={btn.title}
-						/>
+						onClick={() => navigate(btn.route)}
+						title={btn.title}>
+						{btn.icon ? (
+							<div className="icon-sidebar">{btn.icon}</div>
+						) : (
+							<img
+								className={`img-sidebar ${btn.className || ""}`}
+								src={btn.src}
+								alt={`${btn.alt} ícone`}
+							/>
+						)}
 					</div>
 				))}
 			</div>
