@@ -40,6 +40,10 @@
 	cursor: pointer;
 }
 
+.buttons-img:active {
+	transform: scale(1.05);
+}
+
 .side-bar-container:hover .buttons-img {
 	opacity: 1; /* mostra só no hover */
 }
@@ -52,32 +56,17 @@
 	transition: transform 0.2s ease;
 }
 
-.img-sidebar:active {
-	transform: scale(1.05);
-}
-
-.button-label {
-	color: white;
-	white-space: nowrap;
-	opacity: 0;
-	transition: opacity 0.3s ease;
-	margin-left: 10px;
-}
-
-.side-bar-container:hover .button-label {
-	opacity: 1;
-}
-
-.treino-icon {
-	padding-left: 3px;
-}
-
 .theme-btn {
 	display: flex;
 	margin-bottom: 50px;
 	opacity: 0;
+	transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+.theme-toggle-container {
+	transition: opacity 0.3s ease;
 }
 
 .side-bar-container:hover .theme-btn {
-	opacity: 1; /* mostra só no hover */
+	opacity: 1;
 }

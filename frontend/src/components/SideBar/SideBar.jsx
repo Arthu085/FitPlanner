@@ -14,7 +14,6 @@ const SideBar = () => {
 			alt: "Treino",
 			title: "Treinos",
 			route: "/treinos",
-			className: "treino-icon",
 		},
 		{
 			icon: <History size={38} />,
@@ -57,7 +56,9 @@ const SideBar = () => {
 					</div>
 				))}
 			</div>
-			<ThemeToggle className="theme-btn" />
+			<div className="theme-toggle-container">
+				<ThemeToggle className="theme-btn" />
+			</div>
 		</div>
 	);
 };

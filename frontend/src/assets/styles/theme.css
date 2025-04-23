@@ -128,3 +128,8 @@ p {
 	filter: var(--filter-invert);
 	transition: all 0.3s ease;
 }
+
+.container-subtitle-btns h2 {
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
