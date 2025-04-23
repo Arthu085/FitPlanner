@@ -124,9 +124,7 @@ const Metas = () => {
 
 				<div className="metas-list">
 					{metasFiltradas.length === 0 ? (
-						<p className="no-metas-message">
-							Nenhuma meta encontrada para o filtro selecionado.
-						</p>
+						<p>Nenhuma meta encontrada para o filtro selecionado.</p>
 					) : (
 						metasFiltradas.map((meta) => (
 							<div

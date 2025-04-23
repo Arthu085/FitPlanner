@@ -281,7 +281,7 @@ const Treinos = () => {
 							</div>
 						))
 					) : (
-						<p className="no-metas-message">Nenhum treino cadastrado.</p>
+						<p>Nenhum treino cadastrado.</p>
 					)}
 				</div>
 			</div>

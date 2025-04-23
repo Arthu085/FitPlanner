@@ -5,13 +5,17 @@
 	--focus-input-auth-border: #252525;
 	--focus-input-auth-box: 0 0 8px rgba(60, 60, 60, 0.8);
 	--focus-input-auth-bg: #3a3a3a;
+	--filter-invert: invert(1);
+	--bg-card-color: rgba(255, 255, 255, 0.095);
 }
 
 .light-theme {
 	--bg-color: #ffffff;
-	--bg-color-auth: #d5d1d1;
+	--bg-color-auth: #aca9a9;
 	--text-color: #0d0d0d;
 	--focus-input-auth-border: #808080;
 	--focus-input-auth-box: 0 0 8px rgba(135, 135, 135, 0.8);
 	--focus-input-auth-bg: #7a7a7a;
+	--filter-invert: invert(0);
+	--bg-card-color: rgba(77, 74, 74, 0.607);
 }

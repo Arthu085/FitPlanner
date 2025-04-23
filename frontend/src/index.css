@@ -199,7 +199,6 @@
 }
 
 .tittle {
-	color: white;
 	text-align: center;
 }
 
@@ -220,7 +219,6 @@
 .container-subtitle-btns h2 {
 	display: flex;
 	align-items: last baseline;
-	color: white;
 }
 
 .container-filtros-btns {

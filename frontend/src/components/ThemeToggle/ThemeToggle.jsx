@@ -2,15 +2,15 @@ import { useState } from "react";
 import { useTheme } from "../../hooks/useTheme";
 import { Moon, Sun } from "lucide-react";
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ className = "" }) {
 	const { theme, toggleTheme } = useTheme();
 	const [hovered, setHovered] = useState(false);
 
 	const baseStyle = {
 		backgroundColor: hovered
 			? theme === "light"
-				? "rgba(0, 0, 0, 0.33)" // fundo preto transparente no tema claro
-				: "rgba(255, 255, 255, 0.1)" // fundo branco transparente no tema escuro
+				? "rgba(0, 0, 0, 0.33)"
+				: "rgba(255, 255, 255, 0.1)"
 			: "transparent",
 		border: "none",
 		cursor: "pointer",
@@ -20,8 +20,8 @@ export default function ThemeToggle() {
 	};
 
 	const iconStyle = {
-		width: "50px",
-		height: "50px",
+		width: "45px",
+		height: "45px",
 		filter: theme === "dark" ? "invert(1)" : "none",
 	};
 
@@ -30,7 +30,8 @@ export default function ThemeToggle() {
 			onClick={toggleTheme}
 			onMouseEnter={() => setHovered(true)}
 			onMouseLeave={() => setHovered(false)}
-			style={baseStyle}>
+			style={baseStyle}
+			className={className}>
 			{theme === "light" ? (
 				<Moon style={iconStyle} />
 			) : (

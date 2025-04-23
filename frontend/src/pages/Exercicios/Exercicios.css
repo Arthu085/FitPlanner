@@ -62,7 +62,6 @@
 }
 
 .list-btns span {
-	color: white;
 	font-size: 1.2em;
 	text-transform: uppercase;
 	word-wrap: break-word; /* Quebra palavras longas se necessário */
@@ -126,7 +125,6 @@
 }
 
 .pagination-controls span {
-	color: white;
 	font-weight: 500;
 }
 

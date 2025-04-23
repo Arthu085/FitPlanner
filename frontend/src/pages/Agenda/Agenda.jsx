@@ -71,9 +71,7 @@ const Agenda = () => {
 				</div>
 
 				<div className="metas-list">
-					<p className="no-metas-message">
-						Nenhuma meta encontrada para o filtro selecionado.
-					</p>
+					<p>Nenhuma meta encontrada para o filtro selecionado.</p>
 					<div className={`meta-content`}>
 						<h2>Treino A</h2>
 						<div className="span-datas">

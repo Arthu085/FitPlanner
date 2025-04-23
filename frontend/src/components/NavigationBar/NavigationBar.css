@@ -1,5 +1,4 @@
 .navigation-bar-container {
-	background-color: #1b1b1b;
 	position: fixed; /* Torna a barra fixa */
 	z-index: 1000; /* Garante que fique acima de outros elementos */
 	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para destaque */
@@ -15,7 +14,6 @@
 .home-icon {
 	width: 40px;
 	height: 40px;
-	filter: invert(1);
 	margin-left: 20px;
 }
 
@@ -30,7 +28,6 @@
 .logout-icon {
 	width: 35px;
 	height: 35px;
-	filter: invert(1);
 	margin-right: 20px;
 }
 

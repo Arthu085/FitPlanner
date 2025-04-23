@@ -1,5 +1,8 @@
 import "./SideBar.css";
+
 import { useNavigate } from "react-router-dom";
+
+import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const SideBar = () => {
 	const navigate = useNavigate();
@@ -34,19 +37,22 @@ const SideBar = () => {
 
 	return (
 		<div className="side-bar-container">
-			{buttons.map((btn, index) => (
-				<div
-					key={index}
-					className="buttons-img"
-					onClick={() => navigate(btn.route)}>
-					<img
-						className={`img-sidebar ${btn.className || ""}`}
-						src={btn.src}
-						alt={`${btn.alt} ícone`}
-						title={btn.title}
-					/>
-				</div>
-			))}
+			<div>
+				{buttons.map((btn, index) => (
+					<div
+						key={index}
+						className="buttons-img"
+						onClick={() => navigate(btn.route)}>
+						<img
+							className={`img-sidebar ${btn.className || ""}`}
+							src={btn.src}
+							alt={`${btn.alt} ícone`}
+							title={btn.title}
+						/>
+					</div>
+				))}
+			</div>
+			<ThemeToggle className="theme-btn" />
 		</div>
 	);
 };
