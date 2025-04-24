@@ -6,13 +6,29 @@ import { useEffect, useState } from "react";
 // components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
+import ErrorToast from "../../components/ErrorToast/ErrorToast";
+import SuccessToast from "../../components/SuccessToast/SuccessToast";
+import InfoToast from "../../components/InfoToast/InfoToast";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
 import { fetchUser } from "../../hooks/api/homeApi";
+import { useToast } from "../../hooks/useToast";
 
 const Home = () => {
 	const [userData, setUserData] = useState([]);
+	const {
+		errorMessage,
+		showError,
+		successMessage,
+		showSuccess,
+		infoMessage,
+		showInfo,
+		showErrorToast,
+		showSuccessToast,
+		showInfoToast,
+		hideToasts,
+	} = useToast();
 
 	const { userId, isLoggedIn } = useAuth();
 
@@ -22,12 +38,14 @@ const Home = () => {
 
 	useEffect(() => {
 		const loadUser = async () => {
-			try {
-				const data = await fetchUser(userId);
-				setUserData(data.data);
-			} catch (error) {
-				alert("Erro ao buscar usuário");
+			const result = await fetchUser(userId);
+
+			if (!result.success) {
+				showErrorToast(result.message);
+				return;
 			}
+
+			setUserData(result.data);
 		};
 
 		loadUser();
@@ -37,6 +55,19 @@ const Home = () => {
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
+			<div className="toast-container">
+				<ErrorToast
+					message={errorMessage}
+					show={showError}
+					onClose={hideToasts}
+				/>
+				<SuccessToast
+					message={successMessage}
+					show={showSuccess}
+					onClose={hideToasts}
+				/>
+				<InfoToast message={infoMessage} show={showInfo} onClose={hideToasts} />
+			</div>
 			<div className="container-page">
 				{userData ? (
 					<div>

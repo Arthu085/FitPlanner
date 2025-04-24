@@ -15,7 +15,12 @@ const getExercicios = async (req, res) => {
 		const totalItems = parseInt(totalResult.rows[0].count);
 		const totalPages = Math.ceil(totalItems / limit);
 
+        if (result.rows.length === 0) {
+            return res.status(200).json({success: true, data: [], message: "Nenhum exercício encontrado"})
+        }
+
 		res.status(200).json({
+            success: true,
 			data: result.rows,
 			page,
 			limit,
@@ -23,8 +28,8 @@ const getExercicios = async (req, res) => {
 			totalPages
 		});
 	} catch (error) {
-		console.error(error);
-		res.status(500).json({ message: 'Erro ao obter exercícios', error });
+        console.error('Erro ao encontrar exercícios:', error);
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor', error });
 	}
 };
 
@@ -36,6 +41,10 @@ const addExercicios = async (req, res) => {
         // Converter para minúsculas para evitar duplicação com diferenças de caixa
         exercise_name = exercise_name.toLowerCase();
 
+        if (!exercise_name || exercise_name.trim() === "") {
+			return res.status(404).json({success: false,  message: "Nome do exercício não pode estar vazio"});
+		}
+
         // Verifica se já existe um exercício com esse nome
         const checkExistence = await pool.query(
             'SELECT * FROM exercises WHERE LOWER(exercise_name) = $1',
@@ -43,7 +52,7 @@ const addExercicios = async (req, res) => {
         );
 
         if (checkExistence.rows.length > 0) {
-            return res.status(400).json({ error: 'Esse exercício já existe!' });
+            return res.status(400).json({ success: false, message: 'Esse exercício já existe' });
         }
 
         // Se não existir, insere no banco
@@ -52,11 +61,11 @@ const addExercicios = async (req, res) => {
             [exercise_name]
         );
 
-        return res.status(201).json({ message: 'Exercício criado com sucesso!', exercise: result.rows[0] });
+        return res.status(201).json({ success: true, message: 'Exercício criado com sucesso' });
 
     } catch (error) {
-        console.error('Erro no backend', error);
-        return res.status(500).json({ error: 'Erro ao criar exercício', details: error.message });
+        console.error('Erro ao adicionar exercício:', error);
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor', error });
     }
 };
 
@@ -68,13 +77,13 @@ const deleteExercicio = async (req, res) => {
         const result = await pool.query(query, [id_exercise]);
 
         if(result.rows.length === 0) {
-            return res.status(404).json({ error: 'Exercício não encontrado'});
+            return res.status(404).json({ success: false, message: 'Exercício não encontrado'});
         }
 
-        res.status(200).json({ message: 'Exercício excluído com sucesso', data: result.rows[0] });
-    } catch (err) {
-        console.error('Erro ao excluir exercício', err);
-        res.status(500).json({ message: 'Erro interno no servidor', err });        
+        res.status(200).json({ success:true, message: 'Exercício excluído com sucesso' });
+    } catch (error) {
+        console.error('Erro ao deletar exercício:', error);
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor', error });        
     }
 };
 
@@ -85,6 +94,10 @@ const editExercicio = async (req, res) => {
     try {
         exercise_name = exercise_name.toLowerCase();
 
+        if (!exercise_name || exercise_name.trim() === "") {
+			return res.status(404).json({success: false,  message: "Nome do exercício não pode estar vazio"});
+		}
+
         // Verifica se já existe um exercício com esse nome
         const checkExistence = await pool.query(
             'SELECT * FROM exercises WHERE LOWER(exercise_name) = $1',
@@ -92,20 +105,20 @@ const editExercicio = async (req, res) => {
         );
 
         if (checkExistence.rows.length > 0) {
-            return res.status(400).json({ error: 'Esse exercício já existe!' });
+            return res.status(400).json({ success: false, message: 'Esse exercício já existe' });
         }
 
         const query = `UPDATE exercises SET exercise_name = $1 WHERE id_exercise = $2 RETURNING *`;
         const result = await pool.query(query, [exercise_name, id_exercise]);
 
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Exercício não encontrado' });
+            return res.status(404).json({ success: false, message: 'Exercício não encontrado' });
         }
 
-        res.status(200).json({ message: 'Exercício editado com sucesso', data: result.rows[0] });
-    } catch (err) {
-        console.error('Erro ao editar exercício:', err);
-        res.status(500).json({ message: 'Erro interno no servidor', error: err.message });        
+        res.status(200).json({ success: true, message: 'Exercício editado com sucesso' });
+    } catch (error) {
+        console.error('Erro ao editar exercício:', error);
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor', error });           
     }
 };
 

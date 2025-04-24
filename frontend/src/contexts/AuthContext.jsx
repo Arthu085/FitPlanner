@@ -30,16 +30,19 @@ export const AuthProvider = ({ children }) => {
 
 			const data = await response.json();
 
-			if (data.success) {
-				localStorage.setItem("token", data.token);
-				localStorage.setItem("id", data.id_user);
-				setUserId(data.id_user);
-				navigate("/home");
-			} else {
-				alert(data.message);
+			if (!data.success) {
+				return { success: data.success, message: data.message };
 			}
+
+			localStorage.setItem("token", data.token);
+			localStorage.setItem("id", data.id_user);
+			setUserId(data.id_user);
+			return { success: true };
 		} catch (error) {
-			alert("Erro ao conectar-se ao servidor: " + error.message);
+			return {
+				success: false,
+				message: "Erro ao conectar-se ao servidor: " + error.message,
+			};
 		}
 	};
 
@@ -60,14 +63,16 @@ export const AuthProvider = ({ children }) => {
 
 			const data = await response.json();
 
-			if (response.ok) {
-				alert("Conta registrada com sucesso!");
-				return true;
-			} else {
-				alert(data.message || "Erro ao registrar usuário.");
+			if (!data.success) {
+				return { success: data.success, message: data.message };
 			}
+
+			return { success: true, message: data.message };
 		} catch (error) {
-			alert("Erro ao conectar-se ao servidor: " + error.message);
+			return {
+				success: false,
+				message: "Erro ao conectar-se ao servidor: " + error.message,
+			};
 		}
 	};
 
@@ -81,7 +86,6 @@ export const AuthProvider = ({ children }) => {
 	const isLoggedIn = () => {
 		if (!userId) {
 			navigate("/");
-			alert("Faça login no sistema");
 			localStorage.removeItem("id");
 			localStorage.removeItem("token");
 		}

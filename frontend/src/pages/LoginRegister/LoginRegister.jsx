@@ -2,12 +2,16 @@ import "./LoginRegister.css";
 
 // react
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
+import { useToast } from "../../hooks/useToast";
 
 import ThemeToggle from "../../components/ThemeToggle/ThemeToggle";
+import ErrorToast from "../../components/ErrorToast/ErrorToast";
+import SuccessToast from "../../components/SuccessToast/SuccessToast";
 
 const LoginRegister = () => {
 	const [isLogin, setIsLogin] = useState(true);
@@ -15,7 +19,17 @@ const LoginRegister = () => {
 	const [password, setPassword] = useState("");
 	const [name, setName] = useState("");
 	const [lastName, setLastName] = useState("");
+	const {
+		errorMessage,
+		showError,
+		successMessage,
+		showSuccess,
+		showErrorToast,
+		showSuccessToast,
+		hideToasts,
+	} = useToast();
 
+	const navigate = useNavigate();
 	const { theme } = useTheme();
 
 	const logoSrc =
@@ -36,51 +50,44 @@ const LoginRegister = () => {
 	const handleLogin = async (e) => {
 		e.preventDefault();
 
-		if (!email.trim() || !password.trim()) {
-			alert("Preencha o e-mail e a senha corretamente.");
+		const result = await login(email, password);
+
+		if (!result.success) {
+			showErrorToast(result.message);
 			return;
 		}
 
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(email)) {
-			alert("Por favor, insira um e-mail válido.");
-			return;
-		}
-
-		await login(email, password);
+		navigate("/home");
 	};
 
 	const handleRegister = async (e) => {
 		e.preventDefault();
 
-		const trimmedEmail = email.trim();
-		const trimmedPassword = password.trim();
-		const trimmedName = name.trim();
-		const trimmedLastName = lastName.trim();
+		const result = await register(email, password, name, lastName);
 
-		if (!trimmedEmail || !trimmedPassword || !trimmedName || !trimmedLastName) {
-			alert("Preencha todos os campos");
+		if (!result.success) {
+			showErrorToast(result.message);
 			return;
 		}
 
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-		if (!emailRegex.test(trimmedEmail)) {
-			alert("Por favor, insira um e-mail válido.");
-			return;
-		}
-
-		if (password.length < 6) {
-			alert("A senha deve ter no mínimo 6 caracteres.");
-			return;
-		}
-
-		const success = await register(email, password, name, lastName);
-		if (success) toggleForm();
+		showSuccessToast(result.message);
+		toggleForm();
 	};
 
 	return (
 		<div className="login-register-container">
+			<div className="toast-container auth">
+				<ErrorToast
+					message={errorMessage}
+					show={showError}
+					onClose={hideToasts}
+				/>
+				<SuccessToast
+					message={successMessage}
+					show={showSuccess}
+					onClose={hideToasts}
+				/>
+			</div>
 			<main>
 				{isLogin ? (
 					<form onSubmit={handleLogin}>

@@ -3,6 +3,9 @@ import "./Metas.css";
 // components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
+import InfoToast from "../../components/InfoToast/InfoToast";
+import ErrorToast from "../../components/ErrorToast/ErrorToast";
+import SuccessToast from "../../components/SuccessToast/SuccessToast";
 
 // react
 import { useEffect, useState } from "react";
@@ -10,6 +13,7 @@ import { useEffect, useState } from "react";
 // hooks
 import { useAuth } from "../../hooks/useAuth";
 import { fetchMeta, createMeta, editMeta } from "../../hooks/api/metaApi";
+import { useToast } from "../../hooks/useToast";
 
 // utils
 import { formatarData } from "../../utils/formatters";
@@ -22,7 +26,19 @@ const Metas = () => {
 	const [descricao_meta, setDescricaoMeta] = useState("");
 	const [data_finalizacao_meta, setDataFinalizacaoMeta] = useState("");
 	const [id_meta, setIdMeta] = useState("");
-	const [metasFiltradas, setMetasFiltradas] = useState(metas); // estado para as metas filtradas
+	const [metasFiltradas, setMetasFiltradas] = useState(metas);
+	const {
+		errorMessage,
+		showError,
+		successMessage,
+		showSuccess,
+		infoMessage,
+		showInfo,
+		showErrorToast,
+		showSuccessToast,
+		showInfoToast,
+		hideToasts,
+	} = useToast();
 
 	const { userId, isLoggedIn } = useAuth();
 
@@ -44,13 +60,19 @@ const Metas = () => {
 	}, [userId]);
 
 	const loadMeta = async () => {
-		try {
-			const data = await fetchMeta(userId);
+		const result = await fetchMeta(userId);
 
-			setMetas(data.meta);
-		} catch (error) {
-			console.error("Erro ao buscar metas", error);
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		if (result.success && result.data.length === 0) {
+			showInfoToast(result.message);
+			return;
+		}
+
+		setMetas(result.data);
 	};
 
 	const handleCreateMeta = async (e) => {
@@ -63,19 +85,19 @@ const Metas = () => {
 			data_finalizacao_meta,
 		};
 
-		try {
-			const data = await createMeta(metaData);
+		const result = await createMeta(metaData);
 
-			alert(data.message);
-			setFormVisibleAdd(!formVisibleAdd);
-			loadMeta();
-			setTituloMeta("");
-			setDescricaoMeta("");
-			setDataFinalizacaoMeta("");
-		} catch (error) {
-			console.error("Erro ao adicionar meta:", error);
-			alert("Ocorreu um erro ao adicionar a meta. Tente novamente mais tarde."); // Mensagem de erro genérica
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		showSuccessToast(result.message);
+		setFormVisibleAdd(!formVisibleAdd);
+		loadMeta();
+		setTituloMeta("");
+		setDescricaoMeta("");
+		setDataFinalizacaoMeta("");
 	};
 
 	const handleEditMeta = async (e, idMeta, concluida) => {
@@ -85,19 +107,34 @@ const Metas = () => {
 
 		const metaData = { id_meta: idMeta, statusMeta };
 
-		try {
-			await editMeta(metaData);
-			loadMeta();
-		} catch (error) {
-			console.error("Erro ao editar meta:", error);
-			alert("Ocorreu um erro ao editar a meta. Tente novamente mais tarde.");
+		const result = await editMeta(metaData);
+
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		loadMeta();
+		showSuccessToast(result.message);
 	};
 
 	return (
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
+			<div className="toast-container">
+				<ErrorToast
+					message={errorMessage}
+					show={showError}
+					onClose={hideToasts}
+				/>
+				<SuccessToast
+					message={successMessage}
+					show={showSuccess}
+					onClose={hideToasts}
+				/>
+				<InfoToast message={infoMessage} show={showInfo} onClose={hideToasts} />
+			</div>
 			<div className="container-page">
 				<h1 className="tittle">Metas</h1>
 				<div className="container-subtitle-btns">

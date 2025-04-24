@@ -8,6 +8,13 @@ const formatDateToISO = (dateBR) => {
 const addMeta = async (req, res) => {
     let { id_user, titulo_meta, descricao_meta, data_finalizacao_meta } = req.body;
 
+    if (!id_user || !titulo_meta || !descricao_meta || !data_finalizacao_meta) {
+		return res.status(400).json({
+			success: false,
+			message: 'Todos os campos são obrigatórios'
+		});
+	}
+
     try {
         // Converter data se estiver no formato brasileiro
         if (data_finalizacao_meta.includes('/')) {
@@ -19,10 +26,10 @@ const addMeta = async (req, res) => {
             [id_user, titulo_meta, descricao_meta, data_finalizacao_meta]
         );
 
-        return res.status(201).json({ message: 'Meta criada com sucesso!', meta: result.rows[0] });
+        return res.status(201).json({ success: true, message: 'Meta criada com sucesso' });
     } catch (error) {
-        console.error('Erro no backend', error);
-        return res.status(500).json({ error: 'Erro ao criar meta', details: error.message });
+        console.error('Erro ao adicionar meta:', error);
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor', error });
     }
 };
 
@@ -33,10 +40,14 @@ const getMeta = async(req, res) => {
     try {
         const result = await pool.query('SELECT * FROM metas WHERE id_user = $1 ORDER BY id_meta DESC', [id_user]);
 
-        return res.status(200).json({ message: 'Metas encontradas', meta: result.rows });
+        if (result.rows.length === 0) {
+            return res.status(200).json({success: true, data: [], message: "Nenhuma meta encontrada para esse usuário"})
+        }
+
+        return res.status(200).json({ success: true, data: result.rows, message: 'Metas encontradas' });
     } catch (error) {
-        console.error('Erro no backend', error);
-        return res.status(500).json({ error: 'Erro ao buscar meta', details: error.message });
+        console.error('Erro ao encontrar metas:', error);
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor', error });
     }
 };
 
@@ -48,13 +59,13 @@ const editMeta = async(req, res) => {
         const result = await pool.query('UPDATE metas SET id_status = $1 WHERE id_meta = $2 RETURNING *', [id_status, id_meta]);
 
         if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Meta não encontrada' });
+            return res.status(404).json({ success: false, message: 'Meta não encontrada' });
         };
 
-        res.status(200).json({ message: 'Meta editada com sucesso', data: result.rows[0] });
+        res.status(200).json({ success:true, message: 'Meta editada com sucesso' });
     } catch (error) {
         console.error('Erro ao editar meta:', error);
-        res.status(500).json({ message: 'Erro interno no servidor', error: error.message });            
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor', error });          
     }
 };
 

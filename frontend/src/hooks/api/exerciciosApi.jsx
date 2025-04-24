@@ -4,10 +4,25 @@ export const fetchExercicios = async (page = 1, limit = 8) => {
 			`http://localhost:3000/api/exercicios/getexercicios?page=${page}&limit=${limit}`
 		);
 		const data = await response.json();
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
+		if (data.data.length === 0) {
+			return {
+				success: true,
+				data: [],
+				message: data.message,
+			};
+		}
+
 		return data;
 	} catch (error) {
-		console.error("Erro ao buscar exercício", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };
 
@@ -24,14 +39,16 @@ export const createExercicio = async (exercicioData) => {
 
 		const data = await result.json();
 
-		if (!result.ok) {
-			throw new Error(data.error || "Erro desconhecido");
+		if (!data.success) {
+			return { success: data.success, message: data.message };
 		}
 
 		return data;
 	} catch (error) {
-		console.error("Erro ao adicionar exercício:", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };
 
@@ -45,10 +62,17 @@ export const deleteExercicio = async (id_exercise) => {
 		);
 
 		const data = await result.json();
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
 		return data;
 	} catch (error) {
-		console.error("Erro ao deletar exercício:", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };
 
@@ -65,9 +89,16 @@ export const editExercicio = async (exercicioData) => {
 			}
 		);
 		const data = await result.json();
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
 		return data;
 	} catch (error) {
-		console.error("Erro ao editar exercício", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };

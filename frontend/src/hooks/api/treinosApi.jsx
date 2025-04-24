@@ -11,10 +11,25 @@ export const fetchTreinos = async (userId) => {
 		);
 
 		const data = await result.json();
-		return data;
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
+		if (data.data.length === 0) {
+			return {
+				success: true,
+				data: [],
+				message: data.message,
+			};
+		}
+
+		return { success: true, data: data.data };
 	} catch (error) {
-		console.error("Erro ao buscar treinos", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };
 
@@ -31,10 +46,17 @@ export const createTreino = async (treinoData) => {
 		});
 
 		const data = await result.json();
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
 		return data;
 	} catch (error) {
-		console.error("Erro ao criar treino", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };
 
@@ -49,9 +71,16 @@ export const deleteTreino = async (idTreino) => {
 		);
 
 		const data = await result.json();
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
 		return data;
 	} catch (error) {
-		console.error("Erro ao excluir treino", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };

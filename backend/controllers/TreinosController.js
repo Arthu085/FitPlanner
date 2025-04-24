@@ -7,10 +7,18 @@ const getTreinos = async (req, res) => {
         const query = 'SELECT a.id_user, a.id_treino, a.nome_treino, b.id_exercise, b.serie, b.repeticoes, c.exercise_name, b.id_treino_exercicio  FROM treinos a INNER JOIN treino_exercicio b ON a.id_treino = b.id_treino INNER JOIN exercises c ON b.id_exercise = c.id_exercise WHERE a.id_user = $1';
         const result = await pool.query(query, [id_user]);
 
-        res.status(200).json(result.rows);
+		if (!result.rows.length) {
+			return res.status(200).json({
+				success: true,
+				data: [],
+				message: 'Nenhum treino cadastrado para este usuário',
+			});
+		}
+
+        return res.status(200).json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('Erro no backend', error);
-        res.status(500).json({ error: 'Erro ao buscar treinos', details: error.message });
+        console.error('Erro ao encontrar treino:', error);
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor', error });
     };
 };
 
@@ -27,7 +35,7 @@ const addTreino = async (req, res) => {
         const resultTreino = await client.query(queryTreino, [nome_treino, id_user]);
 
         if (resultTreino.rows.length === 0) {
-            throw new Error('Erro ao adicionar treino');
+            return res.status(500).json({ success: false, message: 'Erro ao adicionar treino' });
         }
 
         const id_treino = resultTreino.rows[0].id_treino;
@@ -42,7 +50,7 @@ const addTreino = async (req, res) => {
             if (checkResult.rows.length > 0) {
                 await client.query('ROLLBACK'); // Cancela a transação
                 return res.status(400).json({ 
-                    error: `O exercício já está cadastrado neste treino!` 
+                    success: false, message: "O exercício já está cadastrado neste treino"
                 });
             }
 
@@ -55,11 +63,11 @@ const addTreino = async (req, res) => {
 
         await client.query('COMMIT'); // Confirma a transação
 
-        res.status(201).json({ message: 'Treino e exercícios adicionados com sucesso' });
+        res.status(201).json({ success: true, message: 'Treino adicionado' });
     } catch (error) {
         await client.query('ROLLBACK'); // Desfaz tudo se houver erro
         console.error('Erro no backend:', error);
-        res.status(400).json({ error: 'Erro ao adicionar treino', details: error.message });
+        res.status(500).json({ success: false, message: 'Erro ao adicionar treino', details: error.message });
     } finally {
         client.release(); // Libera a conexão do pool
     }
@@ -74,13 +82,13 @@ const deleteTreino = async (req, res) => {
         const result = await pool.query(query, [id_treino]);
 
         if (result.rowCount > 0) {
-            res.status(200).json({ message: 'Treino excluído com sucesso' });
+            res.status(200).json({ success: true, message: 'Treino excluído com sucesso' });
         } else {
-            res.status(404).json({ message: 'Treino não encontrado' });
+            res.status(404).json({ success: false, message: 'Treino não encontrado' });
         }
     } catch (error) {
         console.error('Erro no backend', error);
-        res.status(500).json({ error: 'Erro ao excluir treino', details: error.message });
+        res.status(500).json({ success: false, message: 'Erro ao excluir treino', details: error.message });
     }
 };
 
