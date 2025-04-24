@@ -9,6 +9,7 @@ import SideBar from "../../components/SideBar/SideBar";
 import ErrorToast from "../../components/ErrorToast/ErrorToast";
 import SuccessToast from "../../components/SuccessToast/SuccessToast";
 import InfoToast from "../../components/InfoToast/InfoToast";
+import Loading from "../../components/Loading/Loading";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -48,6 +49,7 @@ const Treinos = () => {
 		showInfoToast,
 		hideToasts,
 	} = useToast();
+	const [loading, setLoading] = useState(false);
 
 	const { userId, isLoggedIn } = useAuth();
 
@@ -114,18 +116,24 @@ const Treinos = () => {
 	};
 
 	const loadTreinos = async () => {
+		setLoading(true);
 		const result = await fetchTreinos(userId);
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
 		if (result.success && result.data.length === 0) {
 			showInfoToast(result.message);
+			setLoading(false);
+			const groupedTreinos = groupTreinosById(result.data);
+			setTreinos(groupedTreinos);
 			return;
 		}
 
+		setLoading(false);
 		const groupedTreinos = groupTreinosById(result.data);
 		setTreinos(groupedTreinos);
 	};
@@ -155,21 +163,25 @@ const Treinos = () => {
 			id_user: userId,
 		};
 
+		setLoading(true);
 		const result = await createTreino(treinoData);
 
 		if (result.message === "O exercício já está cadastrado neste treino") {
 			showInfoToast(result.message);
+			setLoading(false);
 			return;
 		}
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
+		await loadTreinos();
+		setLoading(false);
 		showSuccessToast(result.message);
 		setFormVisibleAdd(!formVisibleAdd);
-		loadTreinos();
 	};
 
 	const loadExercicios = async () => {
@@ -191,16 +203,19 @@ const Treinos = () => {
 	const handleDeleteTreino = async (e) => {
 		e.preventDefault();
 
+		setLoading(true);
 		const result = await deleteTreino(idTreino);
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
+		await loadTreinos();
+		setLoading(false);
 		showSuccessToast(result.message);
 		setFormVisibleDelete(false);
-		loadTreinos();
 	};
 
 	// const editTreino = async (e) => {
@@ -279,6 +294,7 @@ const Treinos = () => {
 				/>
 				<InfoToast message={infoMessage} show={showInfo} onClose={hideToasts} />
 			</div>
+			{loading && <Loading />}
 			<div className="container-page">
 				<h1 className="tittle">Treinos</h1>
 				<div className="container-subtitle-btns">

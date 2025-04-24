@@ -12,6 +12,7 @@ import { useToast } from "../../hooks/useToast";
 import ThemeToggle from "../../components/ThemeToggle/ThemeToggle";
 import ErrorToast from "../../components/ErrorToast/ErrorToast";
 import SuccessToast from "../../components/SuccessToast/SuccessToast";
+import Loading from "../../components/Loading/Loading";
 
 const LoginRegister = () => {
 	const [isLogin, setIsLogin] = useState(true);
@@ -28,6 +29,7 @@ const LoginRegister = () => {
 		showSuccessToast,
 		hideToasts,
 	} = useToast();
+	const [loading, setLoading] = useState(false);
 
 	const navigate = useNavigate();
 	const { theme } = useTheme();
@@ -49,27 +51,33 @@ const LoginRegister = () => {
 
 	const handleLogin = async (e) => {
 		e.preventDefault();
+		setLoading(true);
 
 		const result = await login(email, password);
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
+		setLoading(false);
 		navigate("/home");
 	};
 
 	const handleRegister = async (e) => {
 		e.preventDefault();
+		setLoading(true);
 
 		const result = await register(email, password, name, lastName);
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
+		setLoading(false);
 		showSuccessToast(result.message);
 		toggleForm();
 	};
@@ -88,6 +96,7 @@ const LoginRegister = () => {
 					onClose={hideToasts}
 				/>
 			</div>
+			{loading && <Loading />}
 			<main>
 				{isLogin ? (
 					<form onSubmit={handleLogin}>

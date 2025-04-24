@@ -9,6 +9,7 @@ import SideBar from "../../components/SideBar/SideBar";
 import ErrorToast from "../../components/ErrorToast/ErrorToast";
 import SuccessToast from "../../components/SuccessToast/SuccessToast";
 import InfoToast from "../../components/InfoToast/InfoToast";
+import Loading from "../../components/Loading/Loading";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -29,6 +30,7 @@ const Home = () => {
 		showInfoToast,
 		hideToasts,
 	} = useToast();
+	const [loading, setLoading] = useState(false);
 
 	const { userId, isLoggedIn } = useAuth();
 
@@ -38,13 +40,16 @@ const Home = () => {
 
 	useEffect(() => {
 		const loadUser = async () => {
+			setLoading(true);
 			const result = await fetchUser(userId);
 
 			if (!result.success) {
 				showErrorToast(result.message);
+				setLoading(false);
 				return;
 			}
 
+			setLoading(false);
 			setUserData(result.data);
 		};
 
@@ -68,6 +73,7 @@ const Home = () => {
 				/>
 				<InfoToast message={infoMessage} show={showInfo} onClose={hideToasts} />
 			</div>
+			{loading && <Loading />}
 			<div className="container-page">
 				{userData ? (
 					<div>

@@ -9,6 +9,7 @@ import SideBar from "../../components/SideBar/SideBar";
 import InfoToast from "../../components/InfoToast/InfoToast";
 import ErrorToast from "../../components/ErrorToast/ErrorToast";
 import SuccessToast from "../../components/SuccessToast/SuccessToast";
+import Loading from "../../components/Loading/Loading";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -43,6 +44,7 @@ const Exercicios = () => {
 		showInfoToast,
 		hideToasts,
 	} = useToast();
+	const [loading, setLoading] = useState(false);
 
 	const { isLoggedIn } = useAuth();
 
@@ -69,18 +71,23 @@ const Exercicios = () => {
 	};
 
 	const loadExercicios = async () => {
+		setLoading(true);
 		const result = await fetchExercicios(currentPage, itemsPerPage);
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
 		if (result.success && result.data.length === 0) {
 			showInfoToast(result.message);
+			setLoading(false);
+			setExercicios(result.data);
 			return;
 		}
 
+		setLoading(false);
 		setExercicios(result.data);
 		setTotalPages(result.totalPages);
 	};
@@ -98,19 +105,23 @@ const Exercicios = () => {
 
 		const exercicioData = { exercise_name };
 
+		setLoading(true);
 		const result = await createExercicio(exercicioData);
 
 		if (result.message === "Esse exercício já existe") {
 			showInfoToast(result.message);
+			setLoading(false);
 			return;
 		}
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
 		await loadExercicios();
+		setLoading(false);
 		setExerciseName("");
 		showSuccessToast(result.message);
 		toggleFormAdd();
@@ -119,14 +130,17 @@ const Exercicios = () => {
 	const handleDeleteExercicio = async (e) => {
 		e.preventDefault();
 
+		setLoading(true);
 		const result = await deleteExercicio(id_exercise);
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
 		await loadExercicios();
+		setLoading(false);
 		showSuccessToast(result.message);
 		setFormVisibleDelete(!formVisibleDelete);
 	};
@@ -136,19 +150,23 @@ const Exercicios = () => {
 
 		const exercicioData = { id_exercise, exercise_name };
 
+		setLoading(true);
 		const result = await editExercicio(exercicioData);
 
 		if (result.message === "Esse exercício já existe") {
 			showInfoToast(result.message);
+			setLoading(false);
 			return;
 		}
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
 		await loadExercicios();
+		setLoading(false);
 		showSuccessToast(result.message);
 		setFormVisibleEdit(!formVisibleEdit);
 		setExerciseName("");
@@ -158,6 +176,7 @@ const Exercicios = () => {
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
+			{loading && <Loading />}
 			<div className="toast-container">
 				<ErrorToast
 					message={errorMessage}
