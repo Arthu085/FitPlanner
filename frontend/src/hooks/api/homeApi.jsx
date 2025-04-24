@@ -7,7 +7,7 @@ export const fetchUser = async (userId) => {
 			const data = await response.json();
 
 			if (!data.success) {
-				return { success: false, message: data.message };
+				return { success: data.success, message: data.message };
 			}
 
 			return { success: true, data: data.data };

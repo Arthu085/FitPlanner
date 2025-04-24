@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
 			const data = await response.json();
 
 			if (!data.success) {
-				return { success: false, message: data.message };
+				return { success: data.success, message: data.message };
 			}
 
 			localStorage.setItem("token", data.token);
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
 			const data = await response.json();
 
 			if (!data.success) {
-				return { success: false, message: data.message };
+				return { success: data.success, message: data.message };
 			}
 
 			return { success: true, message: data.message };

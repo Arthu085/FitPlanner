@@ -11,10 +11,25 @@ export const fetchMeta = async (userId) => {
 		);
 
 		const data = await response.json();
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
+		if (data.data.length === 0) {
+			return {
+				success: true,
+				data: [],
+				message: data.message,
+			};
+		}
+
 		return data;
 	} catch (error) {
-		console.error("Erro ao buscar metas", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };
 
@@ -32,10 +47,17 @@ export const createMeta = async (metaData) => {
 		});
 
 		const data = await result.json();
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
 		return data;
 	} catch (error) {
-		console.error("Erro ao criar meta", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };
 
@@ -51,8 +73,18 @@ export const editMeta = async (metaData) => {
 				body: JSON.stringify({ id_status: metaData.statusMeta }),
 			}
 		);
+
+		const data = await result.json();
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
+		return data;
 	} catch (error) {
-		console.error("Erro ao editar meta", error);
-		throw error;
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
 	}
 };

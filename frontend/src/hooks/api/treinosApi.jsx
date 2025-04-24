@@ -13,7 +13,7 @@ export const fetchTreinos = async (userId) => {
 		const data = await result.json();
 
 		if (!data.success) {
-			return { success: false, message: data.message };
+			return { success: data.success, message: data.message };
 		}
 
 		if (data.data.length === 0) {
@@ -48,7 +48,7 @@ export const createTreino = async (treinoData) => {
 		const data = await result.json();
 
 		if (!data.success) {
-			return { success: false, message: data.message };
+			return { success: data.success, message: data.message };
 		}
 
 		return data;
@@ -73,7 +73,7 @@ export const deleteTreino = async (idTreino) => {
 		const data = await result.json();
 
 		if (!data.success) {
-			return { success: false, message: data.message };
+			return { success: data.success, message: data.message };
 		}
 
 		return data;

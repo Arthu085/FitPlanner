@@ -6,7 +6,7 @@ export const fetchExercicios = async (page = 1, limit = 8) => {
 		const data = await response.json();
 
 		if (!data.success) {
-			return { success: false, message: data.message };
+			return { success: data.success, message: data.message };
 		}
 
 		if (data.data.length === 0) {
@@ -40,7 +40,7 @@ export const createExercicio = async (exercicioData) => {
 		const data = await result.json();
 
 		if (!data.success) {
-			return { success: false, message: data.message };
+			return { success: data.success, message: data.message };
 		}
 
 		return data;
@@ -64,7 +64,7 @@ export const deleteExercicio = async (id_exercise) => {
 		const data = await result.json();
 
 		if (!data.success) {
-			return { success: false, message: data.message };
+			return { success: data.success, message: data.message };
 		}
 
 		return data;
@@ -91,7 +91,7 @@ export const editExercicio = async (exercicioData) => {
 		const data = await result.json();
 
 		if (!data.success) {
-			return { success: false, message: data.message };
+			return { success: data.success, message: data.message };
 		}
 
 		return data;
