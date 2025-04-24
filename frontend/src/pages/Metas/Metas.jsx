@@ -6,6 +6,7 @@ import SideBar from "../../components/SideBar/SideBar";
 import InfoToast from "../../components/InfoToast/InfoToast";
 import ErrorToast from "../../components/ErrorToast/ErrorToast";
 import SuccessToast from "../../components/SuccessToast/SuccessToast";
+import Loading from "../../components/Loading/Loading";
 
 // react
 import { useEffect, useState } from "react";
@@ -39,6 +40,7 @@ const Metas = () => {
 		showInfoToast,
 		hideToasts,
 	} = useToast();
+	const [loading, setLoading] = useState(false);
 
 	const { userId, isLoggedIn } = useAuth();
 
@@ -47,12 +49,19 @@ const Metas = () => {
 	}, []);
 
 	useEffect(() => {
-		if (filtro === "todas") {
-			setMetasFiltradas(metas);
-		} else {
-			const status = filtro === "concluidas" ? 2 : 1;
-			setMetasFiltradas(metas.filter((meta) => meta.id_status === status));
-		}
+		setLoading(true);
+
+		const timeout = setTimeout(() => {
+			if (filtro === "todas") {
+				setMetasFiltradas(metas);
+			} else {
+				const status = filtro === "concluidas" ? 2 : 1;
+				setMetasFiltradas(metas.filter((meta) => meta.id_status === status));
+			}
+			setLoading(false);
+		}, 200);
+
+		return () => clearTimeout(timeout);
 	}, [filtro, metas]);
 
 	useEffect(() => {
@@ -60,18 +69,22 @@ const Metas = () => {
 	}, [userId]);
 
 	const loadMeta = async () => {
+		setLoading(true);
 		const result = await fetchMeta(userId);
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
 		if (result.success && result.data.length === 0) {
 			showInfoToast(result.message);
+			setLoading(false);
 			return;
 		}
 
+		setLoading(false);
 		setMetas(result.data);
 	};
 
@@ -85,16 +98,19 @@ const Metas = () => {
 			data_finalizacao_meta,
 		};
 
+		setLoading(true);
 		const result = await createMeta(metaData);
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
+		await loadMeta();
+		setLoading(false);
 		showSuccessToast(result.message);
 		setFormVisibleAdd(!formVisibleAdd);
-		loadMeta();
 		setTituloMeta("");
 		setDescricaoMeta("");
 		setDataFinalizacaoMeta("");
@@ -107,14 +123,17 @@ const Metas = () => {
 
 		const metaData = { id_meta: idMeta, statusMeta };
 
+		setLoading(true);
 		const result = await editMeta(metaData);
 
 		if (!result.success) {
 			showErrorToast(result.message);
+			setLoading(false);
 			return;
 		}
 
-		loadMeta();
+		await loadMeta();
+		setLoading(false);
 		showSuccessToast(result.message);
 	};
 
@@ -135,6 +154,7 @@ const Metas = () => {
 				/>
 				<InfoToast message={infoMessage} show={showInfo} onClose={hideToasts} />
 			</div>
+			{loading && <Loading />}
 			<div className="container-page">
 				<h1 className="tittle">Metas</h1>
 				<div className="container-subtitle-btns">
