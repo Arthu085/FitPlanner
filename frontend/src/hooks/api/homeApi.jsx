@@ -5,10 +5,17 @@ export const fetchUser = async (userId) => {
 				`http://localhost:3000/api/user/getuser/${userId}`
 			);
 			const data = await response.json();
-			return data;
+
+			if (!data.success) {
+				return { success: false, message: data.message };
+			}
+
+			return { success: true, data: data.data };
 		} catch (error) {
-			console.error("Erro ao buscar usuário", error);
-			throw error;
+			return {
+				success: false,
+				message: "Erro ao conectar-se ao servidor: " + error.message,
+			};
 		}
 	}
 };

@@ -1,21 +1,15 @@
 .error-toast {
-	position: fixed;
-	top: 20px;
-	right: 20px;
-	z-index: 1000;
-
-	display: flex;
-	align-items: center;
-	gap: 8px;
-
 	background-color: #ff4d4f;
 	color: white;
 	padding: 12px 16px;
 	border-radius: 8px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 	font-weight: 500;
-
+	display: flex;
+	align-items: center;
+	gap: 8px;
 	animation: toast-in-out 5s ease forwards;
+	position: relative;
 }
 
 .toast-icon {

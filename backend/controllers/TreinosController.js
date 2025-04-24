@@ -7,10 +7,18 @@ const getTreinos = async (req, res) => {
         const query = 'SELECT a.id_user, a.id_treino, a.nome_treino, b.id_exercise, b.serie, b.repeticoes, c.exercise_name, b.id_treino_exercicio  FROM treinos a INNER JOIN treino_exercicio b ON a.id_treino = b.id_treino INNER JOIN exercises c ON b.id_exercise = c.id_exercise WHERE a.id_user = $1';
         const result = await pool.query(query, [id_user]);
 
-        res.status(200).json(result.rows);
+		if (!result.rows.length) {
+			return res.status(200).json({
+				success: true,
+				data: [],
+				message: 'Nenhum treino cadastrado para este usuário',
+			});
+		}
+
+        return res.status(200).json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('Erro no backend', error);
-        res.status(500).json({ error: 'Erro ao buscar treinos', details: error.message });
+        console.error('Erro ao encontrar treino:', error);
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor', error });
     };
 };
 

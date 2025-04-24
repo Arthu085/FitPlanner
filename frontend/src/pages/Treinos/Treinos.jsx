@@ -6,6 +6,9 @@ import React, { useEffect, useState } from "react";
 // components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
+import ErrorToast from "../../components/ErrorToast/ErrorToast";
+import SuccessToast from "../../components/SuccessToast/SuccessToast";
+import InfoToast from "../../components/InfoToast/InfoToast";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -15,6 +18,7 @@ import {
 	deleteTreino,
 } from "../../hooks/api/treinosApi";
 import { fetchExercicios } from "../../hooks/api/exerciciosApi";
+import { useToast } from "../../hooks/useToast";
 
 const Treinos = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
@@ -32,6 +36,18 @@ const Treinos = () => {
 		id_treino: "",
 		nome_treino: "",
 	});
+	const {
+		errorMessage,
+		showError,
+		successMessage,
+		showSuccess,
+		infoMessage,
+		showInfo,
+		showErrorToast,
+		showSuccessToast,
+		showInfoToast,
+		hideToasts,
+	} = useToast();
 
 	const { userId, isLoggedIn } = useAuth();
 
@@ -98,14 +114,20 @@ const Treinos = () => {
 	};
 
 	const loadTreinos = async () => {
-		try {
-			const data = await fetchTreinos(userId);
-			const groupedTreinos = groupTreinosById(data);
-			setTreinos(groupedTreinos);
-		} catch (error) {
-			console.error("Erro ao buscar treinos:", error);
-			alert("Erro ao buscar treinos");
+		const result = await fetchTreinos(userId);
+
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		if (result.success && result.data.length === 0) {
+			showInfoToast(result.message);
+			return;
+		}
+
+		const groupedTreinos = groupTreinosById(result.data);
+		setTreinos(groupedTreinos);
 	};
 
 	const groupTreinosById = (treinos) => {
@@ -240,6 +262,19 @@ const Treinos = () => {
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
+			<div className="toast-container">
+				<ErrorToast
+					message={errorMessage}
+					show={showError}
+					onClose={hideToasts}
+				/>
+				<SuccessToast
+					message={successMessage}
+					show={showSuccess}
+					onClose={hideToasts}
+				/>
+				<InfoToast message={infoMessage} show={showInfo} onClose={hideToasts} />
+			</div>
 			<div className="container-page">
 				<h1 className="tittle">Treinos</h1>
 				<div className="container-subtitle-btns">

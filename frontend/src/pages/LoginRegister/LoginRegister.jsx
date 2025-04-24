@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 // hooks
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
+import { useToast } from "../../hooks/useToast";
 
 import ThemeToggle from "../../components/ThemeToggle/ThemeToggle";
 import ErrorToast from "../../components/ErrorToast/ErrorToast";
@@ -18,10 +19,15 @@ const LoginRegister = () => {
 	const [password, setPassword] = useState("");
 	const [name, setName] = useState("");
 	const [lastName, setLastName] = useState("");
-	const [errorMessage, setErrorMessage] = useState("");
-	const [showError, setShowError] = useState(false);
-	const [successMessage, setSuccessMessage] = useState("");
-	const [showSuccess, setShowSuccess] = useState(false);
+	const {
+		errorMessage,
+		showError,
+		successMessage,
+		showSuccess,
+		showErrorToast,
+		showSuccessToast,
+		hideToasts,
+	} = useToast();
 
 	const navigate = useNavigate();
 	const { theme } = useTheme();
@@ -47,8 +53,7 @@ const LoginRegister = () => {
 		const result = await login(email, password);
 
 		if (!result.success) {
-			setErrorMessage(result.message);
-			setShowError(true);
+			showErrorToast(result.message);
 			return;
 		}
 
@@ -61,28 +66,28 @@ const LoginRegister = () => {
 		const result = await register(email, password, name, lastName);
 
 		if (!result.success) {
-			setErrorMessage(result.message);
-			setShowError(true);
+			showErrorToast(result.message);
 			return;
 		}
 
-		setSuccessMessage(result.message);
-		setShowSuccess(true);
+		showSuccessToast(result.message);
 		toggleForm();
 	};
 
 	return (
 		<div className="login-register-container">
-			<ErrorToast
-				message={errorMessage}
-				show={showError}
-				onClose={() => setShowError(false)}
-			/>
-			<SuccessToast
-				message={successMessage}
-				show={showSuccess}
-				onClose={() => setShowSuccess(false)}
-			/>
+			<div className="toast-container auth">
+				<ErrorToast
+					message={errorMessage}
+					show={showError}
+					onClose={hideToasts}
+				/>
+				<SuccessToast
+					message={successMessage}
+					show={showSuccess}
+					onClose={hideToasts}
+				/>
+			</div>
 			<main>
 				{isLogin ? (
 					<form onSubmit={handleLogin}>
