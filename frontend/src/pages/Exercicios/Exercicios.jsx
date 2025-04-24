@@ -6,6 +6,9 @@ import React, { useEffect, useState } from "react";
 // components
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import SideBar from "../../components/SideBar/SideBar";
+import InfoToast from "../../components/InfoToast/InfoToast";
+import ErrorToast from "../../components/ErrorToast/ErrorToast";
+import SuccessToast from "../../components/SuccessToast/SuccessToast";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -15,6 +18,7 @@ import {
 	deleteExercicio,
 	editExercicio,
 } from "../../hooks/api/exerciciosApi";
+import { useToast } from "../../hooks/useToast";
 
 const itemsPerPage = 8;
 
@@ -27,6 +31,18 @@ const Exercicios = () => {
 	const [id_exercise, setExercicioId] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
+	const {
+		errorMessage,
+		showError,
+		successMessage,
+		showSuccess,
+		infoMessage,
+		showInfo,
+		showErrorToast,
+		showSuccessToast,
+		showInfoToast,
+		hideToasts,
+	} = useToast();
 
 	const { isLoggedIn } = useAuth();
 
@@ -53,13 +69,20 @@ const Exercicios = () => {
 	};
 
 	const loadExercicios = async () => {
-		try {
-			const data = await fetchExercicios(currentPage, itemsPerPage);
-			setExercicios(data.data);
-			setTotalPages(data.totalPages);
-		} catch (error) {
-			alert("Erro ao buscar exercícios", error);
+		const result = await fetchExercicios(currentPage, itemsPerPage);
+
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		if (result.success && result.data.length === 0) {
+			showInfoToast(result.message);
+			return;
+		}
+
+		setExercicios(result.data);
+		setTotalPages(result.totalPages);
 	};
 
 	const nextPage = () => {
@@ -73,81 +96,81 @@ const Exercicios = () => {
 	const handleCreateExercicio = async (e) => {
 		e.preventDefault();
 
-		if (!exercise_name || exercise_name.trim() === "") {
-			alert("O nome do exercício não pode estar vazio.");
+		const exercicioData = { exercise_name };
+
+		const result = await createExercicio(exercicioData);
+
+		if (result.message === "Esse exercício já existe") {
+			showInfoToast(result.message);
 			return;
 		}
 
-		const exercicioData = { exercise_name };
-
-		try {
-			const data = await createExercicio(exercicioData);
-
-			if (data && !data.error) {
-				await loadExercicios();
-				setExerciseName("");
-				alert(data.message);
-				toggleFormAdd();
-			} else {
-				alert(data.message || "Erro desconhecido");
-			}
-		} catch (error) {
-			alert("Erro ao adicionar exercício");
-			console.error("Erro ao adicionar exercício:", error);
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		await loadExercicios();
+		setExerciseName("");
+		showSuccessToast(result.message);
+		toggleFormAdd();
 	};
 
 	const handleDeleteExercicio = async (e) => {
 		e.preventDefault();
 
-		try {
-			const data = await deleteExercicio(id_exercise);
+		const result = await deleteExercicio(id_exercise);
 
-			if (data && !data.error) {
-				await loadExercicios();
-				alert(data.message);
-				setFormVisibleDelete(!formVisibleDelete);
-			} else {
-				alert(data.message || "Erro desconhecido");
-			}
-		} catch (error) {
-			alert("Erro ao deletar exercício");
-			console.error("Erro ao deletar exercício:", error);
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		await loadExercicios();
+		showSuccessToast(result.message);
+		setFormVisibleDelete(!formVisibleDelete);
 	};
 
 	const handleEditExercicio = async (e) => {
 		e.preventDefault();
 
-		if (!exercise_name || exercise_name.trim() === "") {
-			alert("O nome do exercício não pode estar vazio.");
+		const exercicioData = { id_exercise, exercise_name };
+
+		const result = await editExercicio(exercicioData);
+
+		if (result.message === "Esse exercício já existe") {
+			showInfoToast(result.message);
 			return;
 		}
 
-		const exercicioData = { id_exercise, exercise_name };
-
-		try {
-			const data = await editExercicio(exercicioData);
-
-			if (data && !data.error) {
-				await loadExercicios();
-				alert(data.message);
-				setFormVisibleEdit(!formVisibleEdit);
-				setExerciseName("");
-			} else {
-				alert(data.message || "Erro desconhecido");
-				setExerciseName("");
-			}
-		} catch (error) {
-			alert("Erro ao editar exercício");
-			console.error("Erro ao editar exercício:", error);
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		await loadExercicios();
+		showSuccessToast(result.message);
+		setFormVisibleEdit(!formVisibleEdit);
+		setExerciseName("");
 	};
 
 	return (
 		<div className="sidebar-pages-container">
 			<NavigationBar />
 			<SideBar />
+			<div className="toast-container">
+				<ErrorToast
+					message={errorMessage}
+					show={showError}
+					onClose={hideToasts}
+				/>
+				<SuccessToast
+					message={successMessage}
+					show={showSuccess}
+					onClose={hideToasts}
+				/>
+				<InfoToast message={infoMessage} show={showInfo} onClose={hideToasts} />
+			</div>
 			<div className="container-page">
 				<h1 className="tittle">Exercícios</h1>
 				<div className="container-subtitle-btns">

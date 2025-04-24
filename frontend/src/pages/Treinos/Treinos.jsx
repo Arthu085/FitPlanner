@@ -173,13 +173,19 @@ const Treinos = () => {
 	};
 
 	const loadExercicios = async () => {
-		try {
-			const data = await fetchExercicios();
-			setExercicios(data.data);
-		} catch (error) {
-			console.error("Erro ao buscar exercícios:", error);
-			alert("Erro ao buscar exercícios");
+		const result = await fetchExercicios();
+
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		if (result.success && result.data.length === 0) {
+			showInfoToast(result.message);
+			return;
+		}
+
+		setExercicios(result.data);
 	};
 
 	const handleDeleteTreino = async (e) => {
