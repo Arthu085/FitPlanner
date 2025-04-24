@@ -86,7 +86,6 @@ export const AuthProvider = ({ children }) => {
 	const isLoggedIn = () => {
 		if (!userId) {
 			navigate("/");
-			alert("Faça login no sistema");
 			localStorage.removeItem("id");
 			localStorage.removeItem("token");
 		}
