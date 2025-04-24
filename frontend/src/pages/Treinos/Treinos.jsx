@@ -155,23 +155,21 @@ const Treinos = () => {
 			id_user: userId,
 		};
 
-		try {
-			const data = await createTreino(treinoData);
+		const result = await createTreino(treinoData);
 
-			if (data.error === "O exercício já está cadastrado neste treino!") {
-				alert(data.error);
-				return;
-			}
-
-			alert(data.message);
-			setFormVisibleAdd(!formVisibleAdd);
-			loadTreinos();
-		} catch (error) {
-			console.error("Erro ao adicionar treino:", error);
-			alert(
-				"Ocorreu um erro ao adicionar o treino. Tente novamente mais tarde."
-			);
+		if (result.message === "O exercício já está cadastrado neste treino") {
+			showInfoToast(result.message);
+			return;
 		}
+
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
+		}
+
+		showSuccessToast(result.message);
+		setFormVisibleAdd(!formVisibleAdd);
+		loadTreinos();
 	};
 
 	const loadExercicios = async () => {
@@ -187,16 +185,16 @@ const Treinos = () => {
 	const handleDeleteTreino = async (e) => {
 		e.preventDefault();
 
-		try {
-			const data = await deleteTreino(idTreino);
+		const result = await deleteTreino(idTreino);
 
-			alert(data.message);
-			setFormVisibleDelete(false);
-			loadTreinos();
-		} catch (error) {
-			console.error("Erro ao excluir treino:", error);
-			alert("Erro ao excluir treino");
+		if (!result.success) {
+			showErrorToast(result.message);
+			return;
 		}
+
+		showSuccessToast(result.message);
+		setFormVisibleDelete(false);
+		loadTreinos();
 	};
 
 	// const editTreino = async (e) => {

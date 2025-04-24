@@ -236,9 +236,11 @@
 	position: fixed;
 	top: 100px;
 	right: 20px;
+	z-index: 1001;
 }
 
 .toast-container.auth {
 	top: 30px;
 	right: 20px;
+	z-index: 1001;
 }
