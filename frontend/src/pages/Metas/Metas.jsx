@@ -7,6 +7,7 @@ import InfoToast from "../../components/InfoToast/InfoToast";
 import ErrorToast from "../../components/ErrorToast/ErrorToast";
 import SuccessToast from "../../components/SuccessToast/SuccessToast";
 import Loading from "../../components/Loading/Loading";
+import Pagination from "../../components/Pagination/Pagination";
 
 // react
 import { useEffect, useState } from "react";
@@ -27,7 +28,9 @@ const Metas = () => {
 	const [descricao_meta, setDescricaoMeta] = useState("");
 	const [data_finalizacao_meta, setDataFinalizacaoMeta] = useState("");
 	const [id_meta, setIdMeta] = useState("");
-	const [metasFiltradas, setMetasFiltradas] = useState(metas);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalMetas, setTotalMetas] = useState(0);
+	const metasPorPagina = 12;
 	const {
 		errorMessage,
 		showError,
@@ -49,28 +52,12 @@ const Metas = () => {
 	}, []);
 
 	useEffect(() => {
-		setLoading(true);
-
-		const timeout = setTimeout(() => {
-			if (filtro === "todas") {
-				setMetasFiltradas(metas);
-			} else {
-				const status = filtro === "concluidas" ? 2 : 1;
-				setMetasFiltradas(metas.filter((meta) => meta.id_status === status));
-			}
-			setLoading(false);
-		}, 200);
-
-		return () => clearTimeout(timeout);
-	}, [filtro, metas]);
-
-	useEffect(() => {
 		loadMeta();
-	}, [userId]);
+	}, [userId, currentPage, filtro]);
 
 	const loadMeta = async () => {
 		setLoading(true);
-		const result = await fetchMeta(userId);
+		const result = await fetchMeta(userId, currentPage, filtro);
 
 		if (!result.success) {
 			showErrorToast(result.message);
@@ -86,7 +73,10 @@ const Metas = () => {
 
 		setLoading(false);
 		setMetas(result.data);
+		setTotalMetas(result.total);
 	};
+
+	const totalPages = Math.ceil(totalMetas / metasPorPagina);
 
 	const handleCreateMeta = async (e) => {
 		e.preventDefault();
@@ -164,6 +154,7 @@ const Metas = () => {
 							<label>Filtrar metas:</label>
 							<select
 								id="filtro"
+								title="Selecione o filtro"
 								value={filtro}
 								onChange={(e) => setFiltro(e.target.value)}>
 								<option value="todas">Todas</option>
@@ -180,10 +171,10 @@ const Metas = () => {
 				</div>
 
 				<div className="metas-list">
-					{metasFiltradas.length === 0 ? (
+					{metas.length === 0 ? (
 						<p>Nenhuma meta encontrada para o filtro selecionado.</p>
 					) : (
-						metasFiltradas.map((meta) => (
+						metas.map((meta) => (
 							<div
 								key={meta.id_meta}
 								className={`meta-content ${
@@ -194,6 +185,7 @@ const Metas = () => {
 									<p>{meta.descricao_meta}</p>
 									<input
 										type="checkbox"
+										title="Marcar como concluída"
 										checked={meta.id_status === 2} // Checkbox marcado se a meta for concluída (id_status 2)
 										onChange={(e) => {
 											// Alterando o estado do checkbox
@@ -215,6 +207,16 @@ const Metas = () => {
 						))
 					)}
 				</div>
+				{totalPages > 1 && (
+					<Pagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						onPrev={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+						onNext={() =>
+							setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+						}
+					/>
+				)}
 			</div>
 
 			{formVisibleAdd && (
