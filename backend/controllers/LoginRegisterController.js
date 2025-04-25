@@ -20,6 +20,12 @@ const register = async (req, res) => {
     if (!emailRegex.test(trimmedEmail)) {
         return res.status(400).json({ success: false, message: 'Digite um e-mail válido' });
     }
+
+    const allowedDomains = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com'];
+    const domain = email_user.split('@')[1];
+    if(!allowedDomains.includes(domain)) {
+        return res.status(400).json({ success:false, message: "Domínio de e-mail não permitido"})
+    }
     
     if (trimmedPassword.length < 6) {
         return res.status(400).json({ success: false, message: 'Mínimo de 6 caracteres' });
