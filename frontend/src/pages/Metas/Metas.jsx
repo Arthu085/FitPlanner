@@ -65,8 +65,10 @@ const Metas = () => {
 			return;
 		}
 
-		if (result.success && result.data.length === 0) {
+		if (result.data.length === 0) {
 			showInfoToast(result.message);
+			setMetas([]);
+			setTotalMetas(0);
 			setLoading(false);
 			return;
 		}

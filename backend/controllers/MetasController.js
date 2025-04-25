@@ -56,6 +56,10 @@ const getMeta = async (req, res) => {
     try {
       // Executando a query para obter as metas com o filtro aplicado
       const result = await pool.query(query, params);
+
+      if(result.rows.length === 0) {
+        return res.status(200).json({ success: true, data:[], message: "Nenhuma meta encontrada no filtro selecionado para esse usuário" })
+      }
   
       // Query para contar o total de metas
       const totalCount = await pool.query(

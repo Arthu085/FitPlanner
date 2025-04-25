@@ -21,6 +21,10 @@ export const fetchMeta = async (
 			return { success: false, message: data.message };
 		}
 
+		if (data.length === 0 && data.success) {
+			return { success: data.success, message: data.message, data: [] };
+		}
+
 		return {
 			success: true,
 			data: data.data,
