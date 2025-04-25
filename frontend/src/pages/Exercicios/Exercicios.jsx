@@ -10,6 +10,7 @@ import InfoToast from "../../components/InfoToast/InfoToast";
 import ErrorToast from "../../components/ErrorToast/ErrorToast";
 import SuccessToast from "../../components/SuccessToast/SuccessToast";
 import Loading from "../../components/Loading/Loading";
+import Pagination from "../../components/Pagination/Pagination";
 
 // hooks
 import { useAuth } from "../../hooks/useAuth";
@@ -20,8 +21,6 @@ import {
 	editExercicio,
 } from "../../hooks/api/exerciciosApi";
 import { useToast } from "../../hooks/useToast";
-
-const itemsPerPage = 8;
 
 const Exercicios = () => {
 	const [formVisibleAdd, setFormVisibleAdd] = useState(false);
@@ -72,7 +71,7 @@ const Exercicios = () => {
 
 	const loadExercicios = async () => {
 		setLoading(true);
-		const result = await fetchExercicios(currentPage, itemsPerPage);
+		const result = await fetchExercicios(currentPage);
 
 		if (!result.success) {
 			showErrorToast(result.message);
@@ -221,19 +220,13 @@ const Exercicios = () => {
 						)}
 					</ul>
 				</div>
-
 				{totalPages > 1 && (
-					<div className="pagination-controls">
-						<button onClick={prevPage} disabled={currentPage === 1}>
-							Anterior
-						</button>
-						<span>
-							Página {currentPage} de {totalPages}
-						</span>
-						<button onClick={nextPage} disabled={currentPage === totalPages}>
-							Próxima
-						</button>
-					</div>
+					<Pagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						onPrev={prevPage}
+						onNext={nextPage}
+					/>
 				)}
 			</div>
 

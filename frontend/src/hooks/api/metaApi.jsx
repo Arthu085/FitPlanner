@@ -1,7 +1,12 @@
-export const fetchMeta = async (userId) => {
+export const fetchMeta = async (
+	userId,
+	page = 1,
+	filtro = "todas",
+	limit = 12
+) => {
 	try {
 		const response = await fetch(
-			`http://localhost:3000/api/metas/getmeta/${userId}`,
+			`http://localhost:3000/api/metas/getmeta/${userId}?page=${page}&limit=${limit}&filtro=${filtro}`,
 			{
 				method: "GET",
 				headers: {
@@ -13,18 +18,15 @@ export const fetchMeta = async (userId) => {
 		const data = await response.json();
 
 		if (!data.success) {
-			return { success: data.success, message: data.message };
+			return { success: false, message: data.message };
 		}
 
-		if (data.data.length === 0) {
-			return {
-				success: true,
-				data: [],
-				message: data.message,
-			};
-		}
-
-		return data;
+		return {
+			success: true,
+			data: data.data,
+			total: data.total,
+			message: data.message,
+		};
 	} catch (error) {
 		return {
 			success: false,
