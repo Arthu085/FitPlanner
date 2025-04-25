@@ -106,8 +106,9 @@ const editTreino = async (req, res) => {
             const resultUpdateNome = await pool.query(queryUpdateNome, [nome_treino, id_treino]);
 
             if (resultUpdateNome.rows.length === 0) {
-                return res.status(404).json({ error: 'Treino não encontrado' });
+                return res.status(404).json({ success: false, message: 'Treino não encontrado' });
             }
+
             treinoAtualizado = resultUpdateNome.rows[0];
         }
 
@@ -117,7 +118,7 @@ const editTreino = async (req, res) => {
             const resultCheckExercicio = await pool.query(queryCheckExercicio, [id_treino_exercicio]);
 
             if (resultCheckExercicio.rows.length === 0) {
-                return res.status(404).json({ error: 'Exercício não encontrado' });
+                return res.status(404).json({ success: false, message: 'Exercício não encontrado' });
             }
 
             // Monta dinamicamente a query de UPDATE para atualizar apenas os campos enviados
@@ -147,6 +148,11 @@ const editTreino = async (req, res) => {
                     RETURNING *;
                 `;
                 const resultUpdateExercicio = await pool.query(queryUpdateExercicio, values);
+
+                if(resultUpdateExercicio.rows.length === 0) {
+                    return res.status(404).json({success: false, message: "Exercício não encontrado"})
+                }
+
                 exercicioAtualizado = resultUpdateExercicio.rows[0];
             }
 
@@ -156,45 +162,50 @@ const editTreino = async (req, res) => {
                 const resultRemoveExercicio = await pool.query(queryRemoveExercicio, [id_treino_exercicio]);
 
                 if (resultRemoveExercicio.rows.length === 0) {
-                    return res.status(404).json({ error: 'Exercício não encontrado para remoção' });
+                    return res.status(404).json({ success: false, message: 'Exercício não encontrado para remoção' });
                 }
 
                 return res.status(200).json({
+                    success: true,
                     message: 'Exercício removido com sucesso',
-                    exercicioRemovido: resultRemoveExercicio.rows[0]
-                });
-            }
-
-            // Verifica e adiciona um novo exercício
-            if (adicionarExercicio) {
-                const { novoIdExercicio, novaSerie, novaRepeticao } = adicionarExercicio;
-
-                if (!novoIdExercicio || !novaSerie || !novaRepeticao) {
-                    return res.status(400).json({ error: 'Dados do novo exercício incompletos' });
-                }
-
-                const queryAddExercicio = `
-                    INSERT INTO treino_exercicio (id_treino, id_exercise, serie, repeticoes)
-                    VALUES ($1, $2, $3, $4) RETURNING *;
-                `;
-                const resultAddExercicio = await pool.query(queryAddExercicio, [id_treino, novoIdExercicio, novaSerie, novaRepeticao]);
-
-                return res.status(200).json({
-                    message: 'Exercício adicionado com sucesso',
-                    novoExercicio: resultAddExercicio.rows[0]
                 });
             }
         }
 
+            // Verifica e adiciona um novo exercício
+        if (adicionarExercicio) {
+            const { novoIdExercicio, novaSerie, novaRepeticao } = adicionarExercicio;
+
+            if (![novoIdExercicio, novaSerie, novaRepeticao].every(Boolean)) {
+                return res.status(400).json({ success: false, message: 'Dados do novo exercício incompletos' });
+            }
+
+            const queryAddExercicio = `
+                INSERT INTO treino_exercicio (id_treino, id_exercise, serie, repeticoes)
+                VALUES ($1, $2, $3, $4) RETURNING *;
+            `;
+            const resultAddExercicio = await pool.query(queryAddExercicio, [id_treino, novoIdExercicio, novaSerie, novaRepeticao]);
+
+            if(resultAddExercicio.rows.length === 0) {
+                return res.status(400).json({success: false, message:"Erro ao adicionar novo exercício"})
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Exercício adicionado com sucesso',
+            });
+        }
+
         return res.status(200).json({
+            success: true,
             message: 'Atualização realizada com sucesso',
-            treino: treinoAtualizado,
-            exercicio: exercicioAtualizado
+            treinoAtualizado,
+            exercicioAtualizado
         });
 
     } catch (error) {
         console.error('Erro no backend', error);
-        return res.status(500).json({ error: 'Erro ao editar treino', details: error.message });
+        res.status(500).json({ success: false, message: 'Erro ao excluir treino', details: error.message });
     }
 };
 

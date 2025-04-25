@@ -84,3 +84,41 @@ export const deleteTreino = async (idTreino) => {
 		};
 	}
 };
+
+export const editTreino = async (
+	treinoData,
+	adicionarExercicio = false,
+	removerExercicio = false
+) => {
+	try {
+		const url = treinoData.idTreinoExercicio
+			? `http://localhost:3000/api/treinos/edittreino/${treinoData.idTreino}/${treinoData.idTreinoExercicio}`
+			: `http://localhost:3000/api/treinos/edittreino/${treinoData.idTreino}`;
+
+		const result = await fetch(url, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				nome_treino: treinoData.nomeTreino,
+				serie: treinoData.serie,
+				repeticoes: treinoData.repeticoes,
+				id_exercise: treinoData.idExercicio,
+				adicionarExercicio,
+				removerExercicio,
+			}),
+		});
+
+		const data = await result.json();
+
+		if (!data.success) {
+			return { success: false, message: data.message };
+		}
+
+		return data;
+	} catch (error) {
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
+	}
+};

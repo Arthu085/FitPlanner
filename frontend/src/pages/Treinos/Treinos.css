@@ -73,14 +73,36 @@
 .btn-edit-delete {
 	margin-top: 25px;
 	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	gap: 10px;
+}
+
+.container-list {
+	display: flex;
 	flex-direction: column;
 	gap: 10px;
+	max-height: 110px;
+	overflow-y: auto;
+}
+
+.container-list::-webkit-scrollbar {
+	width: 8px;
+}
+
+.container-list::-webkit-scrollbar-thumb {
+	background-color: rgba(100, 100, 100, 0.4);
+	border-radius: 8px;
+}
+
+.container-list::-webkit-scrollbar-track {
+	background: transparent;
 }
 
 .btn-edit-treino,
 .btn-remove-treino {
-	padding: 2px;
-	width: 20%;
+	padding: 10px;
+	width: 30%;
 	border: none;
 	border-radius: 5px;
 	font-size: 14px;
