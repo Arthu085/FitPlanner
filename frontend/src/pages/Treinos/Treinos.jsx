@@ -17,6 +17,7 @@ import {
 	fetchTreinos,
 	createTreino,
 	deleteTreino,
+	editTreino,
 } from "../../hooks/api/treinosApi";
 import { fetchExercicios } from "../../hooks/api/exerciciosApi";
 import { useToast } from "../../hooks/useToast";
@@ -29,10 +30,15 @@ const Treinos = () => {
 	const [nomeTreino, setNomeTreino] = useState("");
 	const [exercicios, setExercicios] = useState([]);
 	const [exercicioSelecionado, setExerciciosSelecionados] = useState([
-		{ id_exercise: "", serie: "", repeticoes: "", exercise_name: "" },
+		{ id_exercise: "" },
 	]);
-	const [idTreino, setIdTreino] = useState(null);
-	const [idTreinoExercicio, setIdTreinoExercicio] = useState(null);
+	const [treinoSelecionado, setTreinoSelecionado] = useState({
+		id_treino: "",
+		nome_treino: "",
+	});
+	const [treinoExercicioSelecionado, setTreinoExercicioSelecionado] = useState([
+		{ id_treino_exercicio: "", id_exercise: "", serie: "", repeticoes: "" },
+	]);
 	const {
 		errorMessage,
 		showError,
@@ -64,32 +70,19 @@ const Treinos = () => {
 		setExerciciosSelecionados([{ id_exercise: "", serie: "", repeticoes: "" }]);
 	};
 
-	const toggleFormEditVisible = (id_treino) => {
+	const toggleFormEditVisible = (treino) => {
 		setFormVisibleEdit(!formVisibleEdit);
-		setIdTreino(id_treino);
-
-		// Encontrar o treino pelo id_treino
-		const treino = treinos.find((t) => t.id_treino === id_treino);
-
-		// Atualizar treinoSelecionado com os exercícios do treino
-		setTreinoSelecionado(treino);
-
-		// Atualizar os exercícios no estado
-		if (treino && treino.exercicios) {
-			setExerciciosSelecionados(
-				treino.exercicios.map((exercicio) => ({
-					id_exercise: exercicio.id_exercise,
-					serie: exercicio.serie || "",
-					repeticoes: exercicio.repeticoes || "",
-					exercise_name: exercicio.exercise_name,
-				}))
-			);
-		}
+		setTreinoSelecionado({
+			id_treino: treino.id_treino,
+			nome_treino: treino.nome_treino,
+		});
+		setTreinoExercicioSelecionado(treino.exercicios || []); // <- se vier os exercicios junto
 	};
 
-	const toggleFormDeleteVisible = (id_treino) => {
+	const toggleFormDeleteVisible = (treino) => {
 		setFormVisibleDelete(!formVisibleDelete);
-		setIdTreino(id_treino);
+		setTreinoSelecionado(treino);
+		console.log(treinoSelecionado);
 	};
 
 	const adicionarExercicio = () => {
@@ -199,7 +192,7 @@ const Treinos = () => {
 		e.preventDefault();
 
 		setLoading(true);
-		const result = await deleteTreino(idTreino);
+		const result = await deleteTreino(treinoSelecionado.id_treino);
 
 		if (!result.success) {
 			showErrorToast(result.message);
@@ -213,62 +206,46 @@ const Treinos = () => {
 		setFormVisibleDelete(false);
 	};
 
-	const editTreino = async (e) => {
+	const handleEditTreino = async (e) => {
 		e.preventDefault();
+		setLoading(true);
 
 		try {
-			const responseUpdateNome = await fetch(
-				`http://localhost:3000/api/treinos/edittreino/${idTreino}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						nome_treino: treinoSelecionado.nome_treino,
-					}),
+			// Atualizar o nome do treino
+			const responseNome = await editTreino({
+				idTreino: treinoSelecionado.id_treino,
+				nomeTreino: treinoSelecionado.nome_treino,
+			});
+
+			// Atualizar cada exercício
+			for (const exercicio of treinoExercicioSelecionado) {
+				const responseExercicio = await editTreino({
+					idTreino: treinoSelecionado.id_treino,
+					idTreinoExercicio: exercicio.id_treino_exercicio,
+					idExercicio: exercicio.id_exercise,
+					serie: exercicio.serie,
+					repeticoes: exercicio.repeticoes,
+				});
+
+				if (!responseExercicio.success) {
+					showErrorToast(responseExercicio.message);
+					setLoading(false);
+					return;
 				}
-			);
-
-			const responseUpdateData = await fetch(
-				`http://localhost:3000/api/treinos/edittreino/${idTreino}/${idTreinoExercicio}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						nome_treino: treinoSelecionado.nome_treino,
-						exercicios: exercicioSelecionado.map((exercicio) => ({
-							id_treino_exercicio: exercicio.id_treino_exercicio,
-							id_exercise: exercicio.id_exercise,
-							serie: exercicio.serie,
-							repeticoes: exercicio.repeticoes,
-						})),
-					}),
-				}
-			);
-
-			const dataUpdateNome = await responseUpdateNome.json();
-			const dataUpdateData = await responseUpdateData.json();
-
-			if (responseUpdateData.ok) {
-				alert("Treino atualizado com sucesso!");
-				toggleFormEditVisible();
-				l;
-			} else {
-				alert("Erro ao atualizar treino: " + data.error);
 			}
 
-			if (responseUpdateNome.ok) {
-				alert("Nome do treino atualizado com sucesso!");
-				toggleFormEditVisible();
+			// Depois de tudo
+			if (!responseNome.success) {
+				showErrorToast(responseNome.message);
 			} else {
-				alert("Erro ao atualizar treino: " + data.error);
+				await loadTreinos();
+				showSuccessToast(responseNome.message);
+				toggleFormEditVisible(); // Fechar modal
 			}
 		} catch (error) {
-			console.error("Erro ao atualizar treino:", error);
-			alert("Erro ao conectar ao servidor");
+			showErrorToast(error.message);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -318,17 +295,12 @@ const Treinos = () => {
 								<div className="btn-edit-delete">
 									<button
 										className="btn-edit-treino"
-										onClick={() =>
-											toggleFormEditVisible(
-												treino.id_treino,
-												treino.id_treino_exercicio
-											)
-										}>
+										onClick={() => toggleFormEditVisible(treino)}>
 										Editar
 									</button>
 									<button
 										className="btn-remove-treino"
-										onClick={() => toggleFormDeleteVisible(treino.id_treino)}>
+										onClick={() => toggleFormDeleteVisible(treino)}>
 										Excluir
 									</button>
 								</div>
@@ -433,57 +405,56 @@ const Treinos = () => {
 					<div className="form-overlay" onClick={toggleFormEditVisible}></div>
 					<div className="form-content">
 						<h2>Editar Treino</h2>
-						<form className="form-add" onSubmit={editTreino}>
+						<form className="form-add" onSubmit={handleEditTreino}>
 							<label>Novo nome do Treino</label>
 							<input
 								type="text"
 								placeholder="Digite o novo nome do treino"
 								value={treinoSelecionado.nome_treino}
 								onChange={(e) => {
-									const novoTreino = { ...treinoSelecionado };
-									novoTreino.nome_treino = e.target.value;
-									setTreinoSelecionado(novoTreino);
+									setTreinoSelecionado((prev) => ({
+										...prev,
+										nome_treino: e.target.value,
+									}));
 								}}
 								required
 							/>
-							{exercicioSelecionado.map((exercicio, index) => (
-								<div key={exercicio.id_exercise} className="select-btn-remove">
+							{treinoExercicioSelecionado.map((treinoExercicio, index) => (
+								<div
+									key={treinoExercicio.id_treino_exercicio}
+									className="select-btn-remove">
 									<div className="form-group">
-										<label htmlFor={`exercicio-${exercicio.id_exercise}`}>
-											Exercício {index + 1}
-										</label>
+										<label>Exercício {index + 1}</label>
 										<select
-											name={`exercicio-${exercicio.id_exercise}`}
-											id={`exercicio-${exercicio.id_exercise}`}
-											value={exercicio.id_exercise}
-											onChange={(e) =>
-												handleExercicioChange(index, e.target.value)
-											}
-											className="select-exercicio"
-											required>
+											value={treinoExercicio.id_exercise}
+											onChange={(e) => {
+												const novosExercicios = [...treinoExercicioSelecionado];
+												novosExercicios[index].id_exercise = e.target.value;
+												setTreinoExercicioSelecionado(novosExercicios);
+											}}>
 											<option value="">Selecione um exercício</option>
-											<option
-												key={exercicio.id_exercise}
-												value={exercicio.id_exercise}>
-												{exercicio.exercise_name}
-											</option>
+											{exercicios.map((exercicio) => (
+												<option
+													key={exercicio.id_exercise}
+													value={exercicio.id_exercise}>
+													{exercicio.exercise_name}
+												</option>
+											))}
 										</select>
+
 										<div className="serie-repeticao-container">
 											<label>Série</label>
 											<input
 												type="number"
 												placeholder="Digite a quantidade de séries"
 												id="serie"
-												value={exercicio.serie}
+												value={treinoExercicio.serie}
 												onChange={(e) => {
 													const novosExercicios = [
-														...exercicioSelecionado.exercicios,
+														...treinoExercicioSelecionado,
 													];
 													novosExercicios[index].serie = e.target.value;
-													setExerciciosSelecionados({
-														...exercicioSelecionado,
-														exercicios: novosExercicios,
-													});
+													setTreinoExercicioSelecionado(novosExercicios);
 												}}
 												min="1"
 												step="1"
@@ -494,16 +465,13 @@ const Treinos = () => {
 												type="number"
 												placeholder="Digite a quantidade de repetições"
 												id="repeticao"
-												value={exercicio.repeticoes}
+												value={treinoExercicio.repeticoes}
 												onChange={(e) => {
 													const novosExercicios = [
-														...exercicioSelecionado.exercicios,
+														...treinoExercicioSelecionado,
 													];
 													novosExercicios[index].repeticoes = e.target.value;
-													setExerciciosSelecionados({
-														...exercicioSelecionado,
-														exercicios: novosExercicios,
-													});
+													setTreinoExercicioSelecionado(novosExercicios);
 												}}
 												min="1"
 												step="1"
