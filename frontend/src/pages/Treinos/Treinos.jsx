@@ -19,7 +19,7 @@ import {
 	deleteTreino,
 	editTreino,
 } from "../../hooks/api/treinosApi";
-import { fetchExercicios } from "../../hooks/api/exerciciosApi";
+import { fetchExerciciosNoLimit } from "../../hooks/api/exerciciosApi";
 import { useToast } from "../../hooks/useToast";
 
 const Treinos = () => {
@@ -27,18 +27,13 @@ const Treinos = () => {
 	const [formVisibleEdit, setFormVisibleEdit] = useState(false);
 	const [formVisibleDelete, setFormVisibleDelete] = useState(false);
 	const [treinos, setTreinos] = useState([]);
-	const [nomeTreino, setNomeTreino] = useState("");
 	const [exercicios, setExercicios] = useState([]);
-	const [exercicioSelecionado, setExerciciosSelecionados] = useState([
-		{ id_exercise: "" },
+	const [idTreinoDelete, setIdTreinoDelete] = useState(null);
+	const [exercicioSelecionado, setExercicioSelecionado] = useState([
+		{ id_exercise: "", serie: "", repeticoes: "" },
 	]);
-	const [treinoSelecionado, setTreinoSelecionado] = useState({
-		id_treino: "",
-		nome_treino: "",
-	});
-	const [treinoExercicioSelecionado, setTreinoExercicioSelecionado] = useState([
-		{ id_treino_exercicio: "", id_exercise: "", serie: "", repeticoes: "" },
-	]);
+	const [nomeTreino, setNomeTreino] = useState("");
+
 	const {
 		errorMessage,
 		showError,
@@ -67,7 +62,6 @@ const Treinos = () => {
 	const toggleFormAddVisible = () => {
 		setFormVisibleAdd(!formVisibleAdd);
 		setNomeTreino("");
-		setExerciciosSelecionados([{ id_exercise: "", serie: "", repeticoes: "" }]);
 	};
 
 	const toggleFormEditVisible = (treino) => {
@@ -81,26 +75,36 @@ const Treinos = () => {
 
 	const toggleFormDeleteVisible = (treino) => {
 		setFormVisibleDelete(!formVisibleDelete);
-		setTreinoSelecionado(treino);
-		console.log(treinoSelecionado);
+		setIdTreinoDelete(treino);
 	};
 
 	const adicionarExercicio = () => {
-		setExerciciosSelecionados([
-			...exercicioSelecionado,
+		setExercicioSelecionado((prev) => [
+			...prev,
 			{ id_exercise: "", serie: "", repeticoes: "" },
 		]);
 	};
 
-	const atualizarExercicio = (index, campo, valor) => {
-		const novosExercicios = [...exercicioSelecionado];
-		novosExercicios[index][campo] = valor;
-		setExerciciosSelecionados(novosExercicios);
+	const removerExercicio = (index) => {
+		setExercicioSelecionado((prevState) =>
+			prevState.filter((_, i) => i !== index)
+		);
 	};
 
-	const removerExercicio = (index) => {
-		const novosExercicios = exercicioSelecionado.filter((_, i) => i !== index);
-		setExerciciosSelecionados(novosExercicios);
+	const groupTreinosById = (treinos) => {
+		const grouped = treinos.reduce((acc, treino) => {
+			if (!acc[treino.id_treino]) {
+				acc[treino.id_treino] = {
+					...treino,
+					exercicios: [treino], // Inicia a lista de exercícios com o primeiro treino
+				};
+			} else {
+				acc[treino.id_treino].exercicios.push(treino); // Adiciona os exercícios à lista
+			}
+			return acc;
+		}, {});
+
+		return Object.values(grouped); // Retorna os treinos agrupados
 	};
 
 	const loadTreinos = async () => {
@@ -124,22 +128,6 @@ const Treinos = () => {
 		setLoading(false);
 		const groupedTreinos = groupTreinosById(result.data);
 		setTreinos(groupedTreinos);
-	};
-
-	const groupTreinosById = (treinos) => {
-		const grouped = treinos.reduce((acc, treino) => {
-			if (!acc[treino.id_treino]) {
-				acc[treino.id_treino] = {
-					...treino,
-					exercicios: [treino], // Inicia a lista de exercícios com o primeiro treino
-				};
-			} else {
-				acc[treino.id_treino].exercicios.push(treino); // Adiciona os exercícios à lista
-			}
-			return acc;
-		}, {});
-
-		return Object.values(grouped); // Retorna os treinos agrupados
 	};
 
 	const handleCreateTreino = async (e) => {
@@ -173,7 +161,7 @@ const Treinos = () => {
 	};
 
 	const loadExercicios = async () => {
-		const result = await fetchExercicios();
+		const result = await fetchExerciciosNoLimit();
 
 		if (!result.success) {
 			showErrorToast(result.message);
@@ -192,7 +180,7 @@ const Treinos = () => {
 		e.preventDefault();
 
 		setLoading(true);
-		const result = await deleteTreino(treinoSelecionado.id_treino);
+		const result = await deleteTreino(idTreinoDelete.id_treino);
 
 		if (!result.success) {
 			showErrorToast(result.message);
@@ -336,9 +324,11 @@ const Treinos = () => {
 										<select
 											className="select-exercicio"
 											value={exercicio.id_exercise}
-											onChange={(e) =>
-												atualizarExercicio(index, "id_exercise", e.target.value)
-											}
+											onChange={(e) => {
+												const novoExercicio = [...exercicioSelecionado];
+												novoExercicio[index].id_exercise = e.target.value;
+												setExercicioSelecionado(novoExercicio);
+											}}
 											required>
 											<option value="">Selecione um exercício</option>
 											{exercicios.map((ex) => (
@@ -354,9 +344,11 @@ const Treinos = () => {
 												placeholder="Digite a quantidade de séries"
 												min="1"
 												value={exercicio.serie}
-												onChange={(e) =>
-													atualizarExercicio(index, "serie", e.target.value)
-												}
+												onChange={(e) => {
+													const novosExercicios = [...exercicioSelecionado];
+													novosExercicios[index].serie = e.target.value;
+													setExercicioSelecionado(novosExercicios);
+												}}
 												required
 											/>
 											<label>Repetição</label>
@@ -365,13 +357,11 @@ const Treinos = () => {
 												placeholder="Digite a quantidade de repetições"
 												min="1"
 												value={exercicio.repeticoes}
-												onChange={(e) =>
-													atualizarExercicio(
-														index,
-														"repeticoes",
-														e.target.value
-													)
-												}
+												onChange={(e) => {
+													const novosExercicios = [...exercicioSelecionado];
+													novosExercicios[index].repeticoes = e.target.value;
+													setExercicioSelecionado(novosExercicios);
+												}}
 												required
 											/>
 										</div>
@@ -387,9 +377,9 @@ const Treinos = () => {
 								</div>
 							))}
 							<button
-								onClick={adicionarExercicio}
 								type="button"
-								className="add-btn-exercicio">
+								className="add-btn-exercicio"
+								onClick={adicionarExercicio}>
 								Adicionar Exercício
 							</button>
 							<button type="submit" className="add-btn">

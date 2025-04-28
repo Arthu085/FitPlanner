@@ -26,6 +26,34 @@ export const fetchExercicios = async (page = 1, limit = 8) => {
 	}
 };
 
+export const fetchExerciciosNoLimit = async () => {
+	try {
+		const response = await fetch(
+			`http://localhost:3000/api/exercicios/getexerciciosnolimit`
+		);
+		const data = await response.json();
+
+		if (!data.success) {
+			return { success: data.success, message: data.message };
+		}
+
+		if (data.data.length === 0) {
+			return {
+				success: true,
+				data: [],
+				message: data.message,
+			};
+		}
+
+		return data;
+	} catch (error) {
+		return {
+			success: false,
+			message: "Erro ao conectar-se ao servidor: " + error.message,
+		};
+	}
+};
+
 export const createExercicio = async (exercicioData) => {
 	try {
 		const result = await fetch(
