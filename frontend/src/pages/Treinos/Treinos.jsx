@@ -1,5 +1,7 @@
 import "./Treinos.css";
 
+import { v4 as uuidv4 } from "uuid";
+
 // react
 import React, { useEffect, useState } from "react";
 
@@ -18,6 +20,8 @@ import {
 	createTreino,
 	deleteTreino,
 	editTreino,
+	deleteExercicioOnEditing,
+	addExercicioOnEditing,
 } from "../../hooks/api/treinosApi";
 import { fetchExerciciosNoLimit } from "../../hooks/api/exerciciosApi";
 import { useToast } from "../../hooks/useToast";
@@ -33,6 +37,16 @@ const Treinos = () => {
 		{ id_exercise: "", serie: "", repeticoes: "" },
 	]);
 	const [nomeTreino, setNomeTreino] = useState("");
+	const [treinoSelecionado, setTreinoSelecionado] = useState({
+		id_treino: "",
+		nome_treino: "",
+		exercicios: [],
+	});
+	const [treinoOriginal, setTreinoOriginal] = useState({
+		id_treino: "",
+		nome_treino: "",
+		exercicios: [],
+	});
 
 	const {
 		errorMessage,
@@ -62,15 +76,27 @@ const Treinos = () => {
 	const toggleFormAddVisible = () => {
 		setFormVisibleAdd(!formVisibleAdd);
 		setNomeTreino("");
+		setExercicioSelecionado([{ id_exercise: "", serie: "", repeticoes: "" }]);
 	};
 
 	const toggleFormEditVisible = (treino) => {
 		setFormVisibleEdit(!formVisibleEdit);
-		setTreinoSelecionado({
+
+		const treinoFormatado = {
 			id_treino: treino.id_treino,
 			nome_treino: treino.nome_treino,
-		});
-		setTreinoExercicioSelecionado(treino.exercicios || []); // <- se vier os exercicios junto
+			exercicios: Array.isArray(treino.exercicios)
+				? treino.exercicios.map((exercicio) => ({
+						id_treino_exercicio: exercicio.id_treino_exercicio,
+						id_exercise: exercicio.id_exercise,
+						serie: exercicio.serie,
+						repeticoes: exercicio.repeticoes,
+				  }))
+				: [],
+		};
+
+		setTreinoSelecionado(treinoFormatado);
+		setTreinoOriginal(treinoFormatado);
 	};
 
 	const toggleFormDeleteVisible = (treino) => {
@@ -83,6 +109,19 @@ const Treinos = () => {
 			...prev,
 			{ id_exercise: "", serie: "", repeticoes: "" },
 		]);
+		setTreinoSelecionado((prev) => ({
+			...prev,
+			exercicios: [
+				...prev.exercicios,
+				{
+					id_exercise: "",
+					serie: "",
+					repeticoes: "",
+					isNew: true,
+					tempId: uuidv4(),
+				},
+			],
+		}));
 	};
 
 	const removerExercicio = (index) => {
@@ -194,46 +233,200 @@ const Treinos = () => {
 		setFormVisibleDelete(false);
 	};
 
+	const handleDeleteExercicio = async (index, exercicio) => {
+		try {
+			// Se não tem id_treino_exercicio, é um novo exercício não salvo ainda
+			if (!exercicio.id_treino_exercicio) {
+				setTreinoSelecionado((prev) => ({
+					...prev,
+					exercicios: prev.exercicios.filter((_, i) => i !== index),
+				}));
+				return;
+			}
+
+			// Se tiver, chamar a API para deletar do banco
+			const result = await deleteExercicioOnEditing(
+				exercicio.id_treino_exercicio
+			);
+
+			if (!result.success) {
+				showErrorToast(result.message);
+				return;
+			}
+
+			// Remove do estado se deletou com sucesso
+			setTreinoSelecionado((prev) => ({
+				...prev,
+				exercicios: prev.exercicios.filter((_, i) => i !== index),
+			}));
+
+			await loadTreinos();
+			showSuccessToast("Exercício removido com sucesso");
+		} catch (error) {
+			showErrorToast("Erro ao deletar exercício");
+		}
+	};
+
 	const handleEditTreino = async (e) => {
 		e.preventDefault();
-		setLoading(true);
 
-		try {
-			// Atualizar o nome do treino
-			const responseNome = await editTreino({
-				idTreino: treinoSelecionado.id_treino,
-				nomeTreino: treinoSelecionado.nome_treino,
-			});
+		// Verifica se algo foi alterado ANTES de prosseguir
+		const nomeAlterado =
+			treinoSelecionado.nome_treino.trim() !==
+			treinoOriginal.nome_treino.trim();
 
-			// Atualizar cada exercício
-			for (const exercicio of treinoExercicioSelecionado) {
-				const responseExercicio = await editTreino({
-					idTreino: treinoSelecionado.id_treino,
-					idTreinoExercicio: exercicio.id_treino_exercicio,
-					idExercicio: exercicio.id_exercise,
-					serie: exercicio.serie,
-					repeticoes: exercicio.repeticoes,
-				});
+		// Verifica se há exercício novo e se o id do exercício novo já existe
+		const houveNovoExercicio = treinoSelecionado.exercicios.some((ex) => {
+			if (ex.isNew) {
+				// Verifica se o id_exercise do exercício novo já existe no treino
+				const idsDosExerciciosNoTreino = treinoSelecionado.exercicios.map(
+					(ex) => ex.id_exercise
+				);
 
-				if (!responseExercicio.success) {
-					showErrorToast(responseExercicio.message);
-					setLoading(false);
-					return;
+				// Se o id_exercise já estiver no treino, mostra erro e retorna true
+				if (idsDosExerciciosNoTreino.includes(ex.id_exercise)) {
+					showInfoToast("O exercício já está no treino");
+					houveErro = true; // Marca que houve erro
+					return true; // Impede o exercício de ser considerado como novo
 				}
 			}
+			return false;
+		});
 
-			// Depois de tudo
-			if (!responseNome.success) {
-				showErrorToast(responseNome.message);
-			} else {
-				await loadTreinos();
-				showSuccessToast(responseNome.message);
-				toggleFormEditVisible(); // Fechar modal
+		const houveExercicioEditado = treinoSelecionado.exercicios.some(
+			(exSelecionado) => {
+				if (exSelecionado.isNew) return false;
+
+				const original = treinoOriginal.exercicios.find(
+					(e) => e.id_treino_exercicio === exSelecionado.id_treino_exercicio
+				);
+
+				if (!original) return false;
+
+				return (
+					parseInt(exSelecionado.id_exercise) !==
+						parseInt(original.id_exercise) ||
+					parseInt(exSelecionado.serie) !== parseInt(original.serie) ||
+					parseInt(exSelecionado.repeticoes) !== parseInt(original.repeticoes)
+				);
 			}
-		} catch (error) {
-			showErrorToast(error.message);
-		} finally {
-			setLoading(false);
+		);
+
+		// Verifica se não houve alterações
+		if (!nomeAlterado && !houveNovoExercicio && !houveExercicioEditado) {
+			showInfoToast("Nenhuma alteração detectada");
+			return;
+		}
+
+		let houveErro = false;
+		setLoading(true);
+
+		// Atualiza o nome do treino, se necessário
+		if (nomeAlterado) {
+			try {
+				const resultNome = await editTreino({
+					id_treino: treinoSelecionado.id_treino,
+					nome_treino: treinoSelecionado.nome_treino,
+				});
+
+				if (!resultNome.success) {
+					showErrorToast(resultNome.message);
+					houveErro = true;
+				}
+			} catch (error) {
+				showErrorToast("Erro ao atualizar nome do treino");
+				houveErro = true;
+			}
+		}
+
+		// Verifica duplicação de exercício durante a inserção de novos exercícios
+		const idsDosExerciciosNoTreino = treinoSelecionado.exercicios.map(
+			(ex) => ex.id_exercise
+		);
+
+		// Verifica e processa os exercícios (atualização ou inserção)
+		for (const exSelecionado of treinoSelecionado.exercicios) {
+			// Se for novo, verifica duplicação antes de adicionar
+			if (exSelecionado.isNew) {
+				if (idsDosExerciciosNoTreino.includes(exSelecionado.id_exercise)) {
+					showErrorToast("O exercício já está no treino.");
+					houveErro = true;
+					break;
+				}
+
+				try {
+					const resultAdd = await addExercicioOnEditing({
+						id_treino: treinoSelecionado.id_treino,
+						id_exercise: exSelecionado.id_exercise,
+						serie: exSelecionado.serie,
+						repeticoes: exSelecionado.repeticoes,
+					});
+
+					if (!resultAdd.success) {
+						showErrorToast(resultAdd.message);
+						houveErro = true;
+						continue;
+					}
+				} catch (error) {
+					showErrorToast("Erro ao adicionar novo exercício");
+					houveErro = true;
+					continue;
+				}
+			} else {
+				// Se não é novo, verifica alterações
+				const original = treinoOriginal.exercicios.find(
+					(e) => e.id_treino_exercicio === exSelecionado.id_treino_exercicio
+				);
+
+				if (!original) continue;
+
+				const exercicioAlterado =
+					parseInt(exSelecionado.id_exercise) !==
+						parseInt(original.id_exercise) ||
+					parseInt(exSelecionado.serie) !== parseInt(original.serie) ||
+					parseInt(exSelecionado.repeticoes) !== parseInt(original.repeticoes);
+
+				if (exercicioAlterado) {
+					try {
+						const resultEdit = await editTreino({
+							id_treino: treinoSelecionado.id_treino,
+							id_treino_exercicio: exSelecionado.id_treino_exercicio,
+							id_exercise: exSelecionado.id_exercise,
+							serie: exSelecionado.serie,
+							repeticoes: exSelecionado.repeticoes,
+						});
+
+						if (
+							resultEdit.message ===
+							"Este exercício já está associado a este treino"
+						) {
+							showInfoToast(resultEdit.message);
+							houveErro = true;
+							break;
+						}
+
+						if (!resultEdit.success) {
+							showErrorToast(resultEdit.message);
+							houveErro = true;
+							break;
+						}
+					} catch (error) {
+						showErrorToast("Erro ao atualizar exercício");
+						houveErro = true;
+						break;
+					}
+				}
+			}
+		}
+
+		setLoading(false);
+		await loadTreinos();
+
+		if (!houveErro) {
+			showSuccessToast("Treino atualizado com sucesso");
+			setFormVisibleEdit(false);
+		} else {
+			showErrorToast("Algumas alterações não foram salvas");
 		}
 	};
 
@@ -409,42 +602,54 @@ const Treinos = () => {
 								}}
 								required
 							/>
-							{treinoExercicioSelecionado.map((treinoExercicio, index) => (
+							{treinoSelecionado.exercicios.map((exercicio, index) => (
 								<div
-									key={treinoExercicio.id_treino_exercicio}
+									key={
+										exercicio.id_treino_exercicio || exercicio.tempId || index
+									}
 									className="select-btn-remove">
 									<div className="form-group">
 										<label>Exercício {index + 1}</label>
 										<select
-											value={treinoExercicio.id_exercise}
+											value={exercicio.id_exercise}
 											onChange={(e) => {
-												const novosExercicios = [...treinoExercicioSelecionado];
-												novosExercicios[index].id_exercise = e.target.value;
-												setTreinoExercicioSelecionado(novosExercicios);
+												const novosExercicios =
+													treinoSelecionado.exercicios.map((ex, i) =>
+														i === index
+															? { ...ex, id_exercise: e.target.value }
+															: ex
+													);
+												setTreinoSelecionado((prev) => ({
+													...prev,
+													exercicios: novosExercicios,
+												}));
 											}}>
 											<option value="">Selecione um exercício</option>
-											{exercicios.map((exercicio) => (
-												<option
-													key={exercicio.id_exercise}
-													value={exercicio.id_exercise}>
-													{exercicio.exercise_name}
+											{exercicios.map((ex) => (
+												<option key={ex.id_exercise} value={ex.id_exercise}>
+													{ex.exercise_name}
 												</option>
 											))}
 										</select>
-
 										<div className="serie-repeticao-container">
 											<label>Série</label>
 											<input
 												type="number"
 												placeholder="Digite a quantidade de séries"
 												id="serie"
-												value={treinoExercicio.serie}
+												value={exercicio.serie}
 												onChange={(e) => {
-													const novosExercicios = [
-														...treinoExercicioSelecionado,
-													];
-													novosExercicios[index].serie = e.target.value;
-													setTreinoExercicioSelecionado(novosExercicios);
+													const valor = parseInt(e.target.value, 10);
+													const novosExercicios =
+														treinoSelecionado.exercicios.map((ex, i) =>
+															i === index
+																? { ...ex, serie: isNaN(valor) ? "" : valor }
+																: ex
+														);
+													setTreinoSelecionado((prev) => ({
+														...prev,
+														exercicios: novosExercicios,
+													}));
 												}}
 												min="1"
 												step="1"
@@ -455,13 +660,22 @@ const Treinos = () => {
 												type="number"
 												placeholder="Digite a quantidade de repetições"
 												id="repeticao"
-												value={treinoExercicio.repeticoes}
+												value={exercicio.repeticoes}
 												onChange={(e) => {
-													const novosExercicios = [
-														...treinoExercicioSelecionado,
-													];
-													novosExercicios[index].repeticoes = e.target.value;
-													setTreinoExercicioSelecionado(novosExercicios);
+													const valor = parseInt(e.target.value, 10);
+													const novosExercicios =
+														treinoSelecionado.exercicios.map((ex, i) =>
+															i === index
+																? {
+																		...ex,
+																		repeticoes: isNaN(valor) ? "" : valor,
+																  }
+																: ex
+														);
+													setTreinoSelecionado((prev) => ({
+														...prev,
+														exercicios: novosExercicios,
+													}));
 												}}
 												min="1"
 												step="1"
@@ -469,10 +683,10 @@ const Treinos = () => {
 											/>
 										</div>
 									</div>
-									{exercicioSelecionado.length > 1 && (
+									{treinoSelecionado.exercicios.length > 1 && (
 										<button
 											type="button"
-											onClick={() => removerExercicio(index)}
+											onClick={() => handleDeleteExercicio(index, exercicio)}
 											className="btn-remove">
 											Remover
 										</button>
