@@ -1,12 +1,13 @@
 import Container from "../../components/Container";
 import Form from "../../components/Form";
 import ThemeToggle from "../../components/Theme/ThemeToggle";
+
 import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
 import { useToast } from "../../hooks/useToast";
 
 const Login = () => {
-	const { login, loading, error } = useAuth();
+	const { login, loading } = useAuth();
 	const addToast = useToast();
 
 	const fields = [
@@ -48,7 +49,10 @@ const Login = () => {
 				values={values}
 				handleChange={handleChange}
 				handleSubmit={handleSubmit}
-				title="Entrar"></Form>
+				title="Entrar"
+				text={"Não possui uma conta?"}
+				path={"/register"}
+				pathTitle={"Registrar"}></Form>
 			<div className="absolute bottom-4 left-4">
 				<ThemeToggle />
 			</div>

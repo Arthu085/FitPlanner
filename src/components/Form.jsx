@@ -1,4 +1,5 @@
 import Buttons from "./Buttons";
+import { Link } from "react-router-dom";
 
 export default function Form({
 	fields,
@@ -6,6 +7,9 @@ export default function Form({
 	handleChange,
 	handleSubmit,
 	title,
+	text,
+	path,
+	pathTitle,
 }) {
 	return (
 		<form
@@ -40,6 +44,15 @@ export default function Form({
 				colorBg={"bg-blue-500"}
 				colorHover={"hover:bg-blue-700"}
 				submit={"submit"}></Buttons>
+
+			<div className="flex flex-row gap-4 mt-4">
+				<p className="text-black dark:text-white">{text}</p>
+				<Link
+					to={path}
+					className="text-black dark:text-white font-bold hover:underline">
+					{pathTitle}
+				</Link>
+			</div>
 		</form>
 	);
 }
