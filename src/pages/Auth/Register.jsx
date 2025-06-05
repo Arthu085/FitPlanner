@@ -12,6 +12,7 @@ const Register = () => {
 	const { register, loading } = useAuth();
 	const addToast = useToast();
 	const navigate = useNavigate();
+	localStorage.removeItem("user");
 
 	const fields = [
 		{

@@ -6,10 +6,13 @@ import logo from "../../assets/images/logo.svg";
 import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
 import { useToast } from "../../hooks/useToast";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
 	const { login, loading } = useAuth();
 	const addToast = useToast();
+	localStorage.removeItem("user");
+	const navigate = useNavigate();
 
 	const fields = [
 		{
@@ -32,6 +35,7 @@ const Login = () => {
 		try {
 			const response = await login(data);
 			addToast(response.message || "Login realizado com sucesso", "success");
+			navigate("/");
 			resetForm();
 		} catch (error) {
 			addToast(error.message || "Erro ao fazer login", "error");
