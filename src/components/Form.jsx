@@ -1,3 +1,5 @@
+import Buttons from "./Buttons";
+
 export default function Form({
 	fields,
 	values,
@@ -33,11 +35,11 @@ export default function Form({
 				</div>
 			))}
 
-			<button
-				type="submit"
-				className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
-				Enviar
-			</button>
+			<Buttons
+				text={"Entrar"}
+				colorBg={"bg-blue-500"}
+				colorHover={"hover:bg-blue-700"}
+				submit={"submit"}></Buttons>
 		</form>
 	);
 }
