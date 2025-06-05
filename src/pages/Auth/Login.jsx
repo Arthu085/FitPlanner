@@ -1,6 +1,6 @@
 import Container from "../../components/Container";
 import Form from "../../components/Form";
-import ThemeToggle from "../../components/ThemeToggle";
+import ThemeToggle from "../../components/Theme/ThemeToggle";
 import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
 import { useToast } from "../../hooks/useToast";
