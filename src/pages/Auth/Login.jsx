@@ -1,6 +1,7 @@
 import Container from "../../components/Container";
 import Form from "../../components/Form";
 import ThemeToggle from "../../components/Theme/ThemeToggle";
+import logo from "../../assets/images/logo.svg";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
@@ -52,7 +53,8 @@ const Login = () => {
 				title="Entrar"
 				text={"Não possui uma conta?"}
 				path={"/register"}
-				pathTitle={"Registrar"}></Form>
+				pathTitle={"Registrar"}
+				logo={logo}></Form>
 			<div className="absolute bottom-4 left-4">
 				<ThemeToggle />
 			</div>

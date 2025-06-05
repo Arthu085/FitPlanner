@@ -10,11 +10,15 @@ export default function Form({
 	text,
 	path,
 	pathTitle,
+	logo,
 }) {
 	return (
 		<form
 			onSubmit={handleSubmit}
 			className="bg-white dark:bg-gray-900 shadow-md rounded-xl p-8 w-full max-w-md mx-auto transition-colors duration-300">
+			{logo && (
+				<img src={logo} alt="Logo" className="h-35 mx-auto dark:invert" />
+			)}
 			<h2 className="text-2xl font-bold mb-6 text-center dark:text-white">
 				{title}
 			</h2>
