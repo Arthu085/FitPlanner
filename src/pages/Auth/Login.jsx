@@ -54,7 +54,10 @@ const Login = () => {
 				text={"Não possui uma conta?"}
 				path={"/register"}
 				pathTitle={"Registrar"}
-				logo={logo}></Form>
+				logo={logo}
+				btnTitle={"Entrar"}
+			/>
+
 			<div className="absolute bottom-4 left-4">
 				<ThemeToggle />
 			</div>

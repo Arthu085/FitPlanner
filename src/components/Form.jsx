@@ -11,6 +11,7 @@ export default function Form({
 	path,
 	pathTitle,
 	logo,
+	btnTitle,
 }) {
 	return (
 		<form
@@ -34,7 +35,7 @@ export default function Form({
 						<input
 							type={field.type}
 							id={field.name}
-							name={values[field.name] || ""}
+							name={field.name}
 							value={values[field.name] || ""}
 							onChange={handleChange}
 							placeholder={field.placeholder}
@@ -45,7 +46,7 @@ export default function Form({
 				))}
 
 			<Buttons
-				text={"Entrar"}
+				text={btnTitle}
 				colorBg={"bg-blue-500"}
 				colorHover={"hover:bg-blue-700"}
 				submit={"submit"}></Buttons>

@@ -2,9 +2,17 @@ import Container from "../../components/Container";
 import Form from "../../components/Form";
 import ThemeToggle from "../../components/Theme/ThemeToggle";
 import logo from "../../assets/images/logo.svg";
+
 import { useForm } from "../../hooks/useForm";
+import { useAuth } from "../../hooks/useAuth";
+import { useToast } from "../../hooks/useToast";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+	const { register, loading } = useAuth();
+	const addToast = useToast();
+	const navigate = useNavigate();
+
 	const fields = [
 		{
 			label: "Nome",
@@ -36,7 +44,25 @@ const Register = () => {
 		},
 	];
 
-	const { values, handleChange, handleSubmit, resetForm } = useForm({});
+	const handleFormSubmit = async (data) => {
+		if (data.password !== data.passwordConfirm) {
+			addToast("As senhas devem ser iguais", "error");
+			return;
+		}
+		try {
+			const response = await register(data);
+			addToast(response.message || "Cadastro realizado com sucesso", "success");
+			navigate("/login");
+			resetForm();
+		} catch (error) {
+			addToast(error.message || "Erro ao fazer login", "error");
+		}
+	};
+
+	const { values, handleChange, handleSubmit, resetForm } = useForm(
+		{},
+		handleFormSubmit
+	);
 
 	return (
 		<>
@@ -50,7 +76,10 @@ const Register = () => {
 					values={values}
 					path={"/login"}
 					pathTitle={"Entrar"}
-					logo={logo}></Form>
+					logo={logo}
+					btnTitle={"Cadastrar"}
+				/>
+
 				<div className="absolute bottom-4 left-4">
 					<ThemeToggle />
 				</div>

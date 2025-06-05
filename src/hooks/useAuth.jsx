@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { login as loginRequest } from "../api/authApi";
+import {
+	login as loginRequest,
+	register as registerRequest,
+} from "../api/authApi";
 
 export function useAuth() {
 	const [user, setUser] = useState(null);
@@ -21,6 +24,20 @@ export function useAuth() {
 		}
 	};
 
+	const register = async (data) => {
+		setLoading(true);
+		setError(null);
+		try {
+			const res = await registerRequest(data);
+			return res;
+		} catch (error) {
+			setError(error.message || "Erro ao fazer cadastro");
+			throw error;
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	const logout = () => {
 		setUser(null);
 	};
@@ -29,6 +46,7 @@ export function useAuth() {
 		user,
 		login,
 		logout,
+		register,
 		loading,
 		error,
 		isAuthenticated: !!user,
