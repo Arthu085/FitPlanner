@@ -3,9 +3,12 @@ import Form from "../../components/Form";
 import ThemeToggle from "../../components/ThemeToggle";
 import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
+import { useToast } from "../../hooks/useToast";
 
 const Login = () => {
 	const { login, loading, error } = useAuth();
+	const addToast = useToast();
+
 	const fields = [
 		{
 			label: "E-mail",
@@ -24,9 +27,13 @@ const Login = () => {
 	];
 
 	const handleFormSubmit = async (data) => {
-		await login(data).then(() => {
+		try {
+			const response = await login(data);
+			addToast(response.message || "Login realizado com sucesso", "success");
 			resetForm();
-		});
+		} catch (error) {
+			addToast(error.message || "Erro ao fazer login", "error");
+		}
 	};
 
 	const { values, handleChange, handleSubmit, resetForm } = useForm(

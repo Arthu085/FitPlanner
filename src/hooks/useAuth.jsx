@@ -13,8 +13,10 @@ export function useAuth() {
 		try {
 			const res = await loginRequest(data);
 			setUser(res.user);
+			return res;
 		} catch (error) {
 			setError(error.message || "Erro ao fazer login");
+			throw error;
 		} finally {
 			setLoading(false);
 		}
