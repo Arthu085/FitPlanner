@@ -7,12 +7,17 @@ import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
 import { useToast } from "../../hooks/useToast";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Login = () => {
+	useEffect(() => {
+		localStorage.removeItem("user");
+	}, []);
+
 	const { login, loading } = useAuth();
 	const addToast = useToast();
-	localStorage.removeItem("user");
 	const navigate = useNavigate();
+	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const fields = [
 		{
@@ -32,13 +37,17 @@ const Login = () => {
 	];
 
 	const handleFormSubmit = async (data) => {
+		if (btnDisabled) return;
+		setBtnDisabled(true);
 		try {
 			const response = await login(data);
 			addToast(response.message || "Login realizado com sucesso", "success");
-			navigate("/");
 			resetForm();
+			navigate("/");
 		} catch (error) {
 			addToast(error.message || "Erro ao fazer login", "error");
+		} finally {
+			setBtnDisabled(false);
 		}
 	};
 
@@ -60,6 +69,7 @@ const Login = () => {
 				pathTitle={"Registrar"}
 				logo={logo}
 				btnTitle={"Entrar"}
+				btnDisabled={btnDisabled}
 			/>
 
 			<div className="absolute bottom-4 left-4">

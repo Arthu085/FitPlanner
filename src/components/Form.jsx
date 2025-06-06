@@ -12,6 +12,7 @@ export default function Form({
 	pathTitle,
 	logo,
 	btnTitle,
+	btnDisabled,
 }) {
 	return (
 		<form
@@ -49,7 +50,9 @@ export default function Form({
 				text={btnTitle}
 				colorBg={"bg-blue-500"}
 				colorHover={"hover:bg-blue-700"}
-				submit={"submit"}></Buttons>
+				submit={"submit"}
+				disabled={btnDisabled}
+			/>
 
 			<div className="flex flex-row gap-4 mt-4">
 				<p className="text-black dark:text-white">{text}</p>

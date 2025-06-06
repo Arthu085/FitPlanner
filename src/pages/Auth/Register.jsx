@@ -7,12 +7,17 @@ import { useForm } from "../../hooks/useForm";
 import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Register = () => {
+	useEffect(() => {
+		localStorage.removeItem("user");
+	}, []);
+
 	const { register, loading } = useAuth();
 	const addToast = useToast();
 	const navigate = useNavigate();
-	localStorage.removeItem("user");
+	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const fields = [
 		{
@@ -50,6 +55,8 @@ const Register = () => {
 			addToast("As senhas devem ser iguais", "error");
 			return;
 		}
+		if (btnDisabled) return;
+		setBtnDisabled(true);
 		try {
 			const response = await register(data);
 			addToast(response.message || "Cadastro realizado com sucesso", "success");
@@ -57,6 +64,8 @@ const Register = () => {
 			resetForm();
 		} catch (error) {
 			addToast(error.message || "Erro ao fazer login", "error");
+		} finally {
+			setBtnDisabled(false);
 		}
 	};
 
@@ -79,6 +88,7 @@ const Register = () => {
 					pathTitle={"Entrar"}
 					logo={logo}
 					btnTitle={"Cadastrar"}
+					btnDisabled={btnDisabled}
 				/>
 
 				<div className="absolute bottom-4 left-4">
