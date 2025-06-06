@@ -2,6 +2,7 @@ import Container from "../../components/Container";
 import Form from "../../components/Form";
 import ThemeToggle from "../../components/Theme/ThemeToggle";
 import logo from "../../assets/images/logo.svg";
+import LoadingScreen from "../../components/LoadingScreen";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useForm } from "../../hooks/useForm";
@@ -14,10 +15,13 @@ const Login = () => {
 		localStorage.removeItem("user");
 	}, []);
 
-	const { login, loading } = useAuth();
+	const { login } = useAuth();
 	const addToast = useToast();
-	const navigate = useNavigate();
+
+	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
+
+	const navigate = useNavigate();
 
 	const fields = [
 		{
@@ -39,6 +43,7 @@ const Login = () => {
 	const handleFormSubmit = async (data) => {
 		if (btnDisabled) return;
 		setBtnDisabled(true);
+		setLoading(true);
 		try {
 			const response = await login(data);
 			addToast(response.message || "Login realizado com sucesso", "success");
@@ -47,6 +52,7 @@ const Login = () => {
 		} catch (error) {
 			addToast(error.message || "Erro ao fazer login", "error");
 		} finally {
+			setLoading(false);
 			setBtnDisabled(false);
 		}
 	};
@@ -57,25 +63,29 @@ const Login = () => {
 	);
 
 	return (
-		<Container centered>
-			<Form
-				fields={fields}
-				values={values}
-				handleChange={handleChange}
-				handleSubmit={handleSubmit}
-				title="Entrar"
-				text={"Não possui uma conta?"}
-				path={"/register"}
-				pathTitle={"Registrar"}
-				logo={logo}
-				btnTitle={"Entrar"}
-				btnDisabled={btnDisabled}
-			/>
+		<>
+			{loading && <LoadingScreen />}
 
-			<div className="absolute bottom-4 left-4">
-				<ThemeToggle />
-			</div>
-		</Container>
+			<Container centered>
+				<Form
+					fields={fields}
+					values={values}
+					handleChange={handleChange}
+					handleSubmit={handleSubmit}
+					title="Entrar"
+					text={"Não possui uma conta?"}
+					path={"/register"}
+					pathTitle={"Registrar"}
+					logo={logo}
+					btnTitle={"Entrar"}
+					btnDisabled={btnDisabled}
+				/>
+
+				<div className="absolute bottom-4 left-4">
+					<ThemeToggle />
+				</div>
+			</Container>
+		</>
 	);
 };
 

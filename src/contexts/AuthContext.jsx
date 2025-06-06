@@ -11,11 +11,9 @@ export const AuthProvider = ({ children }) => {
 		const saved = localStorage.getItem("user");
 		return saved ? JSON.parse(saved) : null;
 	});
-	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 
 	const login = async (data) => {
-		setLoading(true);
 		setError(null);
 		try {
 			const res = await loginRequest(data);
@@ -25,13 +23,10 @@ export const AuthProvider = ({ children }) => {
 		} catch (error) {
 			setError(error.message || "Erro ao fazer login");
 			throw error;
-		} finally {
-			setLoading(false);
 		}
 	};
 
 	const register = async (data) => {
-		setLoading(true);
 		setError(null);
 		try {
 			const res = await registerRequest(data);
@@ -39,8 +34,6 @@ export const AuthProvider = ({ children }) => {
 		} catch (error) {
 			setError(error.message || "Erro ao fazer cadastro");
 			throw error;
-		} finally {
-			setLoading(false);
 		}
 	};
 
@@ -58,7 +51,6 @@ export const AuthProvider = ({ children }) => {
 				login,
 				logout,
 				register,
-				loading,
 				error,
 				isAuthenticated,
 			}}>

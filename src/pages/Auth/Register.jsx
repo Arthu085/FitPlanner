@@ -2,6 +2,7 @@ import Container from "../../components/Container";
 import Form from "../../components/Form";
 import ThemeToggle from "../../components/Theme/ThemeToggle";
 import logo from "../../assets/images/logo.svg";
+import LoadingScreen from "../../components/LoadingScreen";
 
 import { useForm } from "../../hooks/useForm";
 import { useAuth } from "../../hooks/useAuth";
@@ -14,10 +15,13 @@ const Register = () => {
 		localStorage.removeItem("user");
 	}, []);
 
-	const { register, loading } = useAuth();
+	const { register } = useAuth();
 	const addToast = useToast();
-	const navigate = useNavigate();
+
+	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
+
+	const navigate = useNavigate();
 
 	const fields = [
 		{
@@ -57,6 +61,7 @@ const Register = () => {
 		}
 		if (btnDisabled) return;
 		setBtnDisabled(true);
+		setLoading(true);
 		try {
 			const response = await register(data);
 			addToast(response.message || "Cadastro realizado com sucesso", "success");
@@ -65,6 +70,7 @@ const Register = () => {
 		} catch (error) {
 			addToast(error.message || "Erro ao fazer login", "error");
 		} finally {
+			setLoading(false);
 			setBtnDisabled(false);
 		}
 	};
@@ -76,6 +82,8 @@ const Register = () => {
 
 	return (
 		<>
+			{loading && <LoadingScreen />}
+
 			<Container centered>
 				<Form
 					title="Cadastrar"
