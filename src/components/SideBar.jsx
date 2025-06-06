@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ThemeToggle from "../Theme/ThemeToggle";
+import ThemeToggle from "./Theme/ThemeToggle";
 
 const menuItems = [{ label: "Sessão de Treino" }, { label: "Treinos" }];
 
