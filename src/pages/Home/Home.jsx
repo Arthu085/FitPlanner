@@ -1,4 +1,5 @@
 import Container from "../../components/Container";
+import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 
 const Home = () => {
@@ -6,6 +7,7 @@ const Home = () => {
 		<>
 			<Container>
 				<Header />
+				<Footer />
 			</Container>
 		</>
 	);
