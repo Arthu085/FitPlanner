@@ -9,9 +9,15 @@ export default function PrivateRoute() {
 	const toastShownRef = useRef(false);
 
 	useEffect(() => {
-		if (!user && !toastShownRef.current) {
+		const manuallyLoggedOut = localStorage.getItem("manualLogout");
+
+		if (!user && !toastShownRef.current && !manuallyLoggedOut) {
 			addToast("Faça login para usar o sistema", "error");
 			toastShownRef.current = true;
+		}
+
+		if (manuallyLoggedOut) {
+			localStorage.removeItem("manualLogout"); // limpa a flag
 		}
 	}, [user, addToast]);
 
