@@ -4,11 +4,12 @@ import Header from "../../components/Header";
 import Layout from "../../components/Layout";
 import SideBar from "../../components/SideBar";
 import Table from "../../components/Table";
+import Buttons from "../../components/Buttons";
+import Modal from "../../components/Modal";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { fetchTrainingSession } from "../../api/trainingSessionApi";
-import Buttons from "../../components/Buttons";
 
 const Home = () => {
 	const { user } = useAuth();
@@ -18,6 +19,7 @@ const Home = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [trainingSessions, setTrainingSessions] = useState([]);
 	const [btnDisabled, setBtnDisabled] = useState(false);
+	const [modalOpen, setModalOpen] = useState(false);
 
 	useEffect(() => {
 		const loadSessions = async () => {
@@ -83,6 +85,7 @@ const Home = () => {
 								type={"primary"}
 								disabled={btnDisabled}
 								text={"Detalhes"}
+								onClick={() => setModalOpen(true)}
 							/>
 							<Buttons
 								type={"warning"}
@@ -94,6 +97,24 @@ const Home = () => {
 				/>
 			</Layout>
 			<Footer />
+			<Modal
+				isOpen={modalOpen}
+				onClose={() => setModalOpen(false)}
+				title="Título do Modal"
+				content={<p>Esse é um modal flexível usando Tailwind e React.</p>}
+				actions={
+					<>
+						<button
+							onClick={() => setModalOpen(false)}
+							className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+							Fechar
+						</button>
+						<button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+							Confirmar
+						</button>
+					</>
+				}
+			/>
 		</Container>
 	);
 };

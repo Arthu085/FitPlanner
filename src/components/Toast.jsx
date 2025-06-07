@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 export default function Toast({ toasts }) {
 	return (
-		<div className="fixed top-2 right-15 z-60 space-y-2">
+		<div className="fixed top-2 right-15 z-70 space-y-2">
 			<AnimatePresence>
 				{toasts.map((toast) => (
 					<motion.div

@@ -10,7 +10,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 			onMouseEnter={() => setIsOpen(true)}
 			onMouseLeave={() => setIsOpen(false)}
 			className={`
-        fixed top-0 left-0 h-full z-50
+        fixed top-0 left-0 h-full z-40
         bg-gray-500 dark:bg-gray-800 shadow-xl rounded-r-3xl
         transition-all duration-300 ease-in-out
         flex flex-col
