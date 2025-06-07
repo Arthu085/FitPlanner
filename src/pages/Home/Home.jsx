@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Container from "../../components/Container";
 import Footer from "../../components/Footer";
 import Header from "../../components/Header";
@@ -6,14 +5,50 @@ import Layout from "../../components/Layout";
 import SideBar from "../../components/SideBar";
 import Table from "../../components/Table";
 
-const Home = () => {
-	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+import { useAuth } from "../../hooks/useAuth";
+import { useEffect, useState } from "react";
+import { fetchTrainingSession } from "../../api/trainingSessionApi";
+import Buttons from "../../components/Buttons";
 
-	const headers = ["Treino", "Data Iniciado", "Data finalizado", "Situação"];
-	const data = [
-		["João", "joao@email.com", "Ativo", "A"],
-		["Maria", "maria@email.com", "Inativo"],
+const Home = () => {
+	const { user } = useAuth();
+	const token = user?.token;
+	const name = user?.name;
+
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [trainingSessions, setTrainingSessions] = useState([]);
+	const [btnDisabled, setBtnDisabled] = useState(false);
+
+	useEffect(() => {
+		const loadSessions = async () => {
+			try {
+				const data = await fetchTrainingSession(token);
+				setTrainingSessions(data);
+			} catch (error) {
+				console.error("Erro ao buscar sessões de treino:", error);
+			}
+		};
+
+		if (token) {
+			loadSessions();
+		}
+	}, [token]);
+
+	const headers = [
+		{ label: "Treino", key: "treino" },
+		{ label: "Data Iniciado", key: "iniciado" },
+		{ label: "Data Finalizado", key: "finalizado" },
+		{ label: "Situação", key: "situacao" },
 	];
+
+	const data = trainingSessions.map((session) => ({
+		treino: session.training?.title || "Sem título",
+		iniciado: new Date(session.started_at).toLocaleString(),
+		finalizado: session.finished_at
+			? new Date(session.finished_at).toLocaleString()
+			: "-",
+		situacao: session.finished_at ? "Finalizado" : "Em andamento",
+	}));
 
 	return (
 		<Container>
@@ -22,7 +57,7 @@ const Home = () => {
 			<Layout isSidebarOpen={isSidebarOpen} title="Dashboard">
 				<section className="space-y-2 mt-7 mb-5">
 					<h2 className="text-2xl font-semibold text-black dark:text-white">
-						Olá, Fulano
+						Olá, {name}
 					</h2>
 					<p className="text-black dark:text-white">
 						Essa é a sua tela de <strong>dashboard</strong>.
@@ -34,16 +69,26 @@ const Home = () => {
 				</section>
 				<Table
 					headers={headers}
-					columns={3}
 					data={data}
 					renderActions={(row) => (
 						<div className="flex gap-2">
-							<button className="bg-blue-500 text-white px-3 py-1 rounded text-sm">
-								Editar
-							</button>
-							<button className="bg-red-500 text-white px-3 py-1 rounded text-sm">
-								Excluir
-							</button>
+							{row.situacao === "Em andamento" && (
+								<Buttons
+									type={"success"}
+									disabled={btnDisabled}
+									text={"Finalizar"}
+								/>
+							)}
+							<Buttons
+								type={"primary"}
+								disabled={btnDisabled}
+								text={"Detalhes"}
+							/>
+							<Buttons
+								type={"warning"}
+								disabled={btnDisabled}
+								text={"Excluir"}
+							/>
 						</div>
 					)}
 				/>

@@ -8,7 +8,7 @@ export default function Table({ headers, data = [], renderActions }) {
 							<th
 								key={idx}
 								className="px-4 py-3 text-left font-semibold text-sm text-gray-800 dark:text-gray-300 border-b">
-								{header}
+								{header.label}
 							</th>
 						))}
 						{renderActions && (
@@ -19,26 +19,36 @@ export default function Table({ headers, data = [], renderActions }) {
 					</tr>
 				</thead>
 				<tbody>
-					{data.map((row, rowIndex) => (
-						<tr
-							key={rowIndex}
-							className={`${
-								rowIndex % 2 === 0
-									? "bg-gray-100 dark:bg-gray-800"
-									: "bg-white dark:bg-gray-900"
-							} border-b`}>
-							{row.map((cell, cellIndex) => (
-								<td
-									key={cellIndex}
-									className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-									{cell}
-								</td>
-							))}
-							{renderActions && (
-								<td className="px-4 py-3">{renderActions(row)}</td>
-							)}
+					{data.length === 0 ? (
+						<tr>
+							<td
+								colSpan={headers.length + (renderActions ? 1 : 0)}
+								className="text-center py-4 text-gray-800 dark:text-gray">
+								Nenhum dado encontrado.
+							</td>
 						</tr>
-					))}
+					) : (
+						data.map((row, rowIndex) => (
+							<tr
+								key={rowIndex}
+								className={`${
+									rowIndex % 2 === 0
+										? "bg-gray-100 dark:bg-gray-800"
+										: "bg-white dark:bg-gray-900"
+								} border-b`}>
+								{headers.map((header, cellIndex) => (
+									<td
+										key={cellIndex}
+										className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+										{row[header.key]}
+									</td>
+								))}
+								{renderActions && (
+									<td className="px-4 py-3">{renderActions(row)}</td>
+								)}
+							</tr>
+						))
+					)}
 				</tbody>
 			</table>
 		</div>

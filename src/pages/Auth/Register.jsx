@@ -97,6 +97,7 @@ const Register = () => {
 					logo={logo}
 					btnTitle={"Cadastrar"}
 					btnDisabled={btnDisabled}
+					btnType={"primary"}
 				/>
 
 				<div className="absolute bottom-4 left-4">
