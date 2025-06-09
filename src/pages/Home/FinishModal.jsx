@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { deleteTrainingSession } from "../../api/trainingSessionApi";
+import {
+	finishTrainingSession,
+	fetchExerciseByTrainingAndSession,
+} from "../../api/trainingSessionApi";
 import { useToast } from "../../hooks/useToast";
 
 import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
 import LoadingScreen from "../../components/LoadingScreen";
 
-export default function DeleteModal({
+export default function FinishModal({
 	id_training_session,
-	openDeleteModal,
+	openFinishModal,
 	onClose,
 	reloadSessions,
 }) {
@@ -20,17 +23,30 @@ export default function DeleteModal({
 	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
-	const handleDeleteTrainingSession = async () => {
+	const handleFinishTrainingSession = async () => {
 		if (btnDisabled) return;
 		setBtnDisabled(true);
 		setLoading(true);
 		try {
-			const data = await deleteTrainingSession(token, id_training_session);
-			addToast(data.message);
-			await reloadSessions();
-			onClose();
+			const exercises = await fetchExerciseByTrainingAndSession(
+				token,
+				id_training_session
+			);
+
+			if (exercises) {
+				const data = await finishTrainingSession(
+					token,
+					id_training_session,
+					exercises
+				);
+				addToast(data.message);
+				await reloadSessions();
+				onClose();
+			}
+
+			return;
 		} catch (error) {
-			addToast(error.message || "Erro ao deletar sessão", "error");
+			addToast(error.message || "Erro ao finalizar sessão", "error");
 			onClose();
 		} finally {
 			setLoading(false);
@@ -42,26 +58,27 @@ export default function DeleteModal({
 		<>
 			{loading && <LoadingScreen />}
 			<Modal
-				isOpen={openDeleteModal}
+				isOpen={openFinishModal}
 				onClose={onClose}
-				title="Deletar sessão de treino"
+				title="Finalizar sessão de treino"
 				content={
 					<div className="space-y-4">
 						<h2 className="text-xl font-bold">
-							Tem certeza que deseja excluir a sessão de treino de nº{" "}
-							{id_training_session}?
-							<div className="border-b border-gray-300 dark:border-gray-600 mt-5"></div>
+							Tem certeza de que deseja finalizar a sessão de treino nº{" "}
+							{id_training_session} sem registrar alterações em séries,
+							repetições, peso ou observações?
 						</h2>
+						<div className="border-b border-gray-300 dark:border-gray-600 mt-5"></div>
 					</div>
 				}
 				actions={
 					<div className="flex gap-3">
 						<Buttons
-							type={"warning"}
-							text={"Excluir"}
-							onClick={handleDeleteTrainingSession}
+							type={"success"}
+							text={"Finalizar"}
 							width="w-24"
 							disabled={btnDisabled}
+							onClick={handleFinishTrainingSession}
 						/>
 						<Buttons
 							type={"primary"}

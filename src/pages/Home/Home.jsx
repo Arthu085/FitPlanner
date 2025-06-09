@@ -6,11 +6,12 @@ import SideBar from "../../components/SideBar";
 import Table from "../../components/Table";
 import Buttons from "../../components/Buttons";
 import DetailsModal from "./detailsModal";
+import DeleteModal from "./DeleteModal";
+import FinishModal from "./FinishModal";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { fetchTrainingSession } from "../../api/trainingSessionApi";
-import DeleteModal from "./DeleteModal";
 
 const Home = () => {
 	const { user } = useAuth();
@@ -21,6 +22,7 @@ const Home = () => {
 	const [trainingSessions, setTrainingSessions] = useState([]);
 	const [detailsModal, setDetailsModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
+	const [finishModal, setFinishModal] = useState(false);
 	const [selectedSessionId, setSelectedSessionId] = useState(null);
 
 	const loadSessions = async () => {
@@ -46,6 +48,11 @@ const Home = () => {
 	const handleOpenDelete = (id) => {
 		setSelectedSessionId(id);
 		setDeleteModal(true);
+	};
+
+	const handleOpenFinish = (id) => {
+		setSelectedSessionId(id);
+		setFinishModal(true);
 	};
 
 	const headers = [
@@ -88,7 +95,11 @@ const Home = () => {
 					renderActions={(row) => (
 						<div className="flex gap-2">
 							{row.situation === "Em andamento" && (
-								<Buttons type={"success"} text={"Finalizar"} />
+								<Buttons
+									type={"success"}
+									text={"Finalizar"}
+									onClick={() => handleOpenFinish(row.id_training_session)}
+								/>
 							)}
 							<Buttons
 								type={"primary"}
@@ -111,6 +122,12 @@ const Home = () => {
 				<DeleteModal
 					openDeleteModal={deleteModal}
 					onClose={() => setDeleteModal(false)}
+					id_training_session={selectedSessionId}
+					reloadSessions={loadSessions}
+				/>
+				<FinishModal
+					openFinishModal={finishModal}
+					onClose={() => setFinishModal(false)}
 					id_training_session={selectedSessionId}
 					reloadSessions={loadSessions}
 				/>

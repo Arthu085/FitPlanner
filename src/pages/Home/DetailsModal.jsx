@@ -26,7 +26,7 @@ export default function DetailsModal({
 				const data = await fetchTrainingSessionById(token, id_training_session);
 				setDetails(data);
 			} catch (error) {
-				addToast(error.message || "Erro ao fazer login", "error");
+				addToast(error.message || "Erro ao buscar detalhes da sessão", "error");
 				onClose();
 			} finally {
 				setLoading(false);

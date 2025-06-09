@@ -38,3 +38,33 @@ export const deleteTrainingSession = async (token, id) => {
 		throw error.response?.data || { message: "Erro de conexão" };
 	}
 };
+
+export const finishTrainingSession = async (token, id, exercises) => {
+	try {
+		const response = await api.post(
+			`/training/session/finish/${id}`,
+			{ exercises },
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+};
+
+export const fetchExerciseByTrainingAndSession = async (token, id) => {
+	try {
+		const response = await api.get(`/training/session/exercise/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+};
