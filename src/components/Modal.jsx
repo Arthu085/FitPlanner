@@ -58,7 +58,7 @@ export default function Modal({
 					)}
 
 					{content && (
-						<div className="text-gray-700 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 pb-3">
+						<div className="text-gray-700 dark:text-gray-300 pb-3">
 							{content}
 						</div>
 					)}

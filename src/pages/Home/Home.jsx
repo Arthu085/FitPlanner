@@ -43,20 +43,20 @@ const Home = () => {
 	};
 
 	const headers = [
-		{ label: "Treino", key: "treino" },
-		{ label: "Data Iniciado", key: "iniciado" },
-		{ label: "Data Finalizado", key: "finalizado" },
-		{ label: "Situação", key: "situacao" },
+		{ label: "Treino", key: "training" },
+		{ label: "Data Iniciado", key: "started" },
+		{ label: "Data Finalizado", key: "finished" },
+		{ label: "Situação", key: "situation" },
 	];
 
 	const data = trainingSessions.map((session) => ({
 		id_training_session: session.id_training_session,
-		treino: session.training?.title || "Sem título",
-		iniciado: new Date(session.started_at).toLocaleString(),
-		finalizado: session.finished_at
+		training: session.training?.title || "Sem título",
+		started: new Date(session.started_at).toLocaleString(),
+		finished: session.finished_at
 			? new Date(session.finished_at).toLocaleString()
 			: "-",
-		situacao: session.finished_at ? "Finalizado" : "Em andamento",
+		situation: session.finished_at ? "Finalizado" : "Em andamento",
 	}));
 
 	return (
@@ -81,7 +81,7 @@ const Home = () => {
 					data={data}
 					renderActions={(row) => (
 						<div className="flex gap-2">
-							{row.situacao === "Em andamento" && (
+							{row.situation === "Em andamento" && (
 								<Buttons
 									type={"success"}
 									disabled={btnDisabled}
