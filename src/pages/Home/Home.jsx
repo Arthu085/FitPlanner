@@ -5,7 +5,7 @@ import Layout from "../../components/Layout";
 import SideBar from "../../components/SideBar";
 import Table from "../../components/Table";
 import Buttons from "../../components/Buttons";
-import Modal from "../../components/Modal";
+import DetailsModal from "./detailsModal";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
@@ -19,7 +19,8 @@ const Home = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [trainingSessions, setTrainingSessions] = useState([]);
 	const [btnDisabled, setBtnDisabled] = useState(false);
-	const [modalOpen, setModalOpen] = useState(false);
+	const [detailsModal, setDetailsModal] = useState(false);
+	const [selectedSessionId, setSelectedSessionId] = useState(null);
 
 	useEffect(() => {
 		const loadSessions = async () => {
@@ -36,6 +37,11 @@ const Home = () => {
 		}
 	}, [token]);
 
+	const handleOpenDetails = (id) => {
+		setSelectedSessionId(id);
+		setDetailsModal(true);
+	};
+
 	const headers = [
 		{ label: "Treino", key: "treino" },
 		{ label: "Data Iniciado", key: "iniciado" },
@@ -44,6 +50,7 @@ const Home = () => {
 	];
 
 	const data = trainingSessions.map((session) => ({
+		id_training_session: session.id_training_session,
 		treino: session.training?.title || "Sem título",
 		iniciado: new Date(session.started_at).toLocaleString(),
 		finalizado: session.finished_at
@@ -85,7 +92,7 @@ const Home = () => {
 								type={"primary"}
 								disabled={btnDisabled}
 								text={"Detalhes"}
-								onClick={() => setModalOpen(true)}
+								onClick={() => handleOpenDetails(row.id_training_session)}
 							/>
 							<Buttons
 								type={"warning"}
@@ -95,26 +102,13 @@ const Home = () => {
 						</div>
 					)}
 				/>
+				<DetailsModal
+					openDetailsModal={detailsModal}
+					onClose={() => setDetailsModal(false)}
+					id_training_session={selectedSessionId}
+				/>
 			</Layout>
 			<Footer />
-			<Modal
-				isOpen={modalOpen}
-				onClose={() => setModalOpen(false)}
-				title="Título do Modal"
-				content={<p>Esse é um modal flexível usando Tailwind e React.</p>}
-				actions={
-					<>
-						<button
-							onClick={() => setModalOpen(false)}
-							className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-							Fechar
-						</button>
-						<button className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-							Confirmar
-						</button>
-					</>
-				}
-			/>
 		</Container>
 	);
 };

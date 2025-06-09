@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 
-export default function Modal({ isOpen, onClose, title, content, actions }) {
+export default function Modal({
+	isOpen,
+	onClose,
+	title,
+	content,
+	actions,
+	size = "w-xl",
+}) {
 	const [show, setShow] = useState(false);
 	const [animate, setAnimate] = useState(false);
+
+	const sizeClass =
+		size === "average" ? "max-w-2xl" : size === "big" ? "max-w-4xl" : size;
 
 	useEffect(() => {
 		if (isOpen) {
@@ -25,7 +35,7 @@ export default function Modal({ isOpen, onClose, title, content, actions }) {
 			}`}>
 			<div
 				onClick={(e) => e.stopPropagation()}
-				className={`bg-white dark:bg-gray-800 rounded-lg shadow-2xl max-w-lg w-full p-6 relative
+				className={`bg-white dark:bg-gray-800 rounded-lg shadow-2xl ${sizeClass} w-full p-6 relative
           transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]
           ${
 						animate
@@ -36,13 +46,13 @@ export default function Modal({ isOpen, onClose, title, content, actions }) {
 				<button
 					onClick={onClose}
 					aria-label="Fechar modal"
-					className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-2xl">
+					className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-3xl cursor-pointer">
 					&times;
 				</button>
 
 				<div className="flex flex-col gap-6">
 					{title && (
-						<h2 className="text-xl font-bold border-b border-gray-300 dark:border-gray-600 pb-3">
+						<h2 className="text-xl font-bold border-b border-gray-300 dark:border-gray-600 pb-3 text-black dark:text-white ">
 							{title}
 						</h2>
 					)}

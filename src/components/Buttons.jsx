@@ -7,6 +7,7 @@ export default function Buttons({
 	disabled = false,
 	loadingText = "Carregando...",
 	type,
+	width = "w-full",
 }) {
 	if (type === "primary") {
 		colorBg = "bg-blue-500";
@@ -26,7 +27,7 @@ export default function Buttons({
 		<button
 			onClick={onClick}
 			type={submit}
-			className={`cursor-pointer w-full font-semibold py-2 px-4 rounded-lg transition duration-300 
+			className={`cursor-pointer ${width} font-semibold py-2 px-4 rounded-lg transition duration-300 
 				${disabled ? "bg-gray-400 cursor-not-allowed" : `${colorBg} ${colorHover}`} 
 				text-white`}
 			disabled={disabled}>
