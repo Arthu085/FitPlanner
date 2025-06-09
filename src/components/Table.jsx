@@ -23,7 +23,7 @@ export default function Table({ headers, data = [], renderActions }) {
 						<tr>
 							<td
 								colSpan={headers.length + (renderActions ? 1 : 0)}
-								className="text-center py-4 text-gray-800 dark:text-gray">
+								className="text-center py-4 text-gray-800 dark:text-black">
 								Nenhum dado encontrado.
 							</td>
 						</tr>

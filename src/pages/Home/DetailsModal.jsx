@@ -80,10 +80,10 @@ export default function DetailsModal({
 								</div>
 							))
 						) : (
-							<p>
-								Não há exercícios ainda nessa sessão de treino
+							<div>
+								<p>Não há exercícios ainda nessa sessão de treino</p>
 								<div className="border-b border-gray-300 dark:border-gray-600 mt-5"></div>
-							</p>
+							</div>
 						)}
 					</div>
 				}

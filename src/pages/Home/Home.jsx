@@ -10,6 +10,7 @@ import DetailsModal from "./detailsModal";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { fetchTrainingSession } from "../../api/trainingSessionApi";
+import DeleteModal from "./DeleteModal";
 
 const Home = () => {
 	const { user } = useAuth();
@@ -18,20 +19,20 @@ const Home = () => {
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [trainingSessions, setTrainingSessions] = useState([]);
-	const [btnDisabled, setBtnDisabled] = useState(false);
 	const [detailsModal, setDetailsModal] = useState(false);
+	const [deleteModal, setDeleteModal] = useState(false);
 	const [selectedSessionId, setSelectedSessionId] = useState(null);
 
-	useEffect(() => {
-		const loadSessions = async () => {
-			try {
-				const data = await fetchTrainingSession(token);
-				setTrainingSessions(data);
-			} catch (error) {
-				console.error("Erro ao buscar sessões de treino:", error);
-			}
-		};
+	const loadSessions = async () => {
+		try {
+			const data = await fetchTrainingSession(token);
+			setTrainingSessions(data);
+		} catch (error) {
+			console.error("Erro ao buscar sessões de treino:", error);
+		}
+	};
 
+	useEffect(() => {
 		if (token) {
 			loadSessions();
 		}
@@ -40,6 +41,11 @@ const Home = () => {
 	const handleOpenDetails = (id) => {
 		setSelectedSessionId(id);
 		setDetailsModal(true);
+	};
+
+	const handleOpenDelete = (id) => {
+		setSelectedSessionId(id);
+		setDeleteModal(true);
 	};
 
 	const headers = [
@@ -82,22 +88,17 @@ const Home = () => {
 					renderActions={(row) => (
 						<div className="flex gap-2">
 							{row.situation === "Em andamento" && (
-								<Buttons
-									type={"success"}
-									disabled={btnDisabled}
-									text={"Finalizar"}
-								/>
+								<Buttons type={"success"} text={"Finalizar"} />
 							)}
 							<Buttons
 								type={"primary"}
-								disabled={btnDisabled}
 								text={"Detalhes"}
 								onClick={() => handleOpenDetails(row.id_training_session)}
 							/>
 							<Buttons
 								type={"warning"}
-								disabled={btnDisabled}
 								text={"Excluir"}
+								onClick={() => handleOpenDelete(row.id_training_session)}
 							/>
 						</div>
 					)}
@@ -106,6 +107,12 @@ const Home = () => {
 					openDetailsModal={detailsModal}
 					onClose={() => setDetailsModal(false)}
 					id_training_session={selectedSessionId}
+				/>
+				<DeleteModal
+					openDeleteModal={deleteModal}
+					onClose={() => setDeleteModal(false)}
+					id_training_session={selectedSessionId}
+					reloadSessions={loadSessions}
 				/>
 			</Layout>
 			<Footer />
