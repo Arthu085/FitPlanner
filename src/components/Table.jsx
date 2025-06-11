@@ -2,28 +2,30 @@ export default function Table({ headers, data = [], renderActions }) {
 	return (
 		<div className="w-full overflow-x-auto">
 			<table className="w-full table-auto border-collapse rounded-lg overflow-hidden">
-				<thead className="bg-gray-200 dark:bg-gray-950">
-					<tr>
-						{headers.map((header, idx) => (
-							<th
-								key={idx}
-								className="px-4 py-3 text-left font-semibold text-sm text-gray-800 dark:text-gray-300 border-b">
-								{header.label}
-							</th>
-						))}
-						{renderActions && (
-							<th className="px-4 py-3 text-left font-semibold text-sm text-gray-800 dark:text-gray-100 border-b">
-								Ações
-							</th>
-						)}
-					</tr>
-				</thead>
+				{data.length > 0 && (
+					<thead className="bg-gray-200 dark:bg-gray-950">
+						<tr>
+							{headers.map((header, idx) => (
+								<th
+									key={idx}
+									className="px-4 py-3 text-left font-semibold text-sm text-gray-800 dark:text-gray-300 border-b">
+									{header.label}
+								</th>
+							))}
+							{renderActions && (
+								<th className="px-4 py-3 text-left font-semibold text-sm text-gray-800 dark:text-gray-100 border-b">
+									Ações
+								</th>
+							)}
+						</tr>
+					</thead>
+				)}
 				<tbody>
 					{data.length === 0 ? (
 						<tr>
 							<td
 								colSpan={headers.length + (renderActions ? 1 : 0)}
-								className="text-center py-4 text-gray-800 dark:text-black">
+								className="text-center py-4 text-black dark:text-white">
 								Nenhum dado encontrado.
 							</td>
 						</tr>
