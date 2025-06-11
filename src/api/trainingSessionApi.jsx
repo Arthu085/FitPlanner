@@ -1,8 +1,8 @@
 import api from "../services/api";
 
-export const fetchTrainingSession = async (token) => {
+export const fetchTrainingSession = async (token, page) => {
 	try {
-		const response = await api.get("/training/session/", {
+		const response = await api.get(`/training/session/?page=${page}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
