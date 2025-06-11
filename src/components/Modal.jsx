@@ -58,7 +58,7 @@ export default function Modal({
 					)}
 
 					{content && (
-						<div className="text-gray-700 dark:text-gray-300 pb-3 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+						<div className="text-gray-700 dark:text-gray-300 pb-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
 							{content}
 						</div>
 					)}
