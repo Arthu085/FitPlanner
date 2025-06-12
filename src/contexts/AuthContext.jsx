@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }) => {
 	};
 
 	const logout = () => {
+		localStorage.setItem("manualLogout", "true");
 		setUser(null);
 		localStorage.removeItem("user");
 	};

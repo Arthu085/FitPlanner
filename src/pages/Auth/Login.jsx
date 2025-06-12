@@ -79,6 +79,7 @@ const Login = () => {
 					logo={logo}
 					btnTitle={"Entrar"}
 					btnDisabled={btnDisabled}
+					btnType={"primary"}
 				/>
 
 				<div className="absolute bottom-4 left-4">
