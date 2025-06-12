@@ -7,7 +7,7 @@ import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
 import LoadingScreen from "../../components/LoadingScreen";
 
-export default function DetailsModal({
+export default function DetailsModalHome({
 	id_training_session,
 	openDetailsModal,
 	onClose,

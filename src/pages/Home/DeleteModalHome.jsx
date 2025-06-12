@@ -7,7 +7,7 @@ import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
 import LoadingScreen from "../../components/LoadingScreen";
 
-export default function DeleteModal({
+export default function DeleteModalHome({
 	id_training_session,
 	openDeleteModal,
 	onClose,

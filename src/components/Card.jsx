@@ -14,20 +14,18 @@ export default function Card({
 				data.map((item, index) => (
 					<div
 						key={index}
-						className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 flex flex-col justify-between
+						className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 flex flex-col justify-between
 							transform transition-transform duration-200 hover:scale-[1.02] hover:shadow-lg">
 						<h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
 							{item[titleKey]}
 						</h2>
 
-						<div className="flex-1 text-gray-700 dark:text-gray-300 mb-4 text-sm">
-							{renderContent ? renderContent(item) : "Sem conteúdo disponível."}
+						<div className="flex-1 text-gray-700 dark:text-gray-300 mb-4 text-sm max-h-[15vh] overflow-y-auto pr-2 custom-scrollbar">
+							{renderContent ? renderContent(item) : ""}
 						</div>
 
 						{renderActions && (
-							<div className="flex justify-end gap-2">
-								{renderActions(item)}
-							</div>
+							<div className="flex  gap-2">{renderActions(item)}</div>
 						)}
 					</div>
 				))

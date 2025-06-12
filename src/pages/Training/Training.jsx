@@ -6,16 +6,35 @@ import Layout from "../../components/Layout";
 import SideBar from "../../components/SideBar";
 import Card from "../../components/Card";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { fetchTraining } from "../../api/trainingApi";
+import LoadingScreen from "../../components/LoadingScreen";
+import DetailsIcon from "./DetailsIcon";
 
 const Training = () => {
+	const { user } = useAuth();
+	const token = user?.token;
+
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [training, setTraining] = useState([]);
 
-	const data = [
-		{ id: 1, title: "Treino A", description: "Peito e tríceps" },
-		{ id: 2, title: "Treino B", description: "Costas e bíceps" },
-	];
+	const loadTraining = async () => {
+		try {
+			setLoading(true);
+			const data = await fetchTraining(token);
+			setTraining(data);
+		} catch (error) {
+			console.error("Erro ao buscar treinos:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		loadTraining();
+	}, [token]);
 
 	return (
 		<>
@@ -41,22 +60,17 @@ const Training = () => {
 					</section>
 
 					<Card
-						data={data}
-						titleKey="title"
-						renderContent={(item) => <p>{item.description}</p>}
+						data={training}
 						renderActions={(item) => (
-							<>
-								<button
-									onClick={() => alert(`Editando ${item.title}`)}
-									className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition">
-									Editar
-								</button>
-								<button
-									onClick={() => alert(`Removendo ${item.title}`)}
-									className="px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 transition">
-									Remover
-								</button>
-							</>
+							<div className="flex flex-row items-center justify-between w-full">
+								<div>
+									<DetailsIcon />
+								</div>
+								<div className="flex gap-3">
+									<Buttons type={"primary"} text={`Editar`} width="w-24" />
+									<Buttons type={"warning"} text={`Excluir`} width="w-24" />
+								</div>
+							</div>
 						)}
 					/>
 				</Layout>
