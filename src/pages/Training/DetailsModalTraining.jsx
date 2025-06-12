@@ -26,7 +26,7 @@ export default function DetailsModalTraining({
 				const data = await fetchTrainingDetails(token, id_training);
 				setDetails(data);
 			} catch (error) {
-				addToast(error.message || "Erro ao buscar detalhes da sessão", "error");
+				addToast(error.message || "Erro ao buscar detalhes do treino", "error");
 				onClose();
 			} finally {
 				setLoading(false);

@@ -13,6 +13,7 @@ import LoadingScreen from "../../components/LoadingScreen";
 import DetailsIcon from "./DetailsIcon";
 import DetailsModalTraining from "./DetailsModalTraining";
 import DeleteModalTraining from "./DeleteModalTraining";
+import CreateModalTraining from "./CreateModalTraining";
 
 const Training = () => {
 	const { user } = useAuth();
@@ -24,6 +25,7 @@ const Training = () => {
 	const [selectedTrainingId, setSelectedTrainingId] = useState(null);
 	const [detailsModal, setDetailsModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
+	const [createModal, setCreateModal] = useState(false);
 
 	const loadTraining = async () => {
 		try {
@@ -70,7 +72,11 @@ const Training = () => {
 							</p>
 						</div>
 						<div>
-							<Buttons text={"Novo Treino"} type={"primary"} />
+							<Buttons
+								text={"Novo Treino"}
+								type={"primary"}
+								onClick={() => setCreateModal(true)}
+							/>
 						</div>
 					</section>
 
@@ -102,6 +108,11 @@ const Training = () => {
 						openDeleteModal={deleteModal}
 						onClose={() => setDeleteModal(false)}
 						id_training={selectedTrainingId}
+						reloadTraining={loadTraining}
+					/>
+					<CreateModalTraining
+						openCreateModal={createModal}
+						onClose={() => setCreateModal(false)}
 						reloadTraining={loadTraining}
 					/>
 				</Layout>

@@ -38,3 +38,16 @@ export const deleteTraining = async (token, id) => {
 		throw error.response?.data || { message: "Erro de conexão" };
 	}
 };
+
+export const createTraining = async (token, data) => {
+	try {
+		const response = await api.post(`/training/create`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+};

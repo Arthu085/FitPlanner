@@ -30,7 +30,7 @@ export default function DeleteModalTraining({
 			await reloadTraining();
 			onClose();
 		} catch (error) {
-			addToast(error.message || "Erro ao deletar sessão", "error");
+			addToast(error.message || "Erro ao deletar treino", "error");
 			onClose();
 		} finally {
 			setLoading(false);

@@ -1,4 +1,5 @@
 import Buttons from "./Buttons";
+
 import { Link } from "react-router-dom";
 
 export default function Form({
@@ -14,11 +15,13 @@ export default function Form({
 	btnTitle,
 	btnDisabled,
 	btnType,
+	changeClass,
 }) {
+	const defaultClass =
+		"bg-white dark:bg-gray-900 shadow-md rounded-xl p-8 w-full max-w-md mx-auto mb-4 mt-4 transition-colors duration-300";
+
 	return (
-		<form
-			onSubmit={handleSubmit}
-			className="bg-white dark:bg-gray-900 shadow-md rounded-xl p-8 w-full max-w-md mx-auto mb-4 mt-4 transition-colors duration-300">
+		<form onSubmit={handleSubmit} className={changeClass || defaultClass}>
 			{logo && (
 				<img src={logo} alt="Logo" className="h-35 mx-auto dark:invert" />
 			)}
