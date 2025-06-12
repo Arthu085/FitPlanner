@@ -100,8 +100,34 @@ const Home = () => {
 							<strong>sessões de treino</strong>.
 						</p>
 					</section>
+
+					<Table
+						headers={headers}
+						data={data}
+						renderActions={(row) => (
+							<div className="flex gap-2">
+								{row.situation === "Em andamento" && (
+									<Buttons
+										type={"success"}
+										text={"Finalizar"}
+										onClick={() => handleOpenFinish(row.id_training_session)}
+									/>
+								)}
+								<Buttons
+									type={"primary"}
+									text={"Detalhes"}
+									onClick={() => handleOpenDetails(row.id_training_session)}
+								/>
+								<Buttons
+									type={"warning"}
+									text={"Excluir"}
+									onClick={() => handleOpenDelete(row.id_training_session)}
+								/>
+							</div>
+						)}
+					/>
 					{data.length > 0 && (
-						<div className="flex flex-row mb-5 gap-4 items-center justify-center">
+						<div className="flex flex-row mt-5 gap-4 items-center justify-end">
 							<Buttons
 								type={"primary"}
 								text={"Anterior"}
@@ -133,31 +159,6 @@ const Home = () => {
 							/>
 						</div>
 					)}
-					<Table
-						headers={headers}
-						data={data}
-						renderActions={(row) => (
-							<div className="flex gap-2">
-								{row.situation === "Em andamento" && (
-									<Buttons
-										type={"success"}
-										text={"Finalizar"}
-										onClick={() => handleOpenFinish(row.id_training_session)}
-									/>
-								)}
-								<Buttons
-									type={"primary"}
-									text={"Detalhes"}
-									onClick={() => handleOpenDetails(row.id_training_session)}
-								/>
-								<Buttons
-									type={"warning"}
-									text={"Excluir"}
-									onClick={() => handleOpenDelete(row.id_training_session)}
-								/>
-							</div>
-						)}
-					/>
 					<DetailsModal
 						openDetailsModal={detailsModal}
 						onClose={() => setDetailsModal(false)}
