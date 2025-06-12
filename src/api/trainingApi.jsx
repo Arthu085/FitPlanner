@@ -25,3 +25,16 @@ export const fetchTrainingDetails = async (token, id) => {
 		throw error.response?.data || { message: "Erro de conexão" };
 	}
 };
+
+export const deleteTraining = async (token, id) => {
+	try {
+		const response = await api.delete(`/training/delete/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+};

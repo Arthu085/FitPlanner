@@ -12,6 +12,7 @@ import { fetchTraining } from "../../api/trainingApi";
 import LoadingScreen from "../../components/LoadingScreen";
 import DetailsIcon from "./DetailsIcon";
 import DetailsModalTraining from "./DetailsModalTraining";
+import DeleteModalTraining from "./DeleteModalTraining";
 
 const Training = () => {
 	const { user } = useAuth();
@@ -22,6 +23,7 @@ const Training = () => {
 	const [training, setTraining] = useState([]);
 	const [selectedTrainingId, setSelectedTrainingId] = useState(null);
 	const [detailsModal, setDetailsModal] = useState(false);
+	const [deleteModal, setDeleteModal] = useState(false);
 
 	const loadTraining = async () => {
 		try {
@@ -42,6 +44,11 @@ const Training = () => {
 	const handleOpenDetails = (id) => {
 		setSelectedTrainingId(id);
 		setDetailsModal(true);
+	};
+
+	const handleOpenDelete = (id) => {
+		setSelectedTrainingId(id);
+		setDeleteModal(true);
 	};
 
 	return (
@@ -76,7 +83,12 @@ const Training = () => {
 								</div>
 								<div className="flex gap-3">
 									<Buttons type={"primary"} text={`Editar`} width="w-24" />
-									<Buttons type={"warning"} text={`Excluir`} width="w-24" />
+									<Buttons
+										type={"warning"}
+										text={`Excluir`}
+										width="w-24"
+										onClick={() => handleOpenDelete(item.id)}
+									/>
 								</div>
 							</div>
 						)}
@@ -85,7 +97,12 @@ const Training = () => {
 						openDetailsModal={detailsModal}
 						onClose={() => setDetailsModal(false)}
 						id_training={selectedTrainingId}
-						reloadSessions={loadTraining}
+					/>
+					<DeleteModalTraining
+						openDeleteModal={deleteModal}
+						onClose={() => setDeleteModal(false)}
+						id_training={selectedTrainingId}
+						reloadTraining={loadTraining}
 					/>
 				</Layout>
 				<Footer />
