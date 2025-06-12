@@ -11,6 +11,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { fetchTraining } from "../../api/trainingApi";
 import LoadingScreen from "../../components/LoadingScreen";
 import DetailsIcon from "./DetailsIcon";
+import DetailsModalTraining from "./DetailsModalTraining";
 
 const Training = () => {
 	const { user } = useAuth();
@@ -19,6 +20,8 @@ const Training = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [training, setTraining] = useState([]);
+	const [selectedTrainingId, setSelectedTrainingId] = useState(null);
+	const [detailsModal, setDetailsModal] = useState(false);
 
 	const loadTraining = async () => {
 		try {
@@ -35,6 +38,11 @@ const Training = () => {
 	useEffect(() => {
 		loadTraining();
 	}, [token]);
+
+	const handleOpenDetails = (id) => {
+		setSelectedTrainingId(id);
+		setDetailsModal(true);
+	};
 
 	return (
 		<>
@@ -64,7 +72,7 @@ const Training = () => {
 						renderActions={(item) => (
 							<div className="flex flex-row items-center justify-between w-full">
 								<div>
-									<DetailsIcon />
+									<DetailsIcon onClick={() => handleOpenDetails(item.id)} />
 								</div>
 								<div className="flex gap-3">
 									<Buttons type={"primary"} text={`Editar`} width="w-24" />
@@ -72,6 +80,12 @@ const Training = () => {
 								</div>
 							</div>
 						)}
+					/>
+					<DetailsModalTraining
+						openDetailsModal={detailsModal}
+						onClose={() => setDetailsModal(false)}
+						id_training={selectedTrainingId}
+						reloadSessions={loadTraining}
 					/>
 				</Layout>
 				<Footer />

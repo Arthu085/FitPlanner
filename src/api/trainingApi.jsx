@@ -12,3 +12,16 @@ export const fetchTraining = async (token) => {
 		throw error.response?.data || { message: "Erro de conexão" };
 	}
 };
+
+export const fetchTrainingDetails = async (token, id) => {
+	try {
+		const response = await api.get(`/training/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+};
