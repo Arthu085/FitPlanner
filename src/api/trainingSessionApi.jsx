@@ -15,7 +15,7 @@ export const fetchTrainingSession = async (token, page) => {
 
 export const fetchTrainingSessionById = async (token, id) => {
 	try {
-		const response = await api.get(`/training/session/${id}`, {
+		const response = await api.get(`/training/session/details/${id}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
