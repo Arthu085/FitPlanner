@@ -15,7 +15,7 @@ export const fetchTraining = async (token) => {
 
 export const fetchTrainingDetails = async (token, id) => {
 	try {
-		const response = await api.get(`/training/${id}`, {
+		const response = await api.get(`/training/details/${id}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
