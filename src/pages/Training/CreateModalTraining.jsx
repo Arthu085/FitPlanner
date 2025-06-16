@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
 import { createTraining } from "../../api/trainingApi";
@@ -13,6 +13,7 @@ export default function CreateModalTraining({
 	openCreateModal,
 	onClose,
 	reloadTraining,
+	exercises = [],
 }) {
 	const { user } = useAuth();
 	const token = user?.token;
@@ -20,6 +21,11 @@ export default function CreateModalTraining({
 
 	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
+
+	const exerciseOptions = exercises.map((exercise) => ({
+		value: exercise.id,
+		label: exercise.name,
+	}));
 
 	const fields = [
 		{
@@ -30,16 +36,23 @@ export default function CreateModalTraining({
 			placeholder: "Digite o título do treino",
 		},
 		{
-			label: "Exercício",
-			type: "select",
+			label: "Exercício(s)",
+			type: "multiselect",
 			name: "exercise",
 			required: true,
 			placeholder: "Selecione o exercício",
+			options: exerciseOptions,
 		},
 	];
 
 	const handleCreateTraining = async () => {
 		if (btnDisabled) return;
+
+		if (!values.exercise || values.exercise.length === 0) {
+			addToast("Selecione ao menos um exercício", "error");
+			return;
+		}
+
 		setBtnDisabled(true);
 		setLoading(true);
 		try {
@@ -57,8 +70,14 @@ export default function CreateModalTraining({
 		}
 	};
 
+	useEffect(() => {
+		if (openCreateModal) {
+			resetForm();
+		}
+	}, [openCreateModal]);
+
 	const { values, handleChange, handleSubmit, resetForm } = useForm(
-		{},
+		{ exercise: [] },
 		handleCreateTraining
 	);
 

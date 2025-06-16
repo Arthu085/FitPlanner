@@ -35,7 +35,7 @@ export default function Modal({
 			}`}>
 			<div
 				onClick={(e) => e.stopPropagation()}
-				className={`bg-white dark:bg-gray-800 rounded-lg shadow-2xl ${sizeClass} w-full p-6 relative
+				className={` bg-white dark:bg-gray-800 rounded-lg shadow-2xl ${sizeClass} w-full p-6 relative
           transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]
           ${
 						animate

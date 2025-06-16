@@ -5,15 +5,16 @@ import Header from "../../components/Header";
 import Layout from "../../components/Layout";
 import SideBar from "../../components/SideBar";
 import Card from "../../components/Card";
-
-import { useEffect, useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
-import { fetchTraining } from "../../api/trainingApi";
 import LoadingScreen from "../../components/LoadingScreen";
 import DetailsIcon from "./DetailsIcon";
 import DetailsModalTraining from "./DetailsModalTraining";
 import DeleteModalTraining from "./DeleteModalTraining";
 import CreateModalTraining from "./CreateModalTraining";
+
+import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { fetchTraining } from "../../api/trainingApi";
+import { fetchAllExercises } from "../../api/exerciseApi";
 
 const Training = () => {
 	const { user } = useAuth();
@@ -26,6 +27,7 @@ const Training = () => {
 	const [detailsModal, setDetailsModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
 	const [createModal, setCreateModal] = useState(false);
+	const [exercises, setExercises] = useState([]);
 
 	const loadTraining = async () => {
 		try {
@@ -34,6 +36,18 @@ const Training = () => {
 			setTraining(data);
 		} catch (error) {
 			console.error("Erro ao buscar treinos:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const loadExercises = async () => {
+		try {
+			setLoading(true);
+			const data = await fetchAllExercises(token);
+			setExercises(data);
+		} catch (error) {
+			addToast(error.message || "Erro ao buscar exercícios", "error");
 		} finally {
 			setLoading(false);
 		}
@@ -51,6 +65,11 @@ const Training = () => {
 	const handleOpenDelete = (id) => {
 		setSelectedTrainingId(id);
 		setDeleteModal(true);
+	};
+
+	const handleOpenCreate = () => {
+		loadExercises();
+		setCreateModal(true);
 	};
 
 	return (
@@ -75,7 +94,7 @@ const Training = () => {
 							<Buttons
 								text={"Novo Treino"}
 								type={"primary"}
-								onClick={() => setCreateModal(true)}
+								onClick={handleOpenCreate}
 							/>
 						</div>
 					</section>
@@ -114,6 +133,7 @@ const Training = () => {
 						openCreateModal={createModal}
 						onClose={() => setCreateModal(false)}
 						reloadTraining={loadTraining}
+						exercises={exercises}
 					/>
 				</Layout>
 				<Footer />
