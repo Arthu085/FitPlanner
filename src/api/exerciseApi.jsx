@@ -2,7 +2,7 @@ import api from "../services/api";
 
 export const fetchAllExercises = async (token) => {
 	try {
-		const response = await api.get(`/exercise/`, {
+		const response = await api.get(`/exercise`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

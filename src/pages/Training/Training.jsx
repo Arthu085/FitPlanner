@@ -15,9 +15,11 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { fetchTraining } from "../../api/trainingApi";
 import { fetchAllExercises } from "../../api/exerciseApi";
+import { useToast } from "../../hooks/useToast";
 
 const Training = () => {
 	const { user } = useAuth();
+	const addToast = useToast();
 	const token = user?.token;
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);

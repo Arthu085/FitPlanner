@@ -45,18 +45,33 @@ export default function CreateModalTraining({
 		},
 	];
 
-	const handleCreateTraining = async () => {
+	const handleCreateTraining = async (formData) => {
 		if (btnDisabled) return;
 
-		if (!values.exercise || values.exercise.length === 0) {
+		if (!formData.exercise || formData.exercise.length === 0) {
 			addToast("Selecione ao menos um exercício", "error");
 			return;
 		}
 
+		// Transforma o array para o formato esperado pelo backend
+		const exercises = formData.exercise.map((ex) => ({
+			id_exercise: ex.id_exercise ?? ex.value, // se não tiver id_exercise, usa value
+			series: ex.series || 3, // padrão 3 se não existir
+			repetitions: ex.repetitions || 10, // padrão 10 se não existir
+		}));
+
+		// Remove propriedades extras, pega só as necessárias
+		const dataToSend = {
+			...formData,
+			exercises,
+		};
+		delete dataToSend.exercise;
+
 		setBtnDisabled(true);
 		setLoading(true);
+
 		try {
-			const data = await createTraining(token, values);
+			const data = await createTraining(token, dataToSend);
 			addToast(data.message);
 			await reloadTraining();
 			onClose();
@@ -93,6 +108,7 @@ export default function CreateModalTraining({
 						<Form
 							handleChange={handleChange}
 							handleSubmit={handleSubmit}
+							exerciseOptions={exerciseOptions}
 							fields={fields}
 							values={values}
 							btnTitle={"Salvar"}
