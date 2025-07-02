@@ -20,7 +20,7 @@ export default function Card({
 							{item[titleKey]}
 						</h2>
 
-						<div className="flex-1 text-gray-700 dark:text-gray-300 mb-4 text-sm max-h-[15vh] overflow-y-auto pr-2 custom-scrollbar">
+						<div className="flex-1 text-gray-700 dark:text-white mb-4 text-sm max-h-[15vh] overflow-y-auto pr-2 custom-scrollbar">
 							{renderContent ? renderContent(item) : ""}
 						</div>
 

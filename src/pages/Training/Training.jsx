@@ -16,6 +16,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { fetchTraining } from "../../api/trainingApi";
 import { fetchAllExercises } from "../../api/exerciseApi";
 import { useToast } from "../../hooks/useToast";
+import EditModalTraining from "./EditModalTraining";
 
 const Training = () => {
 	const { user } = useAuth();
@@ -29,6 +30,7 @@ const Training = () => {
 	const [detailsModal, setDetailsModal] = useState(false);
 	const [deleteModal, setDeleteModal] = useState(false);
 	const [createModal, setCreateModal] = useState(false);
+	const [editModal, setEditModal] = useState(false);
 	const [exercises, setExercises] = useState([]);
 
 	const loadTraining = async () => {
@@ -74,6 +76,12 @@ const Training = () => {
 		setCreateModal(true);
 	};
 
+	const handleOpenEdit = (id) => {
+		loadExercises();
+		setSelectedTrainingId(id);
+		setEditModal(true);
+	};
+
 	return (
 		<>
 			{loading && <LoadingScreen />}
@@ -109,7 +117,12 @@ const Training = () => {
 									<DetailsIcon onClick={() => handleOpenDetails(item.id)} />
 								</div>
 								<div className="flex gap-3">
-									<Buttons type={"primary"} text={`Editar`} width="w-24" />
+									<Buttons
+										type={"primary"}
+										text={`Editar`}
+										width="w-24"
+										onClick={() => handleOpenEdit(item.id)}
+									/>
 									<Buttons
 										type={"warning"}
 										text={`Excluir`}
@@ -136,6 +149,13 @@ const Training = () => {
 						onClose={() => setCreateModal(false)}
 						reloadTraining={loadTraining}
 						exercises={exercises}
+					/>
+					<EditModalTraining
+						openEditModal={editModal}
+						onClose={() => setEditModal(false)}
+						reloadTraining={loadTraining}
+						exercises={exercises}
+						id_training={selectedTrainingId}
 					/>
 				</Layout>
 				<Footer />
