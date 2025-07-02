@@ -13,7 +13,13 @@ export function useForm(initialValues = {}, onSubmit) {
 		onSubmit(values, resetForm);
 	};
 
-	const resetForm = () => setValues(initialValues);
+	const resetForm = (newValues) => {
+		if (newValues) {
+			setValues(newValues);
+		} else {
+			setValues(initialValues);
+		}
+	};
 
 	return {
 		values,

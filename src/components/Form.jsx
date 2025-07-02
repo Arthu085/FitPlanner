@@ -90,41 +90,33 @@ export default function Form({
 		}),
 	};
 
-	// Sincroniza o estado local com o values.exercise inicial do formulário
-	const [selectedExercises, setSelectedExercises] = useState(() => {
-		if (values.exercise && values.exercise.length > 0) {
-			return values.exercise.map((opt) => ({
-				id_exercise: opt.id_exercise ?? opt.value,
-				series: opt.series || 3,
-				repetitions: opt.repetitions || 10,
-			}));
-		}
-		return [];
-	});
-
-	useEffect(() => {
-		if (values.exercise && values.exercise.length > 0) {
-			setSelectedExercises(
-				values.exercise.map((opt) => ({
+	const selectedExercises =
+		values.exercise && Array.isArray(values.exercise)
+			? values.exercise.map((opt) => ({
 					id_exercise: opt.id_exercise ?? opt.value,
+					id_exercise_workout: opt.id_exercise_workout,
 					series: opt.series || 3,
 					repetitions: opt.repetitions || 10,
-				}))
-			);
-		} else {
-			setSelectedExercises([]);
-		}
-	}, [values.exercise]);
+					label: opt.label,
+					value: opt.value ?? opt.id_exercise,
+			  }))
+			: [];
 
 	const handleExerciseChange = (selectedOptions) => {
 		const updated = (selectedOptions || []).map((opt) => {
-			const existing = selectedExercises.find(
-				(ex) => ex.id_exercise === opt.value
+			const existing = (values.exercise || []).find(
+				(ex) => (ex.id_exercise ?? ex.value) === opt.value
 			);
-			return existing || { id_exercise: opt.value, series: 3, repetitions: 10 };
-		});
 
-		setSelectedExercises(updated);
+			return {
+				value: opt.value,
+				label: opt.label,
+				id_exercise: opt.value,
+				id_exercise_workout: existing?.id_exercise_workout,
+				series: existing?.series || 3,
+				repetitions: existing?.repetitions || 10,
+			};
+		});
 
 		handleChange({
 			target: {
@@ -137,7 +129,6 @@ export default function Form({
 	const handleSeriesChange = (index, series) => {
 		const newExercises = [...selectedExercises];
 		newExercises[index].series = series;
-		setSelectedExercises(newExercises);
 
 		handleChange({
 			target: {
@@ -150,7 +141,6 @@ export default function Form({
 	const handleRepetitionsChange = (index, repetitions) => {
 		const newExercises = [...selectedExercises];
 		newExercises[index].repetitions = repetitions;
-		setSelectedExercises(newExercises);
 
 		handleChange({
 			target: {

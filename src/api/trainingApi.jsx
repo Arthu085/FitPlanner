@@ -54,7 +54,7 @@ export const createTraining = async (token, data) => {
 
 export const editTraining = async (token, id, data) => {
 	try {
-		const response = await api.post(`/training/edit/${id}`, data, {
+		const response = await api.patch(`/training/edit/${id}`, data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

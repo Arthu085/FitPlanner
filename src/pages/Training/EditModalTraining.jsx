@@ -11,6 +11,7 @@ import Form from "../../components/Form";
 
 export default function EditModalTraining({
 	id_training,
+	trainingData,
 	openEditModal,
 	onClose,
 	reloadTraining,
@@ -22,6 +23,29 @@ export default function EditModalTraining({
 
 	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
+
+	const { values, handleChange, handleSubmit, resetForm } = useForm(
+		{ title: "", exercise: [] },
+		handleEditTraining
+	);
+
+	useEffect(() => {
+		if (openEditModal && trainingData && exercises.length > 0) {
+			const initialValues = {
+				title: trainingData.title || "",
+				exercise: (trainingData.exercise_workout || []).map((ex) => ({
+					value: ex.id_exercise,
+					label:
+						exercises.find((e) => e.id === ex.id_exercise)?.name || "Exercício",
+					id_exercise: ex.id_exercise,
+					id_exercise_workout: ex.id_exercise_workout,
+					series: ex.series,
+					repetitions: ex.repetitions,
+				})),
+			};
+			resetForm(initialValues);
+		}
+	}, [trainingData, openEditModal, exercises]);
 
 	const exerciseOptions = exercises.map((exercise) => ({
 		value: exercise.id,
@@ -46,7 +70,7 @@ export default function EditModalTraining({
 		},
 	];
 
-	const handleCreateTraining = async (formData) => {
+	async function handleEditTraining(formData) {
 		if (btnDisabled) return;
 
 		if (!formData.exercise || formData.exercise.length === 0) {
@@ -54,48 +78,45 @@ export default function EditModalTraining({
 			return;
 		}
 
-		// Transforma o array para o formato esperado pelo backend
-		const exercises = formData.exercise.map((ex) => ({
-			id_exercise: ex.id_exercise ?? ex.value, // se não tiver id_exercise, usa value
-			series: ex.series || 3, // padrão 3 se não existir
-			repetitions: ex.repetitions || 10, // padrão 10 se não existir
-		}));
+		const exercises = formData.exercise.map((ex) => {
+			const data = {
+				series: ex.series || 3,
+				repetitions: ex.repetitions || 10,
+			};
 
-		// Remove propriedades extras, pega só as necessárias
+			if (ex.id_exercise_workout)
+				data.id_exercise_workout = ex.id_exercise_workout;
+			if (ex.id_exercise || ex.value)
+				data.id_exercise = ex.id_exercise ?? ex.value;
+
+			return data;
+		});
+
 		const dataToSend = {
-			...formData,
+			title: formData.title,
 			exercises,
 		};
-		delete dataToSend.exercise;
 
 		setBtnDisabled(true);
 		setLoading(true);
 
 		try {
-			const data = await createTraining(token, dataToSend);
-			addToast(data.message);
+			const response = await editTraining(token, id_training, dataToSend);
+			addToast(response.message);
 			await reloadTraining();
 			onClose();
 			resetForm();
 		} catch (error) {
-			addToast(error.message || "Erro ao criar treino", "error");
-			onClose();
+			if (error.message === "Nenhuma alteração foi feita") {
+				addToast(error.message, "info");
+			} else {
+				addToast(error.message || "Erro ao editar treino", "error");
+			}
 		} finally {
 			setLoading(false);
 			setBtnDisabled(false);
 		}
-	};
-
-	useEffect(() => {
-		if (openEditModal) {
-			resetForm();
-		}
-	}, [openEditModal]);
-
-	const { values, handleChange, handleSubmit, resetForm } = useForm(
-		{ exercise: [] },
-		handleCreateTraining
-	);
+	}
 
 	return (
 		<>

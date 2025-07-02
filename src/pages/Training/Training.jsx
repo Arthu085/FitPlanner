@@ -32,6 +32,7 @@ const Training = () => {
 	const [createModal, setCreateModal] = useState(false);
 	const [editModal, setEditModal] = useState(false);
 	const [exercises, setExercises] = useState([]);
+	const [trainingToEdit, setTrainingToEdit] = useState(null);
 
 	const loadTraining = async () => {
 		try {
@@ -78,7 +79,15 @@ const Training = () => {
 
 	const handleOpenEdit = (id) => {
 		loadExercises();
+
+		const selected = training.find((t) => t.id === id);
+		if (!selected) {
+			addToast("Treino não encontrado", "error");
+			return;
+		}
+
 		setSelectedTrainingId(id);
+		setTrainingToEdit(selected);
 		setEditModal(true);
 	};
 
@@ -156,6 +165,7 @@ const Training = () => {
 						reloadTraining={loadTraining}
 						exercises={exercises}
 						id_training={selectedTrainingId}
+						trainingData={trainingToEdit}
 					/>
 				</Layout>
 				<Footer />
