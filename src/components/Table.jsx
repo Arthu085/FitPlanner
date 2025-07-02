@@ -8,12 +8,12 @@ export default function Table({ headers, data = [], renderActions }) {
 							{headers.map((header, idx) => (
 								<th
 									key={idx}
-									className="px-4 py-3 text-left font-semibold text-sm text-gray-800 dark:text-gray-300 border-b">
+									className="px-4 py-3 text-left font-semibold text-sm text-black dark:text-white border-b">
 									{header.label}
 								</th>
 							))}
 							{renderActions && (
-								<th className="px-4 py-3 text-left font-semibold text-sm text-gray-800 dark:text-gray-100 border-b">
+								<th className="px-4 py-3 text-left font-semibold text-sm text-black dark:text-white border-b">
 									Ações
 								</th>
 							)}
@@ -41,7 +41,7 @@ export default function Table({ headers, data = [], renderActions }) {
 								{headers.map((header, cellIndex) => (
 									<td
 										key={cellIndex}
-										className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+										className="px-4 py-3 text-sm text-black dark:text-white">
 										{row[header.key]}
 									</td>
 								))}

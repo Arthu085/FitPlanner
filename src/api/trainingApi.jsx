@@ -1,8 +1,8 @@
 import api from "../services/api";
 
-export const fetchTrainingSession = async (token, page) => {
+export const fetchTraining = async (token) => {
 	try {
-		const response = await api.get(`/training/session/?page=${page}`, {
+		const response = await api.get(`/training/`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -13,9 +13,9 @@ export const fetchTrainingSession = async (token, page) => {
 	}
 };
 
-export const fetchTrainingSessionById = async (token, id) => {
+export const fetchTrainingDetails = async (token, id) => {
 	try {
-		const response = await api.get(`/training/session/details/${id}`, {
+		const response = await api.get(`/training/details/${id}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -26,9 +26,9 @@ export const fetchTrainingSessionById = async (token, id) => {
 	}
 };
 
-export const deleteTrainingSession = async (token, id) => {
+export const deleteTraining = async (token, id) => {
 	try {
-		const response = await api.delete(`/training/session/delete/${id}`, {
+		const response = await api.delete(`/training/delete/${id}`, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},
@@ -39,26 +39,22 @@ export const deleteTrainingSession = async (token, id) => {
 	}
 };
 
-export const finishTrainingSession = async (token, id, exercises) => {
+export const createTraining = async (token, data) => {
 	try {
-		const response = await api.post(
-			`/training/session/finish/${id}`,
-			{ exercises },
-			{
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			}
-		);
+		const response = await api.post(`/training/create`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || { message: "Erro de conexão" };
 	}
 };
 
-export const fetchExerciseByTrainingAndSession = async (token, id) => {
+export const editTraining = async (token, id, data) => {
 	try {
-		const response = await api.get(`/training/session/exercise/${id}`, {
+		const response = await api.patch(`/training/edit/${id}`, data, {
 			headers: {
 				Authorization: `Bearer ${token}`,
 			},

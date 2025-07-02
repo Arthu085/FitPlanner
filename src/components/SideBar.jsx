@@ -1,9 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import ThemeToggle from "./Theme/ThemeToggle";
 
-const menuItems = [{ label: "Sessão de Treino" }, { label: "Treinos" }];
-
 export default function Sidebar({ isOpen, setIsOpen }) {
-	const menuItems = [{ label: "Sessão de Treino" }, { label: "Treinos" }];
+	const menuItems = [
+		{ label: "Sessão de Treino", page: "session-training" },
+		{ label: "Treinos", page: "training" },
+	];
+
+	const navigate = useNavigate();
 
 	return (
 		<aside
@@ -27,10 +31,11 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 			</h1>
 
 			<nav className="flex flex-col gap-4 flex-1">
-				{menuItems.map(({ label }) => (
+				{menuItems.map(({ label, page }) => (
 					<button
 						key={label}
-						className="text-black dark:text-white flex items-center gap-4 w-full hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 focus:outline-none cursor-pointer px-2 py-3">
+						className="text-black dark:text-white flex items-center gap-4 w-full hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 focus:outline-none cursor-pointer px-2 py-3"
+						onClick={() => navigate(`/${page}`)}>
 						<span
 							className={`whitespace-nowrap transition-opacity duration-300 ${
 								isOpen ? "opacity-100" : "opacity-0"

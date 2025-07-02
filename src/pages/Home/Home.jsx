@@ -5,9 +5,9 @@ import Layout from "../../components/Layout";
 import SideBar from "../../components/SideBar";
 import Table from "../../components/Table";
 import Buttons from "../../components/Buttons";
-import DetailsModal from "./detailsModal";
-import DeleteModal from "./DeleteModal";
-import FinishModal from "./FinishModal";
+import DetailsModalHome from "./DetailsModalHome";
+import DeleteModalHome from "./DeleteModalHome";
+import FinishModalHome from "./FinishModalHome";
 import LoadingScreen from "../../components/LoadingScreen";
 
 import { useAuth } from "../../hooks/useAuth";
@@ -159,18 +159,18 @@ const Home = () => {
 							/>
 						</div>
 					)}
-					<DetailsModal
+					<DetailsModalHome
 						openDetailsModal={detailsModal}
 						onClose={() => setDetailsModal(false)}
 						id_training_session={selectedSessionId}
 					/>
-					<DeleteModal
+					<DeleteModalHome
 						openDeleteModal={deleteModal}
 						onClose={() => setDeleteModal(false)}
 						id_training_session={selectedSessionId}
 						reloadSessions={loadSessions}
 					/>
-					<FinishModal
+					<FinishModalHome
 						openFinishModal={finishModal}
 						onClose={() => setFinishModal(false)}
 						id_training_session={selectedSessionId}

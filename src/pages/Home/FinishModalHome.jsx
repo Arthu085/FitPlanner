@@ -10,7 +10,7 @@ import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
 import LoadingScreen from "../../components/LoadingScreen";
 
-export default function FinishModal({
+export default function FinishModalHome({
 	id_training_session,
 	openFinishModal,
 	onClose,

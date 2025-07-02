@@ -35,7 +35,7 @@ export default function Modal({
 			}`}>
 			<div
 				onClick={(e) => e.stopPropagation()}
-				className={`bg-white dark:bg-gray-800 rounded-lg shadow-2xl ${sizeClass} w-full p-6 relative
+				className={` bg-white dark:bg-gray-800 rounded-lg shadow-2xl ${sizeClass} w-full p-6 relative
           transform transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]
           ${
 						animate
@@ -58,7 +58,7 @@ export default function Modal({
 					)}
 
 					{content && (
-						<div className="text-gray-700 dark:text-gray-300 pb-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+						<div className="text-black dark:text-white pb-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
 							{content}
 						</div>
 					)}
