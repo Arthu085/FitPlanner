@@ -11,7 +11,10 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
 import { fetchTraining } from "../../api/trainingApi";
-import { fetchTrainingSession } from "../../api/trainingSessionApi";
+import {
+	fetchTrainingSession,
+	startTrainingSession,
+} from "../../api/trainingSessionApi";
 
 const SessionTraining = () => {
 	const { user } = useAuth();
@@ -20,6 +23,7 @@ const SessionTraining = () => {
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
+	const [btnDisabled, setBtnDisabled] = useState(false);
 	const [training, setTraining] = useState([]);
 	const [trainingSessions, setTrainingSessions] = useState([]);
 
@@ -52,6 +56,23 @@ const SessionTraining = () => {
 		loadSessions();
 	}, [token]);
 
+	const handleStartSession = async (trainingId) => {
+		if (btnDisabled) return;
+
+		setBtnDisabled(true);
+		setLoading(true);
+
+		try {
+			const data = await startTrainingSession(token, trainingId);
+			addToast(data.message);
+		} catch (error) {
+			addToast(error.message || "Erro ao iniciar sessão de treino", "error");
+		} finally {
+			setLoading(false);
+			setBtnDisabled(false);
+		}
+	};
+
 	return (
 		<>
 			{loading && <LoadingScreen />}
@@ -74,15 +95,55 @@ const SessionTraining = () => {
 
 					<Card
 						data={training}
-						renderActions={(item) => (
-							<div className="flex flex-row items-center justify-between w-full">
-								<div></div>
-								<div className="flex gap-3">
-									<Buttons type={"primary"} text={`Editar`} width="w-24" />
-									<Buttons type={"warning"} text={`Excluir`} width="w-24" />
+						renderActions={(item) => {
+							const session =
+								trainingSessions?.data?.find(
+									(s) => s.id_training === item.id
+								) || null;
+
+							return (
+								<div className="flex flex-row items-center justify-between w-full">
+									<div>
+										{session ? (
+											session.finished_at !== null ? (
+												<p className="text-black dark:text-white">
+													Treino não iniciado
+												</p>
+											) : (
+												<p className="text-black dark:text-white">
+													Treino em andamento...
+												</p>
+											)
+										) : (
+											<p className="text-black dark:text-white">
+												Treino não iniciado
+											</p>
+										)}
+									</div>
+									<div className="flex gap-3">
+										{session ? (
+											session.finished_at !== null ? (
+												<Buttons
+													type="success"
+													text="Iniciar"
+													width="w-24"
+													onClick={() => handleStartSession(item.id)}
+												/>
+											) : (
+												<Buttons type="primary" text="Finalizar" width="w-24" />
+											)
+										) : (
+											<Buttons
+												type="success"
+												text="Iniciar"
+												width="w-24"
+												onClick={() => handleStartSession(item.id)}
+											/>
+										)}
+									</div>
 								</div>
-							</div>
-						)}
+							);
+						}}
 					/>
 				</Layout>
 				<Footer />

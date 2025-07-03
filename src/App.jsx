@@ -22,7 +22,7 @@ function App() {
 					<Route element={<PrivateRoute />}>
 						<Route path="/" element={<Home />} />
 						<Route path="/training" element={<Training />} />
-						<Route path="/session-training" element={<SessionTraining />} />
+						<Route path="/session/training" element={<SessionTraining />} />
 					</Route>
 				</Routes>
 			</Router>

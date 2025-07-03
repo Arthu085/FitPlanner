@@ -59,6 +59,23 @@ export const finishTrainingSession = async (token, id, exercises) => {
 	}
 };
 
+export const startTrainingSession = async (token, id) => {
+	try {
+		const response = await api.post(
+			`/training/session/start/${id}`,
+			{},
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+};
+
 export const fetchExerciseByTrainingAndSession = async (token, id) => {
 	try {
 		const response = await api.get(`/training/session/exercise/${id}`, {
