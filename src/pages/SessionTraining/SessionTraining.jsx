@@ -15,11 +15,13 @@ import {
 	fetchTrainingSession,
 	startTrainingSession,
 } from "../../api/trainingSessionApi";
+import { useNavigate } from "react-router-dom";
 
 const SessionTraining = () => {
 	const { user } = useAuth();
 	const addToast = useToast();
 	const token = user?.token;
+	const navigate = useNavigate();
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -64,6 +66,12 @@ const SessionTraining = () => {
 
 		try {
 			const data = await startTrainingSession(token, trainingId);
+			navigate(`/session/training/active/${data.session.id}`, {
+				state: {
+					session: data.session,
+					trainingId,
+				},
+			});
 			addToast(data.message);
 		} catch (error) {
 			addToast(error.message || "Erro ao iniciar sessão de treino", "error");

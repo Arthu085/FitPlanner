@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound/NotFound";
 import PrivateRoute from "./components/PrivateRoute";
 import Training from "./pages/Training/Training";
 import SessionTraining from "./pages/SessionTraining/SessionTraining";
+import ActiveSessionTrainig from "./pages/SessionTraining/ActiveSessionTrainig";
 
 function App() {
 	return (
@@ -23,6 +24,10 @@ function App() {
 						<Route path="/" element={<Home />} />
 						<Route path="/training" element={<Training />} />
 						<Route path="/session/training" element={<SessionTraining />} />
+						<Route
+							path="/session/training/active/:id"
+							element={<ActiveSessionTrainig />}
+						/>
 					</Route>
 				</Routes>
 			</Router>
