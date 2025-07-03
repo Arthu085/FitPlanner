@@ -1,11 +1,6 @@
 import "./App.css";
 
-import {
-	BrowserRouter as Router,
-	Routes,
-	Route,
-	Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home/Home";
 import Login from "./pages/Auth/Login";
@@ -13,6 +8,7 @@ import Register from "./pages/Auth/Register";
 import NotFound from "./pages/NotFound/NotFound";
 import PrivateRoute from "./components/PrivateRoute";
 import Training from "./pages/Training/Training";
+import SessionTraining from "./pages/SessionTraining/SessionTraining";
 
 function App() {
 	return (
@@ -26,6 +22,7 @@ function App() {
 					<Route element={<PrivateRoute />}>
 						<Route path="/" element={<Home />} />
 						<Route path="/training" element={<Training />} />
+						<Route path="/session-training" element={<SessionTraining />} />
 					</Route>
 				</Routes>
 			</Router>

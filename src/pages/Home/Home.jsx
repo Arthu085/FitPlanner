@@ -13,11 +13,13 @@ import LoadingScreen from "../../components/LoadingScreen";
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { fetchTrainingSession } from "../../api/trainingSessionApi";
+import { useToast } from "../../hooks/useToast";
 
 const Home = () => {
 	const { user } = useAuth();
 	const token = user?.token;
 	const name = user?.name;
+	const addToast = useToast();
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [trainingSessions, setTrainingSessions] = useState([]);
@@ -35,7 +37,7 @@ const Home = () => {
 			setTrainingSessions(data);
 			setPage(pageToLoad);
 		} catch (error) {
-			console.error("Erro ao buscar sessões de treino:", error);
+			addToast(error.message || "Erro ao buscar sessões de treinos", "error");
 		} finally {
 			setLoading(false);
 		}
@@ -96,7 +98,7 @@ const Home = () => {
 							Essa é a sua tela de <strong>dashboard</strong>.
 						</p>
 						<p className="text-black dark:text-white">
-							Aqui você pode visualizar todas as suas{" "}
+							Aqui você pode visualizar, finalizar e excluir todas as suas{" "}
 							<strong>sessões de treino</strong>.
 						</p>
 					</section>

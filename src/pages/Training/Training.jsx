@@ -10,13 +10,13 @@ import DetailsIcon from "./DetailsIcon";
 import DetailsModalTraining from "./DetailsModalTraining";
 import DeleteModalTraining from "./DeleteModalTraining";
 import CreateModalTraining from "./CreateModalTraining";
+import EditModalTraining from "./EditModalTraining";
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { fetchTraining } from "../../api/trainingApi";
 import { fetchAllExercises } from "../../api/exerciseApi";
 import { useToast } from "../../hooks/useToast";
-import EditModalTraining from "./EditModalTraining";
 
 const Training = () => {
 	const { user } = useAuth();
@@ -40,7 +40,7 @@ const Training = () => {
 			const data = await fetchTraining(token);
 			setTraining(data);
 		} catch (error) {
-			console.error("Erro ao buscar treinos:", error);
+			addToast(error.message || "Erro ao buscar treinos", "error");
 		} finally {
 			setLoading(false);
 		}
