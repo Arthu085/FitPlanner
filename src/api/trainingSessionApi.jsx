@@ -1,12 +1,15 @@
 import api from "../services/api";
 
-export const fetchTrainingSession = async (token, page) => {
+export const fetchTrainingSession = async (token, page = 1, limit = 6) => {
 	try {
-		const response = await api.get(`/training/session/?page=${page}`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		});
+		const response = await api.get(
+			`/training/session/?page=${page}&limit=${limit}`,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
 		return response.data;
 	} catch (error) {
 		throw error.response?.data || { message: "Erro de conexão" };
@@ -44,6 +47,23 @@ export const finishTrainingSession = async (token, id, exercises) => {
 		const response = await api.post(
 			`/training/session/finish/${id}`,
 			{ exercises },
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		);
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+};
+
+export const startTrainingSession = async (token, id) => {
+	try {
+		const response = await api.post(
+			`/training/session/start/${id}`,
+			{},
 			{
 				headers: {
 					Authorization: `Bearer ${token}`,

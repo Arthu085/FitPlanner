@@ -3,7 +3,6 @@ import Buttons from "./Buttons";
 
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
-import { useState, useEffect } from "react";
 
 export default function Form({
 	fields,
@@ -20,6 +19,7 @@ export default function Form({
 	btnType,
 	changeClass,
 	exerciseOptions,
+	showNotesAndWeight = false,
 }) {
 	const defaultClass =
 		"bg-white dark:bg-gray-900 shadow-md rounded-xl p-8 w-full max-w-md mx-auto mb-4 mt-4 transition-colors duration-300";
@@ -99,6 +99,8 @@ export default function Form({
 					repetitions: opt.repetitions || 10,
 					label: opt.label,
 					value: opt.value ?? opt.id_exercise,
+					weight: opt.weight ?? "",
+					notes: opt.notes ?? "",
 			  }))
 			: [];
 
@@ -127,9 +129,11 @@ export default function Form({
 	};
 
 	const handleSeriesChange = (index, series) => {
-		const newExercises = [...selectedExercises];
-		newExercises[index].series = series;
-
+		const newExercises = [...(values.exercise || [])];
+		newExercises[index] = {
+			...newExercises[index],
+			series,
+		};
 		handleChange({
 			target: {
 				name: "exercise",
@@ -139,9 +143,11 @@ export default function Form({
 	};
 
 	const handleRepetitionsChange = (index, repetitions) => {
-		const newExercises = [...selectedExercises];
-		newExercises[index].repetitions = repetitions;
-
+		const newExercises = [...(values.exercise || [])];
+		newExercises[index] = {
+			...newExercises[index],
+			repetitions,
+		};
 		handleChange({
 			target: {
 				name: "exercise",
@@ -236,6 +242,7 @@ export default function Form({
 											))}
 										</select>
 									</div>
+
 									<div>
 										<label
 											className="block text-sm font-medium mb-1 dark:text-white"
@@ -256,6 +263,61 @@ export default function Form({
 											))}
 										</select>
 									</div>
+
+									{showNotesAndWeight && (
+										<>
+											<div>
+												<label
+													className="block text-sm font-medium mb-1 dark:text-white"
+													htmlFor={`weight-${exercise.id_exercise}`}>
+													Peso (kg)
+												</label>
+												<input
+													type="number"
+													step="0.1"
+													id={`weight-${exercise.id_exercise}`}
+													value={exercise.weight || ""}
+													onChange={(e) => {
+														const newExercises = [...selectedExercises];
+														newExercises[index].weight = e.target.value;
+														handleChange({
+															target: {
+																name: "exercise",
+																value: newExercises,
+															},
+														});
+													}}
+													placeholder="Ex: 50.5"
+													className="w-full border border-gray-300 rounded-lg p-2 dark:bg-gray-700 dark:border-gray-700 dark:text-white"
+												/>
+											</div>
+
+											<div>
+												<label
+													className="block text-sm font-medium mb-1 dark:text-white"
+													htmlFor={`notes-${exercise.id_exercise}`}>
+													Notas
+												</label>
+												<input
+													type="text"
+													id={`notes-${exercise.id_exercise}`}
+													value={exercise.notes || ""}
+													onChange={(e) => {
+														const newExercises = [...selectedExercises];
+														newExercises[index].notes = e.target.value;
+														handleChange({
+															target: {
+																name: "exercise",
+																value: newExercises,
+															},
+														});
+													}}
+													placeholder="Observações"
+													className="w-full border border-gray-300 rounded-lg p-2 dark:bg-gray-700 dark:border-gray-700 dark:text-white"
+												/>
+											</div>
+										</>
+									)}
 								</div>
 							</div>
 						);
