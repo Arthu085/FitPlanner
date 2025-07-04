@@ -27,13 +27,11 @@ const ActiveTrainingSession = () => {
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [session, setSession] = useState(null);
-	const [exerciseSession, setExerciseSession] = useState(null);
 	const [exerciseOptions, setExerciseOptions] = useState([]);
 	const [elapsedTime, setElapsedTime] = useState(0);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
-	// Form
 	const { values, handleChange, handleSubmit, resetForm } = useForm(
 		{ exercise: [] },
 		async (formData) => {
@@ -43,91 +41,99 @@ const ActiveTrainingSession = () => {
 					return;
 				}
 
-				const payload = formData.exercise.map((ex) => ({
-					id_exercise: ex.id_exercise,
-					series: ex.series,
-					repetitions: ex.repetitions,
-				}));
+				setBtnDisabled(true);
+				setLoading(true);
 
-				const data = await finishTrainingSession(token, session.id, {
-					exercises: payload,
+				const payload = formData.exercise.map((ex) => {
+					const original = exerciseOptions.find(
+						(o) => o.id_exercise === ex.id_exercise
+					);
+
+					const entry = { id_exercise: ex.id_exercise };
+
+					if (!original || ex.series !== original.series) {
+						entry.series = ex.series;
+					}
+
+					if (!original || ex.repetitions !== original.repetitions) {
+						entry.repetitions = ex.repetitions;
+					}
+
+					if (!original || (ex.weight ?? "") !== (original.weight ?? "")) {
+						entry.weight = ex.weight ?? null;
+					}
+
+					if (!original || (ex.notes ?? "") !== (original.notes ?? "")) {
+						entry.notes = ex.notes ?? null;
+					}
+
+					return entry;
 				});
 
+				const data = await finishTrainingSession(
+					token,
+					session.id_training_session,
+					payload
+				);
+
 				addToast(data.message, "success");
-				navigate("/training/session");
+				navigate("/session/training");
 			} catch (error) {
 				addToast(error.message || "Erro ao finalizar treino", "error");
+			} finally {
+				setBtnDisabled(false);
+				setLoading(false);
 			}
 		}
 	);
 
-	// Busca sessão
+	// Carregamento unificado da sessão + exercícios
 	useEffect(() => {
-		const loadSession = async () => {
+		const loadAll = async () => {
 			setLoading(true);
+
 			try {
-				const data = await fetchTrainingSessionById(token, id);
-				setSession(data);
-			} catch (error) {
-				addToast(error.message || "Erro ao buscar detalhes da sessão", "error");
-			} finally {
-				setLoading(false);
-			}
-		};
+				// 1. Sessão
+				const sessionData = await fetchTrainingSessionById(token, id);
+				setSession(sessionData);
 
-		if (id && token) loadSession();
-	}, [id, token]);
-
-	// Busca IDs dos exercícios da sessão
-	useEffect(() => {
-		const loadExerciseSession = async () => {
-			try {
-				const data = await fetchExerciseByTrainingAndSession(token, id);
-				setExerciseSession(data);
-			} catch (error) {
-				addToast(error.message, "error");
-			}
-		};
-
-		if (id && token) loadExerciseSession();
-	}, [id, token]);
-
-	// Busca detalhes dos exercícios da sessão (nome, etc.)
-	useEffect(() => {
-		const loadExercises = async () => {
-			try {
-				if (!token || !exerciseSession?.length) return;
-
-				setLoading(true);
-
-				const allExercises = await fetchAllExercises(token);
-
-				// Filtra apenas os exercícios da sessão
-				const sessionExerciseIds = exerciseSession.map((ex) => ex.id_exercise);
-
-				const filteredExercises = allExercises.filter((ex) =>
-					sessionExerciseIds.includes(ex.id)
+				// 2. Exercícios da sessão
+				const exerciseSessionData = await fetchExerciseByTrainingAndSession(
+					token,
+					id
 				);
 
-				const options = filteredExercises.map((ex) => ({
-					value: ex.id,
-					label: ex.name,
-					id_exercise: ex.id,
-					series: ex.series,
-					repetitions: ex.repetitions,
-				}));
+				// 3. Todos os exercícios
+				const allExercises = await fetchAllExercises(token);
+
+				// 4. Filtra os da sessão
+				const options = exerciseSessionData.map((exSession) => {
+					const exercise = allExercises.find(
+						(e) => e.id === exSession.id_exercise
+					);
+
+					return {
+						value: exercise?.id,
+						label: exercise?.name,
+						id_exercise: exSession.id_exercise,
+						series: exSession.series,
+						repetitions: exSession.repetitions,
+						weight: exSession.weight ?? "",
+						notes: exSession.notes ?? "",
+					};
+				});
 
 				setExerciseOptions(options);
 				resetForm({ exercise: options });
 			} catch (error) {
-				addToast(error.message || "Erro ao buscar exercícios", "error");
+				addToast(error.message || "Erro ao carregar dados da sessão", "error");
 			} finally {
 				setLoading(false);
 			}
 		};
 
-		loadExercises();
-	}, [token, exerciseSession]);
+		if (token && id) loadAll();
+	}, [token, id]);
 
 	// Cronômetro
 	useEffect(() => {
@@ -143,11 +149,14 @@ const ActiveTrainingSession = () => {
 	}, [session]);
 
 	const formatTime = (s) => {
-		const m = Math.floor(s / 60)
+		const h = Math.floor(s / 3600)
+			.toString()
+			.padStart(2, "0");
+		const m = Math.floor((s % 3600) / 60)
 			.toString()
 			.padStart(2, "0");
 		const sec = (s % 60).toString().padStart(2, "0");
-		return `${m}:${sec}`;
+		return `${h}h:${m}m:${sec}s`;
 	};
 
 	return (
@@ -176,6 +185,8 @@ const ActiveTrainingSession = () => {
 						handleChange={handleChange}
 						handleSubmit={handleSubmit}
 						exerciseOptions={exerciseOptions}
+						showNotesAndWeight={true}
+						changeClass="bg-white dark:bg-gray-900 shadow-md rounded-xl p-8 w-full max-w-2xl mx-auto mb-4 mt-4 transition-colors duration-300"
 					/>
 				</Layout>
 				<Footer />

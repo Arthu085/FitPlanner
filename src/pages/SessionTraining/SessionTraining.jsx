@@ -67,15 +67,26 @@ const SessionTraining = () => {
 		try {
 			const data = await startTrainingSession(token, trainingId);
 			navigate(`/session/training/active/${data.session.id}`, {
-				state: {
-					session: data.session,
-					trainingId,
-				},
+				state: { session: data.session, trainingId },
 			});
 			addToast(data.message);
 		} catch (error) {
 			addToast(error.message || "Erro ao iniciar sessão de treino", "error");
-		} finally {
+			setLoading(false);
+			setBtnDisabled(false);
+		}
+	};
+
+	const handleFinishSession = async (sessionId) => {
+		if (btnDisabled) return;
+
+		setBtnDisabled(true);
+		setLoading(true);
+
+		try {
+			navigate(`/session/training/active/${sessionId}`);
+		} catch (error) {
+			addToast(error.message || "Sessão de treino não encontrada", "error");
 			setLoading(false);
 			setBtnDisabled(false);
 		}
@@ -138,7 +149,14 @@ const SessionTraining = () => {
 													onClick={() => handleStartSession(item.id)}
 												/>
 											) : (
-												<Buttons type="primary" text="Finalizar" width="w-24" />
+												<Buttons
+													type="primary"
+													text="Finalizar"
+													width="w-24"
+													onClick={() =>
+														handleFinishSession(session.id_training_session)
+													}
+												/>
 											)
 										) : (
 											<Buttons
