@@ -93,25 +93,34 @@ const ActiveTrainingSession = () => {
 			setLoading(true);
 
 			try {
-				// 1. Sessão
 				const sessionData = await fetchTrainingSessionById(token, id);
+
+				// Verificação de usuário
+				if (sessionData.id_user !== user.id) {
+					addToast("Acesso não autorizado à sessão", "error");
+					navigate("/session/training");
+					return;
+				}
+
+				// Verificação de sessão finalizada
+				if (sessionData.finished_at) {
+					addToast("Sessão já finalizada", "info");
+					navigate("/session/training");
+					return;
+				}
+
 				setSession(sessionData);
 
-				// 2. Exercícios da sessão
 				const exerciseSessionData = await fetchExerciseByTrainingAndSession(
 					token,
 					id
 				);
-
-				// 3. Todos os exercícios
 				const allExercises = await fetchAllExercises(token);
 
-				// 4. Filtra os da sessão
 				const options = exerciseSessionData.map((exSession) => {
 					const exercise = allExercises.find(
 						(e) => e.id === exSession.id_exercise
 					);
-
 					return {
 						value: exercise?.id,
 						label: exercise?.name,
@@ -127,6 +136,7 @@ const ActiveTrainingSession = () => {
 				resetForm({ exercise: options });
 			} catch (error) {
 				addToast(error.message || "Erro ao carregar dados da sessão", "error");
+				navigate("/session/training");
 			} finally {
 				setLoading(false);
 			}
