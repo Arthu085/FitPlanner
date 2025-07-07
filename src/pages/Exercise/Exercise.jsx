@@ -7,11 +7,13 @@ import Table from "../../components/Table";
 import Buttons from "../../components/Buttons";
 import LoadingScreen from "../../components/LoadingScreen";
 import DeleteModalExercise from "./DeleteModalExercise";
+import CreateModalExercise from "./CreateModalExercise";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { useToast } from "../../hooks/useToast";
 import { fetchAllExercises } from "../../api/exerciseApi";
+import { fetchAllMuscleGroups } from "../../api/muscleGroupApi";
 
 const Exercise = () => {
 	const { user } = useAuth();
@@ -24,8 +26,10 @@ const Exercise = () => {
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
 	const [deleteModal, setDeleteModal] = useState(false);
+	const [createModal, setCreateModal] = useState(false);
 	const [editModal, setEditModal] = useState(false);
 	const [selectedExerciseId, setSelectedExerciseId] = useState(null);
+	const [muscleGroups, setMuscleGroups] = useState([]);
 
 	const headers = [
 		{ label: "Name", key: "name" },
@@ -54,6 +58,18 @@ const Exercise = () => {
 		}
 	};
 
+	const loadMuscleGroups = async () => {
+		try {
+			setLoading(true);
+			const response = await fetchAllMuscleGroups(token);
+			setMuscleGroups(response.data);
+		} catch (error) {
+			addToast(error.message || "Erro ao buscar grupos musculares", "error");
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
 		if (token) {
 			loadExercises(1);
@@ -65,6 +81,11 @@ const Exercise = () => {
 		setDeleteModal(true);
 	};
 
+	const handleOpenCreate = () => {
+		loadMuscleGroups();
+		setCreateModal(true);
+	};
+
 	return (
 		<>
 			{loading && <LoadingScreen />}
@@ -73,14 +94,23 @@ const Exercise = () => {
 				<Header />
 				<SideBar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 				<Layout isSidebarOpen={isSidebarOpen} title="Exercícios">
-					<section className="space-y-2 mt-7 mb-5">
-						<p className="text-black dark:text-white">
-							Essa é a sua tela de <strong>exercícios</strong>.
-						</p>
-						<p className="text-black dark:text-white">
-							Aqui você pode visualizar, adicionar, editar e excluir os seus{" "}
-							<strong>exercícios</strong>.
-						</p>
+					<section className="space-y-2 mt-7 mb-5 flex flex-row justify-between items-center">
+						<div>
+							<p className="text-black dark:text-white">
+								Essa é a sua tela de <strong>exercícios</strong>.
+							</p>
+							<p className="text-black dark:text-white">
+								Aqui você pode visualizar, adicionar, editar e excluir os seus{" "}
+								<strong>exercícios</strong>.
+							</p>
+						</div>
+						<div>
+							<Buttons
+								text={"Novo Exercício"}
+								type={"primary"}
+								onClick={handleOpenCreate}
+							/>
+						</div>
 					</section>
 
 					<Table
@@ -128,6 +158,12 @@ const Exercise = () => {
 						onClose={() => setDeleteModal(false)}
 						id_exercise={selectedExerciseId}
 						reloadExercises={loadExercises}
+					/>
+					<CreateModalExercise
+						openCreateModal={createModal}
+						onClose={() => setCreateModal(false)}
+						reloadExercise={loadExercises}
+						muscleGroups={muscleGroups}
 					/>
 				</Layout>
 				<Footer />
