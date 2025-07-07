@@ -116,7 +116,7 @@ const Home = () => {
 									/>
 								)}
 								<Buttons
-									type={"primary"}
+									type={"info"}
 									text={"Detalhes"}
 									onClick={() => handleOpenDetails(row.id_training_session)}
 								/>

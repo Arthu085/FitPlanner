@@ -13,8 +13,8 @@ export default function Buttons({
 		colorBg = "bg-blue-500";
 		colorHover = "hover:bg-blue-700";
 	} else if (type === "info") {
-		colorBg = "bg-yellow-300";
-		colorHover = "hover:bg-yellow-500";
+		colorBg = "bg-sky-700"; // ou "bg-sky-500"
+		colorHover = "hover:bg-sky-900";
 	} else if (type === "success") {
 		colorBg = "bg-green-700";
 		colorHover = "hover:bg-green-900";

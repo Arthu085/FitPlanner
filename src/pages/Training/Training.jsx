@@ -49,8 +49,8 @@ const Training = () => {
 	const loadExercises = async () => {
 		try {
 			setLoading(true);
-			const data = await fetchAllExercises(token);
-			setExercises(data);
+			const data = await fetchAllExercises(token, 1, 0);
+			setExercises(data.data);
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar exercícios", "error");
 		} finally {

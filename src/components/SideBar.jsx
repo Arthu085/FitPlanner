@@ -3,8 +3,10 @@ import ThemeToggle from "./Theme/ThemeToggle";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
 	const menuItems = [
+		{ label: "Dashboard", page: "" },
 		{ label: "Sessão de Treino", page: "session/training" },
 		{ label: "Treinos", page: "training" },
+		{ label: "Exercícios", page: "exercise" },
 	];
 
 	const navigate = useNavigate();
