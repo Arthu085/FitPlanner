@@ -6,6 +6,7 @@ import SideBar from "../../components/SideBar";
 import Table from "../../components/Table";
 import Buttons from "../../components/Buttons";
 import LoadingScreen from "../../components/LoadingScreen";
+import DeleteModalExercise from "./DeleteModalExercise";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
@@ -20,11 +21,11 @@ const Exercise = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [exercises, setExercises] = useState([]);
 	const [pagination, setPagination] = useState(null);
-	const [detailsModal, setDetailsModal] = useState(false);
-	const [deleteModal, setDeleteModal] = useState(false);
-	const [editModal, setEditModal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
+	const [deleteModal, setDeleteModal] = useState(false);
+	const [editModal, setEditModal] = useState(false);
+	const [selectedExerciseId, setSelectedExerciseId] = useState(null);
 
 	const headers = [
 		{ label: "Name", key: "name" },
@@ -59,6 +60,11 @@ const Exercise = () => {
 		}
 	}, [token]);
 
+	const handleOpenDelete = (id) => {
+		setSelectedExerciseId(id);
+		setDeleteModal(true);
+	};
+
 	return (
 		<>
 			{loading && <LoadingScreen />}
@@ -87,7 +93,11 @@ const Exercise = () => {
 								) : (
 									<>
 										<Buttons type={"primary"} text={"Editar"} />
-										<Buttons type={"warning"} text={"Excluir"} />
+										<Buttons
+											type={"warning"}
+											text={"Excluir"}
+											onClick={() => handleOpenDelete(row.id)}
+										/>
 									</>
 								)}
 							</div>
@@ -113,6 +123,12 @@ const Exercise = () => {
 							/>
 						</div>
 					)}
+					<DeleteModalExercise
+						openDeleteModal={deleteModal}
+						onClose={() => setDeleteModal(false)}
+						id_exercise={selectedExerciseId}
+						reloadExercises={loadExercises}
+					/>
 				</Layout>
 				<Footer />
 			</Container>
