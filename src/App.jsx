@@ -31,6 +31,8 @@ function App() {
 							element={<ActiveSessionTrainig />}
 						/>
 					</Route>
+					{/* Rota 404 */}
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</Router>
 		</>

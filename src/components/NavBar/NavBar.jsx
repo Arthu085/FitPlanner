@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
 import HomeIcon from "./HomeIcon";
 import LogoutIcon from "./LogoutIcon";
+
+import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function NavBar({ showHome, showLogout }) {

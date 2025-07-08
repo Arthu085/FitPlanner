@@ -1,5 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import ThemeToggle from "./Theme/ThemeToggle";
+
+import { useNavigate } from "react-router-dom";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
 	const menuItems = [
