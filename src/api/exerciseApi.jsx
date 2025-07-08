@@ -38,3 +38,16 @@ export const createExercise = async (token, data) => {
 		throw error.response?.data || { message: "Erro de conexão" };
 	}
 };
+
+export const editExercise = async (token, id, data) => {
+	try {
+		const response = await api.patch(`/exercise/edit/${id}`, data, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		throw error.response?.data || { message: "Erro de conexão" };
+	}
+};

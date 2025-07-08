@@ -8,6 +8,7 @@ import Buttons from "../../components/Buttons";
 import LoadingScreen from "../../components/LoadingScreen";
 import DeleteModalExercise from "./DeleteModalExercise";
 import CreateModalExercise from "./CreateModalExercise";
+import EditModalExercise from "./EditModalExercise";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
@@ -30,6 +31,7 @@ const Exercise = () => {
 	const [editModal, setEditModal] = useState(false);
 	const [selectedExerciseId, setSelectedExerciseId] = useState(null);
 	const [muscleGroups, setMuscleGroups] = useState([]);
+	const [exerciseToEdit, setExerciseToEdit] = useState(null);
 
 	const headers = [
 		{ label: "Name", key: "name" },
@@ -86,6 +88,21 @@ const Exercise = () => {
 		setCreateModal(true);
 	};
 
+	const handleOpenEdit = (id) => {
+		loadExercises();
+		loadMuscleGroups();
+
+		const selected = exercises.find((t) => t.id === id);
+		if (!selected) {
+			addToast("Exercício não encontrado", "error");
+			return;
+		}
+
+		setSelectedExerciseId(id);
+		setExerciseToEdit(selected);
+		setEditModal(true);
+	};
+
 	return (
 		<>
 			{loading && <LoadingScreen />}
@@ -122,7 +139,11 @@ const Exercise = () => {
 									<p className="text-black dark:text-white">Sem permissão</p>
 								) : (
 									<>
-										<Buttons type={"primary"} text={"Editar"} />
+										<Buttons
+											type={"primary"}
+											text={"Editar"}
+											onClick={() => handleOpenEdit(row.id)}
+										/>
 										<Buttons
 											type={"warning"}
 											text={"Excluir"}
@@ -164,6 +185,14 @@ const Exercise = () => {
 						onClose={() => setCreateModal(false)}
 						reloadExercise={loadExercises}
 						muscleGroups={muscleGroups}
+					/>
+					<EditModalExercise
+						openEditModal={editModal}
+						onClose={() => setEditModal(false)}
+						reloadExercise={loadExercises}
+						muscleGroups={muscleGroups}
+						exerciseData={exerciseToEdit}
+						id_exercise={selectedExerciseId}
 					/>
 				</Layout>
 				<Footer />
