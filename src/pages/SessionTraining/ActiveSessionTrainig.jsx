@@ -115,10 +115,10 @@ const ActiveTrainingSession = () => {
 					token,
 					id
 				);
-				const allExercises = await fetchAllExercises(token);
+				const allExercises = await fetchAllExercises(token, 1, 0);
 
 				const options = exerciseSessionData.map((exSession) => {
-					const exercise = allExercises.find(
+					const exercise = allExercises.data.find(
 						(e) => e.id === exSession.id_exercise
 					);
 					return {

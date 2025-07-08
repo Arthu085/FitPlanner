@@ -10,6 +10,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Training from "./pages/Training/Training";
 import SessionTraining from "./pages/SessionTraining/SessionTraining";
 import ActiveSessionTrainig from "./pages/SessionTraining/ActiveSessionTrainig";
+import Exercise from "./pages/Exercise/Exercise";
 
 function App() {
 	return (
@@ -24,6 +25,7 @@ function App() {
 						<Route path="/" element={<Home />} />
 						<Route path="/training" element={<Training />} />
 						<Route path="/session/training" element={<SessionTraining />} />
+						<Route path="/exercise" element={<Exercise />} />
 						<Route
 							path="/session/training/active/:id"
 							element={<ActiveSessionTrainig />}
