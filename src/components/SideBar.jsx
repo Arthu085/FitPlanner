@@ -26,7 +26,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       `}>
 			<h1
 				className={`
-          text-2xl font-bold text-black dark:text-white mt-10 mb-5
+          text-2xl font-bold text-black dark:text-white mt-15 mb-5
           whitespace-nowrap transition-opacity duration-300
           ${isOpen ? "opacity-100" : "opacity-0"}
         `}>
