@@ -1,6 +1,7 @@
-import { useTheme } from "../../contexts/ThemeContext";
 import ThemeIconLight from "./ThemeIconLight";
 import ThemeIconDark from "./ThemeIconDark";
+
+import { useTheme } from "../../contexts/ThemeContext";
 
 export default function ThemeToggle({ isVisible = true, size }) {
 	const { theme, setTheme } = useTheme();

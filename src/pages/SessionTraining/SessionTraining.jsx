@@ -66,8 +66,15 @@ const SessionTraining = () => {
 
 		try {
 			const data = await startTrainingSession(token, trainingId);
+			const selectedTraining = training.find((t) => t.id === trainingId);
+			const trainingTitle = selectedTraining?.title || "Treino em andamento";
+
 			navigate(`/session/training/active/${data.session.id}`, {
-				state: { session: data.session, trainingId },
+				state: {
+					session: data.session,
+					trainingId,
+					trainingTitle,
+				},
 			});
 			addToast(data.message);
 		} catch (error) {
@@ -77,14 +84,20 @@ const SessionTraining = () => {
 		}
 	};
 
-	const handleFinishSession = async (sessionId) => {
+	const handleFinishSession = async (sessionId, trainingId) => {
 		if (btnDisabled) return;
 
 		setBtnDisabled(true);
 		setLoading(true);
 
 		try {
-			navigate(`/session/training/active/${sessionId}`);
+			const selectedTraining = training.find((t) => t.id === trainingId);
+			const trainingTitle = selectedTraining?.title || "Treino em andamento";
+			navigate(`/session/training/active/${sessionId}`, {
+				state: {
+					trainingTitle,
+				},
+			});
 		} catch (error) {
 			addToast(error.message || "Sessão de treino não encontrada", "error");
 			setLoading(false);
@@ -114,6 +127,7 @@ const SessionTraining = () => {
 
 					<Card
 						data={training}
+						title={"Treino: "}
 						renderActions={(item) => {
 							const session =
 								trainingSessions?.data?.find(
@@ -122,27 +136,11 @@ const SessionTraining = () => {
 
 							return (
 								<div className="flex flex-row items-center justify-between w-full">
-									<div>
-										{session ? (
-											session.finished_at !== null ? (
-												<p className="text-black dark:text-white">
-													Treino não iniciado
-												</p>
-											) : (
-												<p className="text-black dark:text-white">
-													Treino em andamento...
-												</p>
-											)
-										) : (
-											<p className="text-black dark:text-white">
-												Treino não iniciado
-											</p>
-										)}
-									</div>
 									<div className="flex gap-3">
 										{session ? (
 											session.finished_at !== null ? (
 												<Buttons
+													title="Iniciar treino"
 													type="success"
 													text="Iniciar"
 													width="w-24"
@@ -150,16 +148,21 @@ const SessionTraining = () => {
 												/>
 											) : (
 												<Buttons
+													title="Finalizar treino"
 													type="primary"
 													text="Finalizar"
 													width="w-24"
 													onClick={() =>
-														handleFinishSession(session.id_training_session)
+														handleFinishSession(
+															session.id_training_session,
+															item.id
+														)
 													}
 												/>
 											)
 										) : (
 											<Buttons
+												title="Iniciar treino"
 												type="success"
 												text="Iniciar"
 												width="w-24"

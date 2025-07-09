@@ -3,24 +3,29 @@ import Buttons from "./Buttons";
 
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import { forwardRef } from "react";
 
-export default function Form({
-	fields,
-	values,
-	handleChange,
-	handleSubmit,
-	title,
-	text,
-	path,
-	pathTitle,
-	logo,
-	btnTitle,
-	btnDisabled,
-	btnType,
-	changeClass,
-	exerciseOptions,
-	showNotesAndWeight = false,
-}) {
+const Form = forwardRef(function Form(
+	{
+		fields,
+		values,
+		handleChange,
+		handleSubmit,
+		title,
+		text,
+		path,
+		pathTitle,
+		logo,
+		btnTitle,
+		btnDisabled,
+		btnType,
+		changeClass,
+		exerciseOptions,
+		showNotesAndWeight = false,
+		menuHeight = "200px",
+	},
+	ref
+) {
 	const defaultClass =
 		"bg-white dark:bg-gray-900 shadow-md rounded-xl p-8 w-full max-w-md mx-auto mb-4 mt-4 transition-colors duration-300";
 
@@ -38,7 +43,7 @@ export default function Form({
 		}),
 		menuList: (base) => ({
 			...base,
-			maxHeight: "200px",
+			maxHeight: menuHeight,
 			overflowY: "auto",
 		}),
 		menuPortal: (base) => ({
@@ -157,15 +162,19 @@ export default function Form({
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className={changeClass || defaultClass}>
+		<form
+			ref={ref}
+			onSubmit={handleSubmit}
+			className={changeClass || defaultClass}>
 			{logo && (
 				<img src={logo} alt="Logo" className="h-35 mx-auto dark:invert" />
 			)}
+
 			<h2 className="text-2xl font-bold mb-6 text-center dark:text-white">
 				{title}
 			</h2>
 
-			{/* Renderiza os outros campos */}
+			{/* Campos dinâmicos */}
 			{fields
 				?.filter((field) => field.name !== "exercise")
 				.map((field, index) => (
@@ -175,22 +184,47 @@ export default function Form({
 							htmlFor={field.name}>
 							{field.label}
 						</label>
-						<input
-							type={field.type}
-							id={field.name}
-							name={field.name}
-							value={values[field.name] || ""}
-							onChange={handleChange}
-							placeholder={field.placeholder}
-							className="placeholder:text-gray-600 w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-700 dark:placeholder:text-gray-400 dark:focus:ring-blue-200 text-black dark:text-white"
-							required={field.required}
-						/>
+
+						{field.type === "select" ? (
+							<Select
+								options={field.options || []}
+								value={
+									field.options?.find(
+										(opt) => opt.value === values[field.name]
+									) || null
+								}
+								onChange={(selected) =>
+									handleChange({
+										target: {
+											name: field.name,
+											value: selected?.value || "",
+										},
+									})
+								}
+								placeholder={field.placeholder}
+								menuPortalTarget={document.body}
+								menuPosition="absolute"
+								className="text-black dark:text-white"
+								styles={selectStyles}
+							/>
+						) : (
+							<input
+								type={field.type}
+								id={field.name}
+								name={field.name}
+								value={values[field.name] || ""}
+								onChange={handleChange}
+								placeholder={field.placeholder}
+								className="placeholder:text-gray-600 w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-700 dark:placeholder:text-gray-400 dark:focus:ring-blue-200 text-black dark:text-white"
+								required={field.required}
+							/>
+						)}
 					</div>
 				))}
 
+			{/* Exercícios */}
 			{fields.some((field) => field.name === "exercise") && (
 				<>
-					{/* Multiselect de exercícios */}
 					<div className="mb-4">
 						<label className="block text-sm font-medium mb-1 dark:text-white">
 							Exercícios
@@ -210,11 +244,11 @@ export default function Form({
 						/>
 					</div>
 
-					{/* Inputs de séries e repetições */}
 					{selectedExercises.map((exercise, index) => {
 						const label = (exerciseOptions || []).find(
 							(e) => e.value === exercise.id_exercise
 						)?.label;
+
 						return (
 							<div
 								key={exercise.id_exercise}
@@ -222,6 +256,7 @@ export default function Form({
 								<p className="font-semibold mb-2 dark:text-white">{label}</p>
 
 								<div className="grid grid-cols-2 gap-4">
+									{/* Séries */}
 									<div>
 										<label
 											className="block text-sm font-medium mb-1 dark:text-white"
@@ -243,6 +278,7 @@ export default function Form({
 										</select>
 									</div>
 
+									{/* Repetições */}
 									<div>
 										<label
 											className="block text-sm font-medium mb-1 dark:text-white"
@@ -264,6 +300,7 @@ export default function Form({
 										</select>
 									</div>
 
+									{/* Peso e Notas */}
 									{showNotesAndWeight && (
 										<>
 											<div>
@@ -325,6 +362,7 @@ export default function Form({
 				</>
 			)}
 
+			{/* Botão de envio */}
 			<Buttons
 				text={btnTitle}
 				submit="submit"
@@ -332,6 +370,7 @@ export default function Form({
 				type={btnType}
 			/>
 
+			{/* Link abaixo do formulário */}
 			{path && (
 				<div className="flex flex-row gap-4 mt-4">
 					<p className="text-black dark:text-white">{text}</p>
@@ -344,4 +383,6 @@ export default function Form({
 			)}
 		</form>
 	);
-}
+});
+
+export default Form;

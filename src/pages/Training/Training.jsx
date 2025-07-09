@@ -6,7 +6,6 @@ import Layout from "../../components/Layout";
 import SideBar from "../../components/SideBar";
 import Card from "../../components/Card";
 import LoadingScreen from "../../components/LoadingScreen";
-import DetailsIcon from "./DetailsIcon";
 import DetailsModalTraining from "./DetailsModalTraining";
 import DeleteModalTraining from "./DeleteModalTraining";
 import CreateModalTraining from "./CreateModalTraining";
@@ -49,8 +48,8 @@ const Training = () => {
 	const loadExercises = async () => {
 		try {
 			setLoading(true);
-			const data = await fetchAllExercises(token);
-			setExercises(data);
+			const data = await fetchAllExercises(token, 1, 0);
+			setExercises(data.data);
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar exercícios", "error");
 		} finally {
@@ -111,6 +110,7 @@ const Training = () => {
 						</div>
 						<div>
 							<Buttons
+								title="Criar novo treino"
 								text={"Novo Treino"}
 								type={"primary"}
 								onClick={handleOpenCreate}
@@ -120,23 +120,31 @@ const Training = () => {
 
 					<Card
 						data={training}
+						title={"Treino: "}
+						cursor={"cursor-pointer"}
+						onclick={(item) => handleOpenDetails(item.id)}
 						renderActions={(item) => (
 							<div className="flex flex-row items-center justify-between w-full">
-								<div>
-									<DetailsIcon onClick={() => handleOpenDetails(item.id)} />
-								</div>
 								<div className="flex gap-3">
 									<Buttons
+										title="Editar treino"
 										type={"primary"}
 										text={`Editar`}
 										width="w-24"
-										onClick={() => handleOpenEdit(item.id)}
+										onClick={(e) => {
+											e.stopPropagation();
+											handleOpenEdit(item.id);
+										}}
 									/>
 									<Buttons
+										title="Excluir treino"
 										type={"warning"}
 										text={`Excluir`}
 										width="w-24"
-										onClick={() => handleOpenDelete(item.id)}
+										onClick={(e) => {
+											e.stopPropagation();
+											handleOpenDelete(item.id);
+										}}
 									/>
 								</div>
 							</div>

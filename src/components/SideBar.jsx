@@ -1,10 +1,13 @@
-import { useNavigate } from "react-router-dom";
 import ThemeToggle from "./Theme/ThemeToggle";
+
+import { useNavigate } from "react-router-dom";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
 	const menuItems = [
+		{ label: "Dashboard", page: "" },
 		{ label: "Sessão de Treino", page: "session/training" },
 		{ label: "Treinos", page: "training" },
+		{ label: "Exercícios", page: "exercise" },
 	];
 
 	const navigate = useNavigate();
@@ -23,7 +26,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       `}>
 			<h1
 				className={`
-          text-2xl font-bold text-black dark:text-white mt-10 mb-5
+          text-2xl font-bold text-black dark:text-white mt-15 mb-5
           whitespace-nowrap transition-opacity duration-300
           ${isOpen ? "opacity-100" : "opacity-0"}
         `}>

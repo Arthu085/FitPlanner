@@ -9,6 +9,7 @@ import {
 	finishTrainingSession,
 } from "../../api/trainingSessionApi";
 import { fetchAllExercises } from "../../api/exerciseApi";
+import { useLocation } from "react-router-dom";
 
 import Form from "../../components/Form";
 import LoadingScreen from "../../components/LoadingScreen";
@@ -22,8 +23,11 @@ const ActiveTrainingSession = () => {
 	const { id } = useParams();
 	const navigate = useNavigate();
 	const { user } = useAuth();
-	const token = user?.token;
 	const addToast = useToast();
+	const location = useLocation();
+
+	const trainingTitle = location.state?.trainingTitle || "Treino em andamento";
+	const token = user?.token;
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [session, setSession] = useState(null);
@@ -115,10 +119,10 @@ const ActiveTrainingSession = () => {
 					token,
 					id
 				);
-				const allExercises = await fetchAllExercises(token);
+				const allExercises = await fetchAllExercises(token, 1, 0);
 
 				const options = exerciseSessionData.map((exSession) => {
-					const exercise = allExercises.find(
+					const exercise = allExercises.data.find(
 						(e) => e.id === exSession.id_exercise
 					);
 					return {
@@ -176,7 +180,9 @@ const ActiveTrainingSession = () => {
 			<Container>
 				<Header />
 				<Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
-				<Layout isSidebarOpen={isSidebarOpen} title="Treino em andamento">
+				<Layout
+					isSidebarOpen={isSidebarOpen}
+					title={"Treino: " + trainingTitle}>
 					<section className="space-y-2 mt-7 mb-5 flex flex-row justify-between items-center">
 						<div>
 							<p className="text-black dark:text-white">

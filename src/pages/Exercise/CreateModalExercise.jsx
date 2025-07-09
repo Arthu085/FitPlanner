@@ -1,19 +1,19 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
-import { createTraining } from "../../api/trainingApi";
 import { useForm } from "../../hooks/useForm";
+import { createExercise } from "../../api/exerciseApi";
 
 import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
 import LoadingScreen from "../../components/LoadingScreen";
 import Form from "../../components/Form";
 
-export default function CreateModalTraining({
+export default function CreateModalExercise({
 	openCreateModal,
 	onClose,
-	reloadTraining,
-	exercises = [],
+	reloadExercise,
+	muscleGroups = [],
 }) {
 	const { user } = useAuth();
 	const formRef = useRef();
@@ -24,67 +24,53 @@ export default function CreateModalTraining({
 	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
-	const exerciseOptions = exercises.map((exercise) => ({
-		value: exercise.id,
-		label: exercise.name,
-	}));
-
 	const fields = [
 		{
-			label: "Título",
+			label: "Nome",
 			type: "text",
-			name: "title",
+			name: "name",
 			required: true,
-			placeholder: "Digite o título do treino",
+			placeholder: "Digite o nome do exercício",
 		},
 		{
-			label: "Exercício(s)",
-			type: "multiselect",
-			name: "exercise",
+			label: "Descrição",
+			type: "textarea",
+			name: "description",
 			required: true,
-			placeholder: "Selecione o exercício",
-			options: exerciseOptions,
+			placeholder: "Digite uma descrição para o exercício",
+		},
+		{
+			label: "Grupo Muscular",
+			type: "select",
+			name: "id_muscle_group",
+			required: true,
+			placeholder: "Selecione o grupo muscular",
+			options: muscleGroups.map((group) => ({
+				value: group.id,
+				label: group.name,
+			})),
 		},
 	];
 
-	const handleCreateTraining = async (formData) => {
+	const handleCreateExercise = async (formData) => {
 		if (btnDisabled) return;
 
-		if (!formData.exercise || formData.exercise.length === 0) {
-			addToast("Selecione ao menos um exercício", "error");
+		if (formData.name.trim().length < 3) {
+			addToast("O nome do exercício deve ter pelo menos 3 letras", "info");
 			return;
 		}
-
-		if (formData.title.trim().length < 3) {
-			addToast("O nome do treino deve ter pelo menos 3 letras", "info");
-			return;
-		}
-
-		// Transforma o array para o formato esperado pelo backend
-		const exercises = formData.exercise.map((ex) => ({
-			id_exercise: ex.id_exercise ?? ex.value, // se não tiver id_exercise, usa value
-			series: ex.series || 3, // padrão 3 se não existir
-			repetitions: ex.repetitions || 10, // padrão 10 se não existir
-		}));
-
-		// Remove propriedades extras, pega só as necessárias
-		const dataToSend = {
-			...formData,
-			exercises,
-		};
-		delete dataToSend.exercise;
 
 		setBtnDisabled(true);
 		setLoading(true);
 
 		try {
-			const data = await createTraining(token, dataToSend);
+			const data = await createExercise(token, formData);
 			addToast(data.message);
-			await reloadTraining();
+			await reloadExercise();
 			onClose();
 			resetForm();
 		} catch (error) {
-			addToast(error.message || "Erro ao criar treino", "error");
+			addToast(error.message || "Erro ao criar exercício", "error");
 		} finally {
 			setLoading(false);
 			setBtnDisabled(false);
@@ -98,8 +84,8 @@ export default function CreateModalTraining({
 	}, [openCreateModal]);
 
 	const { values, handleChange, handleSubmit, resetForm } = useForm(
-		{ exercise: [] },
-		handleCreateTraining
+		{},
+		handleCreateExercise
 	);
 
 	const handleFormSubmit = () => {
@@ -114,19 +100,19 @@ export default function CreateModalTraining({
 			<Modal
 				isOpen={openCreateModal}
 				onClose={onClose}
-				title="Criar treino"
+				title="Criar exercício"
 				content={
 					<div className="space-y-4">
 						<Form
 							ref={formRef}
 							handleChange={handleChange}
 							handleSubmit={handleSubmit}
-							exerciseOptions={exerciseOptions}
 							fields={fields}
 							values={values}
 							changeClass={
 								"bg-white dark:bg-gray-800 p-5 w-full mx-auto transition-colors duration-300"
 							}
+							menuHeight="150px"
 						/>
 					</div>
 				}

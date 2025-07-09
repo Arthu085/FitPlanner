@@ -47,7 +47,6 @@ export default function FinishModalHome({
 			return;
 		} catch (error) {
 			addToast(error.message || "Erro ao finalizar sessão", "error");
-			onClose();
 		} finally {
 			setLoading(false);
 			setBtnDisabled(false);
