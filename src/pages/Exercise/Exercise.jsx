@@ -156,6 +156,7 @@ const Exercise = () => {
 						</div>
 						<div>
 							<Buttons
+								title="Criar novo exercício"
 								text={"Novo Exercício"}
 								type={"primary"}
 								onClick={handleOpenCreate}
@@ -182,6 +183,7 @@ const Exercise = () => {
 									className="p-2 w-100 rounded border border-gray-600 dark:border-gray-600 dark:bg-gray-800 bg-gray-400 dark:text-white"
 								/>
 								<Buttons
+									title="Buscar exercício"
 									type={"primary"}
 									text={"Buscar"}
 									submit={"submit"}
@@ -212,11 +214,13 @@ const Exercise = () => {
 								) : (
 									<>
 										<Buttons
+											title="Editar exercício"
 											type={"primary"}
 											text={"Editar"}
 											onClick={() => handleOpenEdit(row.id)}
 										/>
 										<Buttons
+											title="Excluir exercício"
 											type={"warning"}
 											text={"Excluir"}
 											onClick={() => handleOpenDelete(row.id)}

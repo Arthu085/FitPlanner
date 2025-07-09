@@ -24,7 +24,8 @@ export default function Card({
 							active:scale-[0.98] active:shadow-md
 							${cursor}
 						`}
-						onClick={() => onclick?.(item)}>
+						onClick={() => onclick?.(item)}
+						title="Clique para ver mais detalhes">
 						<div className="mb-3">
 							<h2 className="text-lg font-semibold text-gray-900 dark:text-white break-words">
 								{title}

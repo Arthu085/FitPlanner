@@ -8,6 +8,7 @@ export default function Buttons({
 	loadingText = "Carregando...",
 	type,
 	width = "w-full",
+	title = "",
 }) {
 	if (type === "primary") {
 		colorBg = "bg-blue-500";
@@ -29,6 +30,7 @@ export default function Buttons({
 	return (
 		<button
 			onClick={onClick}
+			title={title}
 			type={submit}
 			className={`${width} font-semibold py-2 px-4 rounded-lg transition duration-300 
 	${

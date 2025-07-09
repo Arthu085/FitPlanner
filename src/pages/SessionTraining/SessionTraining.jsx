@@ -140,6 +140,7 @@ const SessionTraining = () => {
 										{session ? (
 											session.finished_at !== null ? (
 												<Buttons
+													title="Iniciar treino"
 													type="success"
 													text="Iniciar"
 													width="w-24"
@@ -147,6 +148,7 @@ const SessionTraining = () => {
 												/>
 											) : (
 												<Buttons
+													title="Finalizar treino"
 													type="primary"
 													text="Finalizar"
 													width="w-24"
@@ -160,6 +162,7 @@ const SessionTraining = () => {
 											)
 										) : (
 											<Buttons
+												title="Iniciar treino"
 												type="success"
 												text="Iniciar"
 												width="w-24"

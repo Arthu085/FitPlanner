@@ -110,6 +110,7 @@ const Training = () => {
 						</div>
 						<div>
 							<Buttons
+								title="Criar novo treino"
 								text={"Novo Treino"}
 								type={"primary"}
 								onClick={handleOpenCreate}
@@ -126,6 +127,7 @@ const Training = () => {
 							<div className="flex flex-row items-center justify-between w-full">
 								<div className="flex gap-3">
 									<Buttons
+										title="Editar treino"
 										type={"primary"}
 										text={`Editar`}
 										width="w-24"
@@ -135,6 +137,7 @@ const Training = () => {
 										}}
 									/>
 									<Buttons
+										title="Excluir treino"
 										type={"warning"}
 										text={`Excluir`}
 										width="w-24"

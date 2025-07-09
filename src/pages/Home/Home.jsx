@@ -149,6 +149,7 @@ const Home = () => {
 									className="p-2 w-100 rounded border border-gray-600 dark:border-gray-600 dark:bg-gray-800 bg-gray-400 dark:text-white"
 								/>
 								<Buttons
+									title="Buscar sessões do treino"
 									type={"primary"}
 									text={"Buscar"}
 									submit={"submit"}
@@ -156,6 +157,7 @@ const Home = () => {
 								/>
 								{hasSearched && (
 									<Buttons
+										title="Ver todas as sessões"
 										type="secondary"
 										text="Ver todos"
 										onClick={() => {
@@ -176,17 +178,20 @@ const Home = () => {
 							<div className="flex gap-2">
 								{row.situation === "Em andamento" && (
 									<Buttons
+										title="Finalizar sessão de treino"
 										type={"success"}
 										text={"Finalizar"}
 										onClick={() => handleOpenFinish(row.id_training_session)}
 									/>
 								)}
 								<Buttons
+									title="Ver detalhes da sessão de treino"
 									type={"info"}
 									text={"Detalhes"}
 									onClick={() => handleOpenDetails(row.id_training_session)}
 								/>
 								<Buttons
+									title="Excluir sessão de treino"
 									type={"warning"}
 									text={"Excluir"}
 									onClick={() => handleOpenDelete(row.id_training_session)}
@@ -197,6 +202,7 @@ const Home = () => {
 					{data.length > 0 && trainingSessions.pagination && (
 						<div className="flex flex-row mt-5 gap-4 items-center justify-end">
 							<Buttons
+								title="Página anterior"
 								type={"primary"}
 								text={"Anterior"}
 								onClick={() => {
@@ -209,6 +215,7 @@ const Home = () => {
 							/>
 
 							<Buttons
+								title="Página seguinte"
 								type={"primary"}
 								text={"Próximo"}
 								onClick={() => {
