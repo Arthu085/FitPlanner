@@ -13,7 +13,7 @@ export default function Buttons({
 		colorBg = "bg-blue-500";
 		colorHover = "hover:bg-blue-700";
 	} else if (type === "info") {
-		colorBg = "bg-sky-700"; // ou "bg-sky-500"
+		colorBg = "bg-sky-700";
 		colorHover = "hover:bg-sky-900";
 	} else if (type === "success") {
 		colorBg = "bg-green-700";
@@ -21,6 +21,9 @@ export default function Buttons({
 	} else if (type === "warning") {
 		colorBg = "bg-red-600";
 		colorHover = "hover:bg-red-800";
+	} else if (type === "secondary") {
+		colorBg = "bg-gray-500";
+		colorHover = "hover:bg-gray-800";
 	}
 
 	return (

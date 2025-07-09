@@ -80,6 +80,11 @@ export default function EditModalTraining({
 			return;
 		}
 
+		if (formData.title.trim().length < 3) {
+			addToast("O nome do treino deve ter pelo menos 3 letras", "info");
+			return;
+		}
+
 		const exercises = formData.exercise.map((ex) => {
 			const data = {
 				series: ex.series || 3,

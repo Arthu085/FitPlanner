@@ -1,9 +1,14 @@
 import api from "../services/api";
 
-export const fetchTrainingSession = async (token, page = 1, limit = 6) => {
+export const fetchTrainingSession = async (
+	token,
+	page = 1,
+	limit = 6,
+	search = ""
+) => {
 	try {
 		const response = await api.get(
-			`/training/session/?page=${page}&limit=${limit}`,
+			`/training/session/?page=${page}&limit=${limit}&search=${search}`,
 			{
 				headers: {
 					Authorization: `Bearer ${token}`,

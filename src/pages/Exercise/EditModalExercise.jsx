@@ -81,6 +81,11 @@ export default function EditModalExercise({
 	async function handleEditExercise(formData) {
 		if (btnDisabled) return;
 
+		if (formData.name.trim().length < 3) {
+			addToast("O nome do exercício deve ter pelo menos 3 letras", "info");
+			return;
+		}
+
 		setBtnDisabled(true);
 		setLoading(true);
 

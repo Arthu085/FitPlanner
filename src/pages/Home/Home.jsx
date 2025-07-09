@@ -29,6 +29,8 @@ const Home = () => {
 	const [selectedSessionId, setSelectedSessionId] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
+	const [search, setSearch] = useState("");
+	const [hasSearched, setHasSearched] = useState(false);
 
 	const loadSessions = async (pageToLoad) => {
 		try {
@@ -62,6 +64,31 @@ const Home = () => {
 	const handleOpenFinish = (id) => {
 		setSelectedSessionId(id);
 		setFinishModal(true);
+	};
+
+	const handleSubmitSearch = async (e) => {
+		e.preventDefault();
+
+		if (search.trim() === "") {
+			return;
+		}
+		if (search.trim().length < 3) {
+			addToast("Digite pelo menos 3 letras para buscar", "info");
+			return;
+		}
+
+		try {
+			setLoading(true);
+			const data = await fetchTrainingSession(token, 1, 6, search);
+			setTrainingSessions(data);
+			setPage(1);
+			setSearch("");
+			setHasSearched(true);
+		} catch (error) {
+			addToast(error.message || "Erro ao buscar sessões de treinos", "error");
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const headers = [
@@ -103,6 +130,45 @@ const Home = () => {
 						</p>
 					</section>
 
+					{(data.length !== 0 || hasSearched) && (
+						<form
+							onSubmit={handleSubmitSearch}
+							className="flex flex-col gap-2 mb-5">
+							<label
+								className="text-black dark:text-white"
+								htmlFor="searchExercise">
+								Pesquise sessões de um treino específico:
+							</label>
+							<div className="flex flex-row gap-2">
+								<input
+									id="searchExercise"
+									type="text"
+									value={search}
+									onChange={(e) => setSearch(e.target.value)}
+									placeholder="Digite o título do treino"
+									className="p-2 w-100 rounded border border-gray-600 dark:border-gray-600 dark:bg-gray-800 bg-gray-400 dark:text-white"
+								/>
+								<Buttons
+									type={"primary"}
+									text={"Buscar"}
+									submit={"submit"}
+									width="w-30"
+								/>
+								{hasSearched && (
+									<Buttons
+										type="secondary"
+										text="Ver todos"
+										onClick={() => {
+											loadSessions(1);
+											setHasSearched(false);
+										}}
+										width="w-30"
+									/>
+								)}
+							</div>
+						</form>
+					)}
+
 					<Table
 						headers={headers}
 						data={data}
@@ -128,7 +194,7 @@ const Home = () => {
 							</div>
 						)}
 					/>
-					{data.length > 0 && (
+					{data.length > 0 && trainingSessions.pagination && (
 						<div className="flex flex-row mt-5 gap-4 items-center justify-end">
 							<Buttons
 								type={"primary"}

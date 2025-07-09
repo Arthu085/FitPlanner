@@ -55,6 +55,11 @@ export default function CreateModalTraining({
 			return;
 		}
 
+		if (formData.title.trim().length < 3) {
+			addToast("O nome do treino deve ter pelo menos 3 letras", "info");
+			return;
+		}
+
 		// Transforma o array para o formato esperado pelo backend
 		const exercises = formData.exercise.map((ex) => ({
 			id_exercise: ex.id_exercise ?? ex.value, // se não tiver id_exercise, usa value
