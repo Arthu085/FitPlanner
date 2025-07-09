@@ -120,6 +120,7 @@ const Training = () => {
 
 					<Card
 						data={training}
+						title={"Treino: "}
 						renderActions={(item) => (
 							<div className="flex flex-row items-center justify-between w-full">
 								<div>

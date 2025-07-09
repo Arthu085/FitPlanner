@@ -3,24 +3,29 @@ import Buttons from "./Buttons";
 
 import { Link } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import { forwardRef } from "react";
 
-export default function Form({
-	fields,
-	values,
-	handleChange,
-	handleSubmit,
-	title,
-	text,
-	path,
-	pathTitle,
-	logo,
-	btnTitle,
-	btnDisabled,
-	btnType,
-	changeClass,
-	exerciseOptions,
-	showNotesAndWeight = false,
-}) {
+const Form = forwardRef(function Form(
+	{
+		fields,
+		values,
+		handleChange,
+		handleSubmit,
+		title,
+		text,
+		path,
+		pathTitle,
+		logo,
+		btnTitle,
+		btnDisabled,
+		btnType,
+		changeClass,
+		exerciseOptions,
+		showNotesAndWeight = false,
+		menuHeight = "200px",
+	},
+	ref
+) {
 	const defaultClass =
 		"bg-white dark:bg-gray-900 shadow-md rounded-xl p-8 w-full max-w-md mx-auto mb-4 mt-4 transition-colors duration-300";
 
@@ -38,7 +43,7 @@ export default function Form({
 		}),
 		menuList: (base) => ({
 			...base,
-			maxHeight: "120px",
+			maxHeight: menuHeight,
 			overflowY: "auto",
 		}),
 		menuPortal: (base) => ({
@@ -157,10 +162,14 @@ export default function Form({
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className={changeClass || defaultClass}>
+		<form
+			ref={ref}
+			onSubmit={handleSubmit}
+			className={changeClass || defaultClass}>
 			{logo && (
 				<img src={logo} alt="Logo" className="h-35 mx-auto dark:invert" />
 			)}
+
 			<h2 className="text-2xl font-bold mb-6 text-center dark:text-white">
 				{title}
 			</h2>
@@ -213,9 +222,9 @@ export default function Form({
 					</div>
 				))}
 
+			{/* Exercícios */}
 			{fields.some((field) => field.name === "exercise") && (
 				<>
-					{/* Exercícios com multiselect */}
 					<div className="mb-4">
 						<label className="block text-sm font-medium mb-1 dark:text-white">
 							Exercícios
@@ -291,6 +300,7 @@ export default function Form({
 										</select>
 									</div>
 
+									{/* Peso e Notas */}
 									{showNotesAndWeight && (
 										<>
 											<div>
@@ -352,6 +362,7 @@ export default function Form({
 				</>
 			)}
 
+			{/* Botão de envio */}
 			<Buttons
 				text={btnTitle}
 				submit="submit"
@@ -359,6 +370,7 @@ export default function Form({
 				type={btnType}
 			/>
 
+			{/* Link abaixo do formulário */}
 			{path && (
 				<div className="flex flex-row gap-4 mt-4">
 					<p className="text-black dark:text-white">{text}</p>
@@ -371,4 +383,6 @@ export default function Form({
 			)}
 		</form>
 	);
-}
+});
+
+export default Form;

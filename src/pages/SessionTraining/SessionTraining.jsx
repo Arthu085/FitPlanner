@@ -114,6 +114,7 @@ const SessionTraining = () => {
 
 					<Card
 						data={training}
+						title={"Treino: "}
 						renderActions={(item) => {
 							const session =
 								trainingSessions?.data?.find(
@@ -122,23 +123,6 @@ const SessionTraining = () => {
 
 							return (
 								<div className="flex flex-row items-center justify-between w-full">
-									<div>
-										{session ? (
-											session.finished_at !== null ? (
-												<p className="text-black dark:text-white">
-													Treino não iniciado
-												</p>
-											) : (
-												<p className="text-black dark:text-white">
-													Treino em andamento...
-												</p>
-											)
-										) : (
-											<p className="text-black dark:text-white">
-												Treino não iniciado
-											</p>
-										)}
-									</div>
 									<div className="flex gap-3">
 										{session ? (
 											session.finished_at !== null ? (

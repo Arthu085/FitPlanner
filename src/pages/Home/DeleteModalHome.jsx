@@ -31,7 +31,6 @@ export default function DeleteModalHome({
 			onClose();
 		} catch (error) {
 			addToast(error.message || "Erro ao deletar sessão", "error");
-			onClose();
 		} finally {
 			setLoading(false);
 			setBtnDisabled(false);

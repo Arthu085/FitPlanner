@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
 import { useForm } from "../../hooks/useForm";
@@ -18,8 +18,10 @@ export default function EditModalExercise({
 	muscleGroups = [],
 }) {
 	const { user } = useAuth();
-	const token = user?.token;
+	const formRef = useRef();
 	const addToast = useToast();
+
+	const token = user?.token;
 
 	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
@@ -70,6 +72,12 @@ export default function EditModalExercise({
 		},
 	];
 
+	const handleFormSubmit = () => {
+		if (formRef.current) {
+			formRef.current.requestSubmit();
+		}
+	};
+
 	async function handleEditExercise(formData) {
 		if (btnDisabled) return;
 
@@ -110,22 +118,28 @@ export default function EditModalExercise({
 				content={
 					<div className="space-y-4">
 						<Form
+							ref={formRef}
 							handleChange={handleChange}
 							handleSubmit={handleSubmit}
 							fields={fields}
 							values={values}
-							btnTitle={"Salvar"}
-							btnDisabled={btnDisabled}
-							btnType={"success"}
 							changeClass={
 								"bg-white dark:bg-gray-800 p-5 w-full mx-auto transition-colors duration-300"
 							}
+							menuHeight="150px"
 						/>
 					</div>
 				}
 				size="big"
 				actions={
 					<div className="flex gap-3">
+						<Buttons
+							type={"success"}
+							text={"Salvar"}
+							onClick={handleFormSubmit}
+							disabled={btnDisabled}
+							width="w-24"
+						/>
 						<Buttons
 							type={"primary"}
 							text={"Fechar"}

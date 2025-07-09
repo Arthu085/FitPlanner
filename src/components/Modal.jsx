@@ -58,14 +58,12 @@ export default function Modal({
 					)}
 
 					{content && (
-						<div className="text-black dark:text-white pb-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+						<div className="text-black dark:text-white max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
 							{content}
 						</div>
 					)}
 
-					{actions && (
-						<div className="flex justify-end gap-3 pt-3">{actions}</div>
-					)}
+					{actions && <div className="flex justify-end gap-3 ">{actions}</div>}
 				</div>
 			</div>
 		</div>

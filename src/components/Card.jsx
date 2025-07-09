@@ -3,9 +3,11 @@ export default function Card({
 	renderActions,
 	renderContent,
 	titleKey = "title",
+	title,
 }) {
 	return (
-		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl">
+		<div
+			className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-7xl `}>
 			{data.length === 0 ? (
 				<div className="col-span-full text-center text-gray-800 dark:text-white">
 					Nenhum dado encontrado.
@@ -16,9 +18,14 @@ export default function Card({
 						key={index}
 						className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 flex flex-col justify-between
 							transform transition-transform duration-200 hover:scale-[1.02] hover:shadow-lg ">
-						<h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-							{item[titleKey]}
-						</h2>
+						<div className="mb-3">
+							<h2 className="text-lg font-semibold text-gray-900 dark:text-white break-words">
+								{title}
+							</h2>
+							<p className="text-md font-medium text-gray-900 dark:text-white break-words">
+								{item[titleKey]}
+							</p>
+						</div>
 
 						<div className="flex-1 text-gray-700 dark:text-white mb-4 text-sm max-h-[15vh] overflow-y-auto pr-2 custom-scrollbar">
 							{renderContent ? renderContent(item) : ""}

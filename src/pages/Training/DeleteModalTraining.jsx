@@ -31,7 +31,6 @@ export default function DeleteModalTraining({
 			onClose();
 		} catch (error) {
 			addToast(error.message || "Erro ao deletar treino", "error");
-			onClose();
 		} finally {
 			setLoading(false);
 			setBtnDisabled(false);

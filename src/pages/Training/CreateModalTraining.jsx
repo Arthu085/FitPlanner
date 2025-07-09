@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
 import { createTraining } from "../../api/trainingApi";
@@ -16,8 +16,10 @@ export default function CreateModalTraining({
 	exercises = [],
 }) {
 	const { user } = useAuth();
-	const token = user?.token;
+	const formRef = useRef();
 	const addToast = useToast();
+
+	const token = user?.token;
 
 	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
@@ -78,7 +80,6 @@ export default function CreateModalTraining({
 			resetForm();
 		} catch (error) {
 			addToast(error.message || "Erro ao criar treino", "error");
-			onClose();
 		} finally {
 			setLoading(false);
 			setBtnDisabled(false);
@@ -96,6 +97,12 @@ export default function CreateModalTraining({
 		handleCreateTraining
 	);
 
+	const handleFormSubmit = () => {
+		if (formRef.current) {
+			formRef.current.requestSubmit();
+		}
+	};
+
 	return (
 		<>
 			{loading && <LoadingScreen />}
@@ -106,14 +113,12 @@ export default function CreateModalTraining({
 				content={
 					<div className="space-y-4">
 						<Form
+							ref={formRef}
 							handleChange={handleChange}
 							handleSubmit={handleSubmit}
 							exerciseOptions={exerciseOptions}
 							fields={fields}
 							values={values}
-							btnTitle={"Salvar"}
-							btnDisabled={btnDisabled}
-							btnType={"success"}
 							changeClass={
 								"bg-white dark:bg-gray-800 p-5 w-full mx-auto transition-colors duration-300"
 							}
@@ -123,6 +128,13 @@ export default function CreateModalTraining({
 				size="big"
 				actions={
 					<div className="flex gap-3">
+						<Buttons
+							type={"success"}
+							text={"Salvar"}
+							onClick={handleFormSubmit}
+							disabled={btnDisabled}
+							width="w-24"
+						/>
 						<Buttons
 							type={"primary"}
 							text={"Fechar"}

@@ -31,7 +31,6 @@ export default function DeleteModalExercise({
 			onClose();
 		} catch (error) {
 			addToast(error.message || "Erro ao deletar exercício", "error");
-			onClose();
 		} finally {
 			setLoading(false);
 			setBtnDisabled(false);
