@@ -64,7 +64,8 @@ const ActiveTrainingSession = () => {
 					}
 
 					if (!original || (ex.weight ?? "") !== (original.weight ?? "")) {
-						entry.weight = ex.weight ?? null;
+						const parsedWeight = Number(ex.weight);
+						entry.weight = isNaN(parsedWeight) ? null : parsedWeight;
 					}
 
 					if (!original || (ex.notes ?? "") !== (original.notes ?? "")) {
