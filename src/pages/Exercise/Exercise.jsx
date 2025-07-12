@@ -239,6 +239,7 @@ const Exercise = () => {
 								disabled={pagination?.page === 1}
 								width="w-30"
 								loadingText="Anterior"
+								disabledWidth="w-30"
 							/>
 							<Buttons
 								type="primary"
@@ -247,6 +248,7 @@ const Exercise = () => {
 								disabled={pagination?.page === pagination?.totalPages}
 								width="w-30"
 								loadingText="Próximo"
+								disabledWidth="w-30"
 							/>
 						</div>
 					)}

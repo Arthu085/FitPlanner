@@ -145,6 +145,7 @@ const SessionTraining = () => {
 													text="Iniciar"
 													width="w-24"
 													onClick={() => handleStartSession(item.id)}
+													disabled={btnDisabled}
 												/>
 											) : (
 												<Buttons
@@ -158,6 +159,7 @@ const SessionTraining = () => {
 															item.id
 														)
 													}
+													disabled={btnDisabled}
 												/>
 											)
 										) : (
@@ -167,6 +169,7 @@ const SessionTraining = () => {
 												text="Iniciar"
 												width="w-24"
 												onClick={() => handleStartSession(item.id)}
+												disabled={btnDisabled}
 											/>
 										)}
 									</div>

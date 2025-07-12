@@ -212,6 +212,7 @@ const Home = () => {
 								disabled={trainingSessions.pagination?.page === 1}
 								width="w-30"
 								loadingText="Anterior"
+								disabledWidth="w-30"
 							/>
 
 							<Buttons
@@ -231,6 +232,7 @@ const Home = () => {
 								}
 								width="w-30"
 								loadingText="Próximo"
+								disabledWidth="w-30"
 							/>
 						</div>
 					)}
