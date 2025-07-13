@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { fetchTrainingSessionById } from "../../api/trainingSessionApi";
 import { useToast } from "../../hooks/useToast";
+import { useLoading } from "../../hooks/useLoading";
 
 import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
@@ -15,13 +16,13 @@ export default function DetailsModalHome({
 	const { user } = useAuth();
 	const token = user?.token;
 	const addToast = useToast();
+	const { isLoading, setIsLoading } = useLoading();
 
 	const [details, setDetails] = useState([]);
-	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		const loadDetails = async () => {
-			setLoading(true);
+			setIsLoading(true);
 			try {
 				const data = await fetchTrainingSessionById(token, id_training_session);
 				setDetails(data);
@@ -29,7 +30,7 @@ export default function DetailsModalHome({
 				addToast(error.message || "Erro ao buscar detalhes da sessão", "error");
 				onClose();
 			} finally {
-				setLoading(false);
+				setIsLoading(false);
 			}
 		};
 
@@ -40,7 +41,7 @@ export default function DetailsModalHome({
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 			<Modal
 				isOpen={openDetailsModal}
 				onClose={onClose}

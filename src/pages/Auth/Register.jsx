@@ -18,8 +18,8 @@ const Register = () => {
 
 	const { register } = useAuth();
 	const addToast = useToast();
-
 	const { isLoading, setIsLoading } = useLoading();
+
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const navigate = useNavigate();

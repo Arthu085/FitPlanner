@@ -18,8 +18,8 @@ const Login = () => {
 
 	const { login } = useAuth();
 	const addToast = useToast();
-
 	const { isLoading, setIsLoading } = useLoading();
+
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const navigate = useNavigate();

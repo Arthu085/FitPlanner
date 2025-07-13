@@ -16,40 +16,41 @@ import {
 	startTrainingSession,
 } from "../../api/trainingSessionApi";
 import { useNavigate } from "react-router-dom";
+import { useLoading } from "../../hooks/useLoading";
 
 const SessionTraining = () => {
 	const { user } = useAuth();
 	const addToast = useToast();
 	const token = user?.token;
 	const navigate = useNavigate();
+	const { isLoading, setIsLoading } = useLoading();
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
 	const [training, setTraining] = useState([]);
 	const [trainingSessions, setTrainingSessions] = useState([]);
 
 	const loadSessions = async () => {
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const data = await fetchTrainingSession(token, 1, 0);
 			setTrainingSessions(data);
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar sessões de treinos", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
 	const loadTraining = async () => {
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const data = await fetchTraining(token);
 			setTraining(data);
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar treinos", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -62,7 +63,7 @@ const SessionTraining = () => {
 		if (btnDisabled) return;
 
 		setBtnDisabled(true);
-		setLoading(true);
+		setIsLoading(true);
 
 		try {
 			const data = await startTrainingSession(token, trainingId);
@@ -79,7 +80,7 @@ const SessionTraining = () => {
 			addToast(data.message);
 		} catch (error) {
 			addToast(error.message || "Erro ao iniciar sessão de treino", "error");
-			setLoading(false);
+			setIsLoading(false);
 			setBtnDisabled(false);
 		}
 	};
@@ -88,7 +89,7 @@ const SessionTraining = () => {
 		if (btnDisabled) return;
 
 		setBtnDisabled(true);
-		setLoading(true);
+		setIsLoading(true);
 
 		try {
 			const selectedTraining = training.find((t) => t.id === trainingId);
@@ -100,14 +101,14 @@ const SessionTraining = () => {
 			});
 		} catch (error) {
 			addToast(error.message || "Sessão de treino não encontrada", "error");
-			setLoading(false);
+			setIsLoading(false);
 			setBtnDisabled(false);
 		}
 	};
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 
 			<Container>
 				<Header />

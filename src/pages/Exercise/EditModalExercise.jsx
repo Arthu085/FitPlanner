@@ -3,6 +3,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
 import { useForm } from "../../hooks/useForm";
 import { editExercise } from "../../api/exerciseApi";
+import { useLoading } from "../../hooks/useLoading";
 
 import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
@@ -20,10 +21,10 @@ export default function EditModalExercise({
 	const { user } = useAuth();
 	const formRef = useRef();
 	const addToast = useToast();
+	const { isLoading, setIsLoading } = useLoading();
 
 	const token = user?.token;
 
-	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const { values, handleChange, handleSubmit, resetForm } = useForm(
@@ -87,7 +88,7 @@ export default function EditModalExercise({
 		}
 
 		setBtnDisabled(true);
-		setLoading(true);
+		setIsLoading(true);
 
 		try {
 			const payload = {
@@ -108,14 +109,14 @@ export default function EditModalExercise({
 				addToast(error.message || "Erro ao editar exercício", "error");
 			}
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 			setBtnDisabled(false);
 		}
 	}
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 			<Modal
 				isOpen={openEditModal}
 				onClose={onClose}

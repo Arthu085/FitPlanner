@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { deleteExercise } from "../../api/exerciseApi";
 import { useToast } from "../../hooks/useToast";
+import { useLoading } from "../../hooks/useLoading";
 
 import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
@@ -16,14 +17,14 @@ export default function DeleteModalExercise({
 	const { user } = useAuth();
 	const token = user?.token;
 	const addToast = useToast();
+	const { isLoading, setIsLoading } = useLoading();
 
-	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const handleDeleteExercise = async () => {
 		if (btnDisabled) return;
 		setBtnDisabled(true);
-		setLoading(true);
+		setIsLoading(true);
 		try {
 			const data = await deleteExercise(token, id_exercise);
 			addToast(data.message);
@@ -32,14 +33,14 @@ export default function DeleteModalExercise({
 		} catch (error) {
 			addToast(error.message || "Erro ao deletar exercício", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 			setBtnDisabled(false);
 		}
 	};
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 			<Modal
 				isOpen={openDeleteModal}
 				onClose={onClose}

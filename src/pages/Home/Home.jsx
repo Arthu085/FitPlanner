@@ -18,6 +18,7 @@ import { useLoading } from "../../hooks/useLoading";
 
 const Home = () => {
 	const { user } = useAuth();
+	const { isLoading, setIsLoading } = useLoading();
 	const token = user?.token;
 	const name = user?.name;
 	const addToast = useToast();
@@ -28,7 +29,6 @@ const Home = () => {
 	const [deleteModal, setDeleteModal] = useState(false);
 	const [finishModal, setFinishModal] = useState(false);
 	const [selectedSessionId, setSelectedSessionId] = useState(null);
-	const { isLoading, setIsLoading } = useLoading();
 	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [hasSearched, setHasSearched] = useState(false);
