@@ -9,6 +9,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useLoading } from "../../hooks/useLoading";
 
 const Register = () => {
 	useEffect(() => {
@@ -18,7 +19,7 @@ const Register = () => {
 	const { register } = useAuth();
 	const addToast = useToast();
 
-	const [loading, setLoading] = useState(false);
+	const { isLoading, setIsLoading } = useLoading();
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const navigate = useNavigate();
@@ -61,7 +62,7 @@ const Register = () => {
 		}
 		if (btnDisabled) return;
 		setBtnDisabled(true);
-		setLoading(true);
+		setIsLoading(true);
 		try {
 			const response = await register(data);
 			addToast(response.message || "Cadastro realizado com sucesso", "success");
@@ -70,7 +71,7 @@ const Register = () => {
 		} catch (error) {
 			addToast(error.message || "Erro ao fazer login", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 			setBtnDisabled(false);
 		}
 	};
@@ -82,7 +83,7 @@ const Register = () => {
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 
 			<Container centered>
 				<Form
