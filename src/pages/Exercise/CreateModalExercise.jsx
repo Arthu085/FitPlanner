@@ -3,6 +3,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useToast } from "../../hooks/useToast";
 import { useForm } from "../../hooks/useForm";
 import { createExercise } from "../../api/exerciseApi";
+import { useLoading } from "../../hooks/useLoading";
 
 import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
@@ -18,10 +19,10 @@ export default function CreateModalExercise({
 	const { user } = useAuth();
 	const formRef = useRef();
 	const addToast = useToast();
+	const { isLoading, setIsLoading } = useLoading();
 
 	const token = user?.token;
 
-	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const fields = [
@@ -61,7 +62,7 @@ export default function CreateModalExercise({
 		}
 
 		setBtnDisabled(true);
-		setLoading(true);
+		setIsLoading(true);
 
 		try {
 			const data = await createExercise(token, formData);
@@ -72,7 +73,7 @@ export default function CreateModalExercise({
 		} catch (error) {
 			addToast(error.message || "Erro ao criar exercício", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 			setBtnDisabled(false);
 		}
 	};
@@ -96,7 +97,7 @@ export default function CreateModalExercise({
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 			<Modal
 				isOpen={openCreateModal}
 				onClose={onClose}

@@ -14,9 +14,11 @@ import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { fetchTrainingSession } from "../../api/trainingSessionApi";
 import { useToast } from "../../hooks/useToast";
+import { useLoading } from "../../hooks/useLoading";
 
 const Home = () => {
 	const { user } = useAuth();
+	const { isLoading, setIsLoading } = useLoading();
 	const token = user?.token;
 	const name = user?.name;
 	const addToast = useToast();
@@ -27,21 +29,20 @@ const Home = () => {
 	const [deleteModal, setDeleteModal] = useState(false);
 	const [finishModal, setFinishModal] = useState(false);
 	const [selectedSessionId, setSelectedSessionId] = useState(null);
-	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
 	const [search, setSearch] = useState("");
 	const [hasSearched, setHasSearched] = useState(false);
 
 	const loadSessions = async (pageToLoad) => {
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const data = await fetchTrainingSession(token, pageToLoad);
 			setTrainingSessions(data);
 			setPage(pageToLoad);
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar sessões de treinos", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -78,7 +79,7 @@ const Home = () => {
 		}
 
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const data = await fetchTrainingSession(token, 1, 6, search);
 			setTrainingSessions(data);
 			setPage(1);
@@ -87,7 +88,7 @@ const Home = () => {
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar sessões de treinos", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -111,7 +112,7 @@ const Home = () => {
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 
 			<Container>
 				<Header />
@@ -212,6 +213,7 @@ const Home = () => {
 								disabled={trainingSessions.pagination?.page === 1}
 								width="w-30"
 								loadingText="Anterior"
+								disabledWidth="w-30"
 							/>
 
 							<Buttons
@@ -231,6 +233,7 @@ const Home = () => {
 								}
 								width="w-30"
 								loadingText="Próximo"
+								disabledWidth="w-30"
 							/>
 						</div>
 					)}

@@ -16,14 +16,15 @@ import { useAuth } from "../../hooks/useAuth";
 import { fetchTraining } from "../../api/trainingApi";
 import { fetchAllExercises } from "../../api/exerciseApi";
 import { useToast } from "../../hooks/useToast";
+import { useLoading } from "../../hooks/useLoading";
 
 const Training = () => {
 	const { user } = useAuth();
 	const addToast = useToast();
 	const token = user?.token;
+	const { isLoading, setIsLoading } = useLoading();
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-	const [loading, setLoading] = useState(false);
 	const [training, setTraining] = useState([]);
 	const [selectedTrainingId, setSelectedTrainingId] = useState(null);
 	const [detailsModal, setDetailsModal] = useState(false);
@@ -35,25 +36,25 @@ const Training = () => {
 
 	const loadTraining = async () => {
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const data = await fetchTraining(token);
 			setTraining(data);
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar treinos", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
 	const loadExercises = async () => {
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const data = await fetchAllExercises(token, 1, 0);
 			setExercises(data.data);
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar exercícios", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -92,7 +93,7 @@ const Training = () => {
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 
 			<Container>
 				<Header />

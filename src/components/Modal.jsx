@@ -17,7 +17,9 @@ export default function Modal({
 	useEffect(() => {
 		if (isOpen) {
 			setShow(true);
-			setTimeout(() => setAnimate(true), 20);
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => setAnimate(true));
+			});
 		} else {
 			setAnimate(false);
 			const timeout = setTimeout(() => setShow(false), 500);

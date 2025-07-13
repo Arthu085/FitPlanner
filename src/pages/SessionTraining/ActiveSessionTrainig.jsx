@@ -10,6 +10,7 @@ import {
 } from "../../api/trainingSessionApi";
 import { fetchAllExercises } from "../../api/exerciseApi";
 import { useLocation } from "react-router-dom";
+import { useLoading } from "../../hooks/useLoading";
 
 import Form from "../../components/Form";
 import LoadingScreen from "../../components/LoadingScreen";
@@ -25,6 +26,7 @@ const ActiveTrainingSession = () => {
 	const { user } = useAuth();
 	const addToast = useToast();
 	const location = useLocation();
+	const { isLoading, setIsLoading } = useLoading();
 
 	const trainingTitle = location.state?.trainingTitle || "Treino em andamento";
 	const token = user?.token;
@@ -33,7 +35,6 @@ const ActiveTrainingSession = () => {
 	const [session, setSession] = useState(null);
 	const [exerciseOptions, setExerciseOptions] = useState([]);
 	const [elapsedTime, setElapsedTime] = useState(0);
-	const [loading, setLoading] = useState(true);
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const { values, handleChange, handleSubmit, resetForm } = useForm(
@@ -46,7 +47,7 @@ const ActiveTrainingSession = () => {
 				}
 
 				setBtnDisabled(true);
-				setLoading(true);
+				setIsLoading(true);
 
 				const payload = formData.exercise.map((ex) => {
 					const original = exerciseOptions.find(
@@ -87,7 +88,7 @@ const ActiveTrainingSession = () => {
 				addToast(error.message || "Erro ao finalizar treino", "error");
 			} finally {
 				setBtnDisabled(false);
-				setLoading(false);
+				setIsLoading(false);
 			}
 		}
 	);
@@ -95,7 +96,7 @@ const ActiveTrainingSession = () => {
 	// Carregamento unificado da sessão + exercícios
 	useEffect(() => {
 		const loadAll = async () => {
-			setLoading(true);
+			setIsLoading(true);
 
 			try {
 				const sessionData = await fetchTrainingSessionById(token, id);
@@ -143,7 +144,7 @@ const ActiveTrainingSession = () => {
 				addToast(error.message || "Erro ao carregar dados da sessão", "error");
 				navigate("/session/training");
 			} finally {
-				setLoading(false);
+				setIsLoading(false);
 			}
 		};
 
@@ -176,7 +177,7 @@ const ActiveTrainingSession = () => {
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 
 			<Container>
 				<Header />

@@ -5,15 +5,18 @@ import App from "./App.jsx";
 import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 import { ToastProvider } from "./contexts/ToastContext.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
+import { LoadingProvider } from "./contexts/LoadingContext.jsx";
 
 createRoot(document.getElementById("root")).render(
 	<StrictMode>
-		<AuthProvider>
-			<ThemeProvider>
-				<ToastProvider>
-					<App />
-				</ToastProvider>
-			</ThemeProvider>
-		</AuthProvider>
+		<LoadingProvider>
+			<AuthProvider>
+				<ThemeProvider>
+					<ToastProvider>
+						<App />
+					</ToastProvider>
+				</ThemeProvider>
+			</AuthProvider>
+		</LoadingProvider>
 	</StrictMode>
 );

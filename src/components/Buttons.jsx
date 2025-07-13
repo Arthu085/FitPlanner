@@ -8,6 +8,7 @@ export default function Buttons({
 	loadingText = "Carregando...",
 	type,
 	width = "w-full",
+	disabledWidth = "w-full",
 	title = "",
 }) {
 	if (type === "primary") {
@@ -32,13 +33,13 @@ export default function Buttons({
 			onClick={onClick}
 			title={title}
 			type={submit}
-			className={`${width} font-semibold py-2 px-4 rounded-lg transition duration-300 
-	${
-		disabled
-			? "bg-gray-400 cursor-not-allowed"
-			: `${colorBg} ${colorHover} cursor-pointer`
-	} 
-	text-white`}
+			className={`${
+				disabled ? disabledWidth : width
+			} font-semibold py-2 px-4 rounded-lg transition duration-300 ${
+				disabled
+					? "bg-gray-400 cursor-not-allowed"
+					: `${colorBg} ${colorHover} cursor-pointer`
+			} text-white`}
 			disabled={disabled}>
 			{disabled ? loadingText : text}
 		</button>

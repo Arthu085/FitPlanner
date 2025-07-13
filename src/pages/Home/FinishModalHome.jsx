@@ -5,6 +5,7 @@ import {
 	fetchExerciseByTrainingAndSession,
 } from "../../api/trainingSessionApi";
 import { useToast } from "../../hooks/useToast";
+import { useLoading } from "../../hooks/useLoading";
 
 import Modal from "../../components/Modal";
 import Buttons from "../../components/Buttons";
@@ -19,14 +20,14 @@ export default function FinishModalHome({
 	const { user } = useAuth();
 	const token = user?.token;
 	const addToast = useToast();
+	const { isLoading, setIsLoading } = useLoading();
 
-	const [loading, setLoading] = useState(false);
 	const [btnDisabled, setBtnDisabled] = useState(false);
 
 	const handleFinishTrainingSession = async () => {
 		if (btnDisabled) return;
 		setBtnDisabled(true);
-		setLoading(true);
+		setIsLoading(true);
 		try {
 			const exercises = await fetchExerciseByTrainingAndSession(
 				token,
@@ -48,14 +49,14 @@ export default function FinishModalHome({
 		} catch (error) {
 			addToast(error.message || "Erro ao finalizar sessão", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 			setBtnDisabled(false);
 		}
 	};
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 			<Modal
 				isOpen={openFinishModal}
 				onClose={onClose}

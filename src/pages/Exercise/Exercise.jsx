@@ -15,16 +15,17 @@ import { useEffect, useState } from "react";
 import { useToast } from "../../hooks/useToast";
 import { fetchAllExercises } from "../../api/exerciseApi";
 import { fetchAllMuscleGroups } from "../../api/muscleGroupApi";
+import { useLoading } from "../../hooks/useLoading";
 
 const Exercise = () => {
 	const { user } = useAuth();
 	const token = user?.token;
 	const addToast = useToast();
+	const { isLoading, setIsLoading } = useLoading();
 
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [exercises, setExercises] = useState([]);
 	const [pagination, setPagination] = useState(null);
-	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
 	const [deleteModal, setDeleteModal] = useState(false);
 	const [createModal, setCreateModal] = useState(false);
@@ -44,7 +45,7 @@ const Exercise = () => {
 
 	const loadExercises = async (pageToLoad = 1) => {
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const response = await fetchAllExercises(token, pageToLoad, 6);
 			const transformed = response.data.map((exercise) => ({
 				...exercise,
@@ -58,19 +59,19 @@ const Exercise = () => {
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar exercícios", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
 	const loadMuscleGroups = async () => {
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const response = await fetchAllMuscleGroups(token);
 			setMuscleGroups(response.data);
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar grupos musculares", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
@@ -116,7 +117,7 @@ const Exercise = () => {
 		}
 
 		try {
-			setLoading(true);
+			setIsLoading(true);
 			const response = await fetchAllExercises(token, pageToLoad, 6, search);
 			const transformed = response.data.map((exercise) => ({
 				...exercise,
@@ -132,13 +133,13 @@ const Exercise = () => {
 		} catch (error) {
 			addToast(error.message || "Erro ao buscar exercício", "error");
 		} finally {
-			setLoading(false);
+			setIsLoading(false);
 		}
 	};
 
 	return (
 		<>
-			{loading && <LoadingScreen />}
+			{isLoading && <LoadingScreen />}
 
 			<Container>
 				<Header />
@@ -239,6 +240,7 @@ const Exercise = () => {
 								disabled={pagination?.page === 1}
 								width="w-30"
 								loadingText="Anterior"
+								disabledWidth="w-30"
 							/>
 							<Buttons
 								type="primary"
@@ -247,6 +249,7 @@ const Exercise = () => {
 								disabled={pagination?.page === pagination?.totalPages}
 								width="w-30"
 								loadingText="Próximo"
+								disabledWidth="w-30"
 							/>
 						</div>
 					)}

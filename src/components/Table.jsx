@@ -25,7 +25,7 @@ export default function Table({ headers, data = [], renderActions }) {
 						<tr>
 							<td
 								colSpan={headers.length + (renderActions ? 1 : 0)}
-								className="text-center py-4 text-black dark:text-white">
+								className="text-left py-4 text-black dark:text-white font-bold text-lg">
 								Nenhum dado encontrado.
 							</td>
 						</tr>
